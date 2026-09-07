@@ -1,0 +1,423 @@
+/* ===========================================
+   Frontend custom overrides (loaded after style.css)
+   =========================================== */
+
+/* ------------------------------------------------------------------
+   Dynamic logo sizing (header + footer)
+   Logos come from company_settings, so they may be any aspect ratio.
+   Use max-height + auto width so the image never distorts and stays
+   nicely proportioned at a healthy size.
+   ------------------------------------------------------------------ */
+.navbar .logo {
+  height: auto;
+  width: auto;
+  max-height: 52px;
+  max-width: 220px;
+}
+
+.footer-section .main-footer .footer-logo-part .logo {
+  height: auto;
+  width: auto;
+  max-height: 72px;
+  max-width: 260px;
+  padding-bottom: 0;
+}
+
+@media (max-width: 767px) {
+  .navbar .logo {
+    max-height: 42px;
+    max-width: 160px;
+  }
+
+  .footer-section .main-footer .footer-logo-part .logo {
+    max-height: 56px;
+    max-width: 200px;
+  }
+}
+
+/* Checkout-flow pages (checkout / address / payment / confirm order) */
+.account-section {
+  background-color: rgb(249 249 249);
+}
+
+/* Fix order-summary sticky scrolling on checkout-style pages.
+   The theme sets `.layout-sec .order-summery-section.sticky-top`
+   to `position: static`, which makes the summary scroll away with the
+   page. Restore the sticky behaviour so the full summary (including the
+   PAY NOW button) stays visible while scrolling. */
+.layout-sec .order-summery-section.sticky-top {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 30px;
+  z-index: 1;
+}
+
+/* Keep the "ingredients" line styled consistently on every checkout page
+   (checkout / address / payment / confirm order). */
+.order-summery-section .checkout-detail .horizontal-product-box .product-content h6.ingredients-text {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Highlight the address card that was selected for delivery. */
+.address-box.selected {
+  border-color: #277d2a !important;
+  box-shadow: 0 0 0 1px #277d2a !important;
+  background: rgba(39, 125, 42, 0.06) !important;
+}
+
+.address-box.selected .address-title h6 {
+  color: #277d2a !important;
+}
+
+.address-box.selected .deliver-here {
+  background-color: #277d2a !important;
+  border-color: #277d2a !important;
+  color: #fff !important;
+}
+
+/* Order Cancellation & Refund note (payment page) */
+.cancellation-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 26px;
+  padding: 20px 22px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(var(--theme-color), 0.09), rgba(var(--theme-color2), 0.09));
+  border: 1px solid rgba(var(--theme-color), 0.25);
+  border-left: 4px solid rgba(var(--theme-color), 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.cancellation-note .note-icon {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(to right, rgba(var(--theme-color), 1), rgba(var(--theme-color2), 1));
+  color: #fff;
+  font-size: 22px;
+  box-shadow: 0 6px 16px rgba(var(--theme-color), 0.35);
+}
+
+.cancellation-note .note-content {
+  flex: 1;
+}
+
+.cancellation-note .note-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(var(--dark-text), 1);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancellation-note .note-title i {
+  color: rgba(var(--theme-color), 1);
+  font-size: 18px;
+}
+
+.cancellation-note p {
+  margin: 0;
+  color: rgba(var(--content-color), 1);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+@media (max-width: 575px) {
+  .cancellation-note {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ===========================================
+   Order cancellation (my orders page)
+   =========================================== */
+
+/* Cancel button (active - order still pending) */
+.cancel-btn {
+  border: 1px solid #e02424;
+  color: #e02424;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:hover,
+.cancel-btn:focus {
+  background: #e02424;
+  border-color: #e02424;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(224, 36, 36, 0.25);
+}
+
+/* Cancel button (disabled - order already accepted / past cancellation point).
+   Still clickable so the customer gets the "why" message. */
+.cancel-btn.disabled-cancel-btn {
+  background: #f2f2f2;
+  border-color: #d9d9d9;
+  color: #9b9b9b;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.cancel-btn.disabled-cancel-btn:hover,
+.cancel-btn.disabled-cancel-btn:focus {
+  background: #ffecec;
+  border-color: #e02424;
+  color: #e02424;
+  box-shadow: none;
+}
+
+/* Inline message shown when cancellation is not possible */
+.cancel-toast {
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cancel-warning {
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+#cancelOrderModal .modal-title {
+  color: #e02424;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+#cancelOrderModal .modal-footer {
+  border-top: 1px solid rgba(var(--dashed-line), 1);
+}
+
+@media (max-width: 575px) {
+  .cancel-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ===========================================
+   Home feature tabs (Dinning Out / Delivery / NightLife)
+   =========================================== */
+.home-wrapper .home-features-list li .home-features-box {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.home-wrapper .home-features-list li:hover {
+  transform: translateY(-2px);
+}
+
+/* Active state: the whole box (li) gets the theme gradient + glow */
+.home-wrapper .home-features-list li.active {
+  background: -webkit-gradient(linear, left top, right top, from(rgba(var(--theme-color), 1)), to(rgba(var(--theme-color2), 1)));
+  background: linear-gradient(to right, rgba(var(--theme-color), 1), rgba(var(--theme-color2), 1));
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 19px;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 12px 30px rgba(var(--theme-color), 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.home-wrapper .home-features-list li.active .home-features-box h6 {
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.home-wrapper .home-features-list li.active .home-features-box img {
+  filter: brightness(0) invert(1);
+  transform: scale(1.1);
+}
+
+/* Animated "running" underline under the active box,
+   mirrors the loader-line used on section titles. */
+.home-wrapper .home-features-list li .home-features-box .feature-active-line {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -8px;
+  height: 3px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.home-wrapper .home-features-list li .home-features-box .feature-active-line::before {
+  content: "";
+  position: absolute;
+  left: -50%;
+  height: 3px;
+  width: 40%;
+  background: -webkit-gradient(linear, left top, right top, from(rgba(var(--theme-color), 1)), to(rgba(var(--theme-color2), 1)));
+  background: linear-gradient(to right, rgba(var(--theme-color), 1), rgba(var(--theme-color2), 1));
+  -webkit-animation: lineAnim 1.6s linear infinite;
+  animation: lineAnim 1.6s linear infinite;
+  border-radius: 20px;
+}
+
+/* ===========================================
+   Restaurant meta row + quick actions
+   (menuListing banner, inside .restaurant-details)
+   =========================================== */
+.product-banner-section .restaurant-details .restaurant-meta {
+  margin-top: calc(14px + 6 * (100vw - 320px) / 1600);
+}
+
+.restaurant-meta .meta-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+.restaurant-meta .meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: calc(12px + 1 * (100vw - 320px) / 1600);
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.restaurant-meta .meta-badge i {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.restaurant-meta .meta-badge.open {
+  background: rgba(var(--success-color), 0.92);
+  border-color: rgba(var(--success-color), 1);
+}
+
+.restaurant-meta .meta-badge.closed {
+  background: rgba(226, 55, 68, 0.92);
+  border-color: rgba(226, 55, 68, 1);
+}
+
+.restaurant-meta .meta-badge .meta-hours {
+  font-weight: 400;
+  opacity: 0.92;
+  padding-left: 4px;
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.restaurant-meta .meta-cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: calc(12px + 1 * (100vw - 320px) / 1600);
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.restaurant-meta .meta-cost i,
+.restaurant-meta .meta-call i {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.restaurant-meta .meta-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: calc(12px + 1 * (100vw - 320px) / 1600);
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.restaurant-meta .meta-call:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+  color: #fff;
+}
+
+.restaurant-meta .meta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.restaurant-meta .meta-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 12px;
+  font-size: calc(12px + 1 * (100vw - 320px) / 1600);
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.restaurant-meta .meta-action i {
+  font-size: 16px;
+  line-height: 1;
+  color: #fff;
+}
+
+.restaurant-meta .meta-action:hover {
+  background: rgba(var(--theme-color), 0.95);
+  border-color: rgba(var(--theme-color), 1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(var(--theme-color), 0.4);
+  color: #fff;
+}
+
+@media (max-width: 575px) {
+  .restaurant-meta .meta-info-row,
+  .restaurant-meta .meta-actions {
+    gap: 8px;
+  }
+  .restaurant-meta .meta-badge .meta-hours {
+    display: block;
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+
+
+
+
+
+
