@@ -1,327 +1,6 @@
 @extends('layouts.front.main')
 @section('content')
-    <style>
-        /* ===========================================
-           Become a Vendor Page Styles
-           =========================================== */
-        /* Benefits */
-        .vendor-benefits .benefit-card {
-            height: 100%;
-            padding: 34px 28px;
-            border-radius: 20px;
-            border: 1px solid rgba(var(--dark-text), 0.08);
-            background: rgba(var(--white), 1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
 
-        .vendor-benefits .benefit-card::before {
-            content: "";
-            position: absolute;
-            inset: 0 auto 0 0;
-            width: 4px;
-            background: linear-gradient(to bottom, rgba(var(--theme-color), 1), rgba(var(--theme-color2), 1));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .vendor-benefits .benefit-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 45px rgba(var(--theme-color), 0.16);
-            border-color: rgba(var(--theme-color), 0.35);
-        }
-
-        .vendor-benefits .benefit-card:hover::before { opacity: 1; }
-
-        .vendor-benefits .benefit-icon {
-            width: 62px;
-            height: 62px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 16px;
-            font-size: 28px;
-            color: #fff;
-            background: linear-gradient(135deg, rgba(var(--theme-color), 1), rgba(var(--theme-color2), 1));
-            box-shadow: 0 10px 22px rgba(var(--theme-color), 0.35);
-            margin-bottom: 22px;
-        }
-
-        .vendor-benefits .benefit-card h4 {
-            font-size: 18px;
-            font-weight: 600;
-            color: rgba(var(--dark-text), 1);
-            margin-bottom: 10px;
-        }
-
-        .vendor-benefits .benefit-card p {
-            color: rgba(var(--content-color), 1);
-            font-size: 14px;
-            line-height: 1.75;
-            margin: 0;
-        }
-
-        /* How it works */
-        .how-it-works {
-            background: linear-gradient(135deg, rgba(var(--box-bg), 1), rgba(var(--white), 1));
-        }
-
-        .steps-wrap {
-            position: relative;
-        }
-
-        .steps-wrap::before {
-            content: "";
-            position: absolute;
-            top: 34px;
-            left: 8%;
-            right: 8%;
-            height: 2px;
-            background: linear-gradient(to right, rgba(var(--theme-color), 0.6), rgba(var(--theme-color2), 0.6));
-            border-radius: 4px;
-        }
-
-        .steps-wrap .step-box {
-            position: relative;
-            text-align: center;
-            padding: 0 14px;
-        }
-
-        .steps-wrap .step-box .step-num {
-            position: relative;
-            z-index: 1;
-            width: 68px;
-            height: 68px;
-            margin: 0 auto 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-            background: linear-gradient(135deg, rgba(var(--theme-color), 1), rgba(var(--theme-color2), 1));
-            box-shadow: 0 10px 24px rgba(var(--theme-color), 0.35);
-            border: 5px solid rgba(var(--white), 1);
-        }
-
-        .steps-wrap .step-box h4 {
-            font-size: 17px;
-            font-weight: 600;
-            color: rgba(var(--dark-text), 1);
-            margin-bottom: 8px;
-        }
-
-        .steps-wrap .step-box p {
-            color: rgba(var(--content-color), 1);
-            font-size: 14px;
-            line-height: 1.7;
-            margin: 0;
-        }
-
-        /* Register section */
-        .vendor-register-section {
-            background:
-                radial-gradient(circle at 100% 0%, rgba(var(--theme-color), 0.1) 0%, rgba(var(--theme-color), 0) 45%),
-                rgba(var(--box-bg), 1);
-        }
-
-        .register-panel {
-            height: 100%;
-            border-radius: 24px;
-            padding: 44px 40px;
-            color: #fff;
-            background: linear-gradient(135deg, rgba(var(--theme-color), 1), rgba(var(--theme-color2), 1));
-            box-shadow: 0 24px 60px rgba(var(--theme-color), 0.35);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .register-panel::before,
-        .register-panel::after {
-            content: "";
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .register-panel::before {
-            width: 200px;
-            height: 200px;
-            top: -70px;
-            right: -70px;
-        }
-
-        .register-panel::after {
-            width: 260px;
-            height: 260px;
-            bottom: -110px;
-            left: -90px;
-        }
-
-        .register-panel .panel-icon {
-            width: 56px;
-            height: 56px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            font-size: 26px;
-            background: rgba(255, 255, 255, 0.18);
-            margin-bottom: 20px;
-        }
-
-        .register-panel h2 {
-            font-size: calc(24px + 8 * (100vw - 320px) / 1600);
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .register-panel > p {
-            opacity: 0.92;
-            font-size: 15px;
-            line-height: 1.7;
-            margin-bottom: 26px;
-        }
-
-        .register-panel ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .register-panel ul li {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 11px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.18);
-            font-size: 14.5px;
-        }
-
-        .register-panel ul li i {
-            margin-top: 3px;
-            font-size: 18px;
-        }
-
-        .vendor-form-card {
-            height: 100%;
-            border: none;
-            border-radius: 24px;
-            background: rgba(var(--white), 1);
-            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
-
-        .vendor-form-card .card-body {
-            padding: 40px 38px;
-        }
-
-        .vendor-form-card h3 {
-            font-size: 22px;
-            font-weight: 700;
-            color: rgba(var(--dark-text), 1);
-            margin-bottom: 6px;
-        }
-
-        .vendor-form-card .form-sub {
-            color: rgba(var(--content-color), 1);
-            font-size: 14px;
-            margin-bottom: 26px;
-        }
-
-        .vendor-form-card .form-input input {
-            height: 52px;
-            font-size: 14px;
-        }
-
-        .vendor-form-card .theme-btn {
-            height: 52px;
-            font-weight: 600;
-            letter-spacing: 0.4px;
-        }
-
-        .vendor-form-card .terms-note {
-            font-size: 12.5px;
-            color: rgba(var(--content-color), 1);
-            margin: 18px 0 0;
-            text-align: center;
-        }
-
-        .vendor-form-card .login-link {
-            display: block;
-            text-align: center;
-            margin-top: 14px;
-            font-size: 14px;
-            color: rgba(var(--content-color), 1);
-        }
-
-        /* Final CTA strip */
-        .vendor-cta {
-            background:
-                linear-gradient(120deg, rgba(var(--theme-color), 1), rgba(var(--theme-color2), 1));
-            border-radius: 24px;
-            padding: 48px 40px;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vendor-cta::before {
-            content: "";
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            top: -120px;
-            right: -80px;
-        }
-
-        .vendor-cta h2 {
-            font-size: calc(24px + 10 * (100vw - 320px) / 1600);
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .vendor-cta p {
-            opacity: 0.92;
-            font-size: 15px;
-            margin: 0;
-        }
-
-        .vendor-cta .btn-white {
-            background: #fff;
-            color: rgba(var(--theme-color2), 1);
-            font-weight: 600;
-            padding: 12px 30px;
-            border-radius: 12px;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .vendor-cta .btn-white:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Dark mode adjustments */
-        body.dark .vendor-benefits .benefit-card,
-        body.dark .vendor-form-card {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        body.dark .vendor-benefits .benefit-card:hover {
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
-        }
-
-        @media (max-width: 991px) {
-            .steps-wrap::before { display: none; }
-            .steps-wrap .step-box { margin-bottom: 30px; }
-            .register-panel { margin-bottom: 24px; }
-        }
-    </style>
 
     <!-- ================================================== -->
     <!-- Page head section start -->
@@ -363,7 +42,7 @@
                     <div class="benefit-card">
                         <div class="benefit-icon"><i class="ri-restaurant-2-line"></i></div>
                         <h4>Own a Restaurant</h4>
-                        <p>List your restaurant and full menu on our platform and start receiving online orders instantly — no upfront cost.</p>
+                        <p>List your restaurant and full menu on our platform and start receiving online orders instantly â€” no upfront cost.</p>
                     </div>
                 </div>
                 <div class="col-xxl-3 col-md-6">
@@ -384,7 +63,7 @@
                     <div class="benefit-card">
                         <div class="benefit-icon"><i class="ri-wallet-3-line"></i></div>
                         <h4>Easy Earnings</h4>
-                        <p>Track earnings, COD settlements and payouts from a simple dashboard — anytime, anywhere.</p>
+                        <p>Track earnings, COD settlements and payouts from a simple dashboard â€” anytime, anywhere.</p>
                     </div>
                 </div>
             </div>
@@ -513,6 +192,7 @@
                                         class="form-control @error('password') is-invalid @enderror"
                                         placeholder="Enter your password" required autocomplete="new-password">
                                     <i class="ri-lock-password-line"></i>
+                                    <i class="ri-eye-line toggle-password"></i>
                                     @error('password')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -522,10 +202,17 @@
                                     <input type="password" name="password_confirmation" class="form-control"
                                         placeholder="Confirm your password" required autocomplete="new-password">
                                     <i class="ri-lock-password-line"></i>
+                                    <i class="ri-eye-line toggle-password"></i>
                                 </div>
 
                                 <button type="submit" class="btn theme-btn submit-btn w-100 rounded-2">
-                                    <i class="ri-store-2-line me-2"></i>BECOME A VENDOR
+                                    <span class="btn-icon">
+                                        <i class="ri-store-2-line me-2"></i>BECOME A VENDOR
+                                    </span>
+                                    <span class="btn-loading d-none">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Submitting...
+                                    </span>
                                 </button>
 
                                 <p class="terms-note">
@@ -563,3 +250,27 @@
     </section>
     <!-- Final CTA section end -->
 @endsection
+
+@push('scripts')
+    <script>
+        $(function () {
+            $('.toggle-password').on('click', function () {
+                var $toggle = $(this);
+                var $input = $toggle.closest('.form-input').find('input');
+                var show = $input.attr('type') === 'password';
+                $input.attr('type', show ? 'text' : 'password');
+                $toggle.toggleClass('ri-eye-line ri-eye-off-line');
+            });
+
+            $('.auth-form').on('submit', function () {
+                var $btn = $(this).find('.submit-btn');
+                if ($btn.hasClass('is-loading')) {
+                    return false;
+                }
+                $btn.addClass('is-loading').prop('disabled', true);
+                $btn.find('.btn-icon').addClass('d-none');
+                $btn.find('.btn-loading').removeClass('d-none');
+            });
+        });
+    </script>
+@endpush

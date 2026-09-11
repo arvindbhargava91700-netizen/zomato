@@ -46,8 +46,11 @@
                         @enderror
                             </div>
                             <div class="form-input">
-                                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="Enter your password">
+                                <input type="password" id="password-field" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="Enter your password">
                                 <i class="ri-lock-password-line"></i>
+                                <button type="button" id="toggle-password" class="toggle-password" tabindex="-1" aria-label="Toggle password visibility">
+                                    <i class="ri-eye-off-line" id="eye-icon"></i>
+                                </button>
                                                         @error('password')
                             <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                         @enderror
@@ -64,6 +67,22 @@
             </div>
         </div>
     </section>
-    <!-- signin page end --
+    <!-- signin page end -->
+
+    <script>
+        document.getElementById('toggle-password').addEventListener('click', function () {
+            const input = document.getElementById('password-field');
+            const icon = document.getElementById('eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('ri-eye-off-line');
+                icon.classList.add('ri-eye-line');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('ri-eye-line');
+                icon.classList.add('ri-eye-off-line');
+            }
+        });
+    </script>
 
 @endsection

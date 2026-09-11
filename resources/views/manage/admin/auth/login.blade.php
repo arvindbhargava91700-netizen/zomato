@@ -21,6 +21,43 @@
             color: #cb202d;
             font-weight: 700;
         }
+        /* Proper Zomato button + spinner */
+        .btn-zomato {
+            background-color: #cb202d !important;
+            border: none !important;
+            color: #ffffff !important;
+            border-radius: 10px !important;
+            height: 46px !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 14px rgba(203, 32, 45, .25) !important;
+            transition: all .2s ease;
+            letter-spacing: .3px;
+        }
+        .btn-zomato:hover,
+        .btn-zomato:focus,
+        .btn-zomato:active {
+            background-color: #a81a25 !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 20px rgba(203, 32, 45, .35) !important;
+            transform: translateY(-1px);
+        }
+        .btn-zomato:disabled {
+            background-color: #a81a25 !important;
+            color: #ffffff !important;
+            opacity: .85;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn-loading {
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-loading.d-none {
+            display: none !important;
+        }
     </style>
 </head>
 <body class="d-flex align-items-center min-vh-100 py-5">
@@ -48,7 +85,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('admin.login.submit') }}" method="POST">
+                        <form action="{{ route('admin.login.submit') }}" method="POST" id="adminLoginForm">
                             @csrf
                             <div class="mb-3">
                                 <label for="email" class="form-label font-weight-bold">Email Address</label>
@@ -72,7 +109,13 @@
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-danger py-2 fw-semibold" style="background-color: #cb202d; border: none;">Sign In</button>
+                                <button type="submit" class="btn btn-zomato py-2 fw-semibold" id="adminLoginBtn">
+                                    <span class="btn-icon">Sign In</span>
+                                    <span class="btn-loading d-none">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Signing in...
+                                    </span>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -82,5 +125,17 @@
     </div>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', function () {
+            var btn = document.getElementById('adminLoginBtn');
+            if (btn.classList.contains('is-loading')) {
+                return false;
+            }
+            btn.classList.add('is-loading');
+            btn.disabled = true;
+            btn.querySelector('.btn-icon').classList.add('d-none');
+            btn.querySelector('.btn-loading').classList.remove('d-none');
+        });
+    </script>
 </body>
 </html>

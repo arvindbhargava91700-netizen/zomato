@@ -73,6 +73,7 @@ class RestaurantController extends Controller
 
         $request->validate([
             'brand_id' => ['nullable', 'exists:brands,id'],
+            'restaurant_type' => ['nullable', 'in:restaurant,brand,nightlife'],
             'restaurant_name' => ['required', 'string', 'max:255'],
             'restaurant_slug' => ['nullable', 'string', 'max:255', Rule::unique('restaurants', 'restaurant_slug')],
             'owner_name' => ['required', 'string', 'max:255'],
@@ -107,7 +108,7 @@ class RestaurantController extends Controller
         ]);
 
         $data = $request->only(
-            'brand_id', 'restaurant_name', 'owner_name', 'email', 'mobile', 'address', 'postal_code',
+            'brand_id', 'restaurant_type', 'restaurant_name', 'owner_name', 'email', 'mobile', 'address', 'postal_code',
             'country_id', 'state_id', 'city_id',
             'latitude', 'longitude', 'opening_time', 'closing_time', 'minimum_order_amount',
             'delivery_radius', 'estimated_delivery_time', 'commission_percentage', 'dining_commission_percentage', 'gst_number',

@@ -107,11 +107,21 @@
                                         <span class="text-muted fs-12">{{ $restaurant->mobile }}</span>
                                     </td>
                                     <td>
-                                        @if($restaurant->is_pure_veg)
-                                            <span class="badge bg-soft-success text-success border border-success">Pure Veg</span>
+                                        @php $rtype = $restaurant->restaurant_type ?? 'restaurant'; @endphp
+                                        @if($rtype === 'brand')
+                                            <span class="badge bg-soft-warning text-warning border border-warning"><i class="feather-award me-1"></i>Brand</span>
+                                        @elseif($rtype === 'nightlife')
+                                            <span class="badge bg-dark text-white"><i class="feather-moon me-1"></i>Nightlife</span>
                                         @else
-                                            <span class="badge bg-soft-danger text-danger border border-danger">Veg / Non-Veg</span>
+                                            <span class="badge bg-soft-primary text-primary border border-primary"><i class="feather-flag me-1"></i>Restaurant</span>
                                         @endif
+                                        <span class="d-block mt-1">
+                                            @if($restaurant->is_pure_veg)
+                                                <span class="badge bg-soft-success text-success border border-success fs-11">Pure Veg</span>
+                                            @else
+                                                <span class="badge bg-soft-danger text-danger border border-danger fs-11">Veg / Non-Veg</span>
+                                            @endif
+                                        </span>
                                     </td>
                                     <td>
                                         <span class="fw-bold text-dark">{{ $restaurant->commission_percentage }}%</span>

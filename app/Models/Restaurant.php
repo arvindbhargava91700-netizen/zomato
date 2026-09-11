@@ -23,6 +23,7 @@ protected $fillable = [
         'user_id',
         'brand_id',
         'restaurant_name',
+        'restaurant_type',
         'restaurant_slug',
         'owner_name',
         'email',

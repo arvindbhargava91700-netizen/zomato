@@ -32,14 +32,29 @@
                     @csrf
 
                     <!-- Section 1: Basic Information -->
-                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">1. Basic Information</h5>
+                    <div class="section-title-wrap">
+                        <span class="section-badge">1</span>
+                        <h5 class="section-title mb-0">Basic Information</h5>
+                    </div>
                     <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            @php $rtype = old('restaurant_type', 'restaurant'); @endphp
+                            <label class="form-label fw-semibold">Restaurant Type <span class="text-danger">*</span></label>
+                            <div class="type-picker">
+                                <input type="radio" name="restaurant_type" id="type_restaurant" value="restaurant" {{ $rtype === 'restaurant' ? 'checked' : '' }}>
+                                <label for="type_restaurant"><i class="feather-flag"></i><span>Restaurant</span></label>
+                                <input type="radio" name="restaurant_type" id="type_brand" value="brand" {{ $rtype === 'brand' ? 'checked' : '' }}>
+                                <label for="type_brand"><i class="feather-award"></i><span>Brand</span></label>
+                                <input type="radio" name="restaurant_type" id="type_nightlife" value="nightlife" {{ $rtype === 'nightlife' ? 'checked' : '' }}>
+                                <label for="type_nightlife"><i class="feather-moon"></i><span>Nightlife</span></label>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <label for="restaurant_name" class="form-label fw-semibold">Restaurant Name <span class="text-danger">*</span></label>
                             <input type="text" name="restaurant_name" id="restaurant_name" class="form-control @error('restaurant_name') is-invalid @enderror" value="{{ old('restaurant_name') }}" required placeholder="e.g. Spice Hub">
                             @error('restaurant_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" id="brand_field_wrapper" @if(old('restaurant_type', 'restaurant') !== 'brand') style="display: none;" @endif>
                             <label for="brand_id" class="form-label fw-semibold">Brand <small class="text-muted">(Optional, active brands)</small></label>
                             <div class="d-flex align-items-center gap-2">
                                 <select name="brand_id" id="brand_id" class="form-select @error('brand_id') is-invalid @enderror" onchange="updateBrandPreview(this)">
@@ -254,9 +269,22 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
-                        <a href="{{ route('restaurant.restaurants.index') }}" class="btn btn-light border px-4 fw-semibold">Cancel</a>
-                        <button type="submit" class="btn btn-danger text-white px-5 fw-semibold" style="background-color: #cb202d; border: none;">Save Restaurant</button>
+                    <div class="d-flex justify-content-end align-items-center gap-2 mt-4 pt-3 border-top action-bar">
+                        <a href="{{ route('restaurant.restaurants.index') }}" class="btn btn-cancel px-4 fw-semibold">
+                            <i class="feather-x me-1"></i>
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="btn btn-zomato px-4 fw-semibold" id="saveRestaurantBtn">
+                            <span class="btn-icons">
+                                <i class="feather-save me-1"></i>
+                                Save Restaurant
+                            </span>
+                            <span class="btn-loading d-none">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Saving...
+                            </span>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -268,6 +296,130 @@
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <style>
+        /* Action Bar */
+        .action-bar {
+            border-color: #e9ecef !important;
+        }
+        .action-bar .btn {
+            height: 46px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 150px;
+        }
+
+        /* Cancel Button */
+        .btn-cancel {
+            background: #ffffff !important;
+            border: 1.5px solid #d9d9d9 !important;
+            color: #555555 !important;
+            transition: all 0.2s ease;
+        }
+        .btn-cancel:hover {
+            border-color: #cb202d !important;
+            color: #cb202d !important;
+            background: #ffffff !important;
+        }
+
+        /* Save Button - Zomato Red */
+        .btn-zomato {
+            background-color: #cb202d !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(203, 32, 45, .25) !important;
+            transition: all .2s ease;
+            letter-spacing: .3px;
+        }
+        .btn-zomato:hover,
+        .btn-zomato:focus,
+        .btn-zomato:active {
+            background-color: #a81a25 !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 20px rgba(203, 32, 45, .35) !important;
+            transform: translateY(-1px);
+        }
+        .btn-zomato:disabled {
+            background-color: #a81a25 !important;
+            color: #ffffff !important;
+            opacity: .85;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Loading Spinner */
+        .btn-loading {
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-loading.d-none {
+            display: none !important;
+        }
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #f1f1f1;
+        }
+        .section-badge {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #cb202d;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .section-title {
+            font-weight: 700;
+            color: #1c1c1c;
+            font-size: 1.05rem;
+        }
+        .type-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 4px;
+        }
+        .type-picker input {
+            display: none;
+        }
+        .type-picker label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #6b7280;
+            background: #fff;
+            transition: all .2s ease;
+        }
+        .type-picker label i {
+            font-size: 16px;
+        }
+        .type-picker label:hover {
+            border-color: #cb202d;
+            color: #cb202d;
+        }
+        .type-picker input:checked + label {
+            border-color: #cb202d;
+            background: #cb202d0d;
+            color: #cb202d;
+        }
+    </style>
 @endpush
 
 @push('scripts')
@@ -343,6 +495,22 @@
             });
             $('#state_id').on('change', function () {
                 loadCities($(this).val(), null);
+            });
+
+            // Show brand list only when Restaurant Type = Brand
+            $('input[name="restaurant_type"]').on('change', function () {
+                $('#brand_field_wrapper').toggle($(this).val() === 'brand');
+            });
+
+            // Submit loading state
+            $('form').on('submit', function () {
+                var $btn = $(this).find('button[type="submit"]');
+                if ($btn.hasClass('is-loading')) {
+                    return false;
+                }
+                $btn.addClass('is-loading').prop('disabled', true);
+                $btn.find('.btn-icons').addClass('d-none');
+                $btn.find('.btn-loading').removeClass('d-none');
             });
 
             function resolveAndApply(lat, lng, addressData) {
