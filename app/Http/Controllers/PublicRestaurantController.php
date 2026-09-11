@@ -52,7 +52,7 @@ class PublicRestaurantController extends Controller
         $lng = $request->get('lng');
         $radius = (float) $request->get('radius', 50);
 
-        $query = Restaurant::visible()->with('city');
+        $query = Restaurant::where('restaurant_type', 'restaurant')->visible()->with('city');
 
         if (is_numeric($lat) && is_numeric($lng)) {
             $lat = (float) $lat;
@@ -227,6 +227,49 @@ class PublicRestaurantController extends Controller
     }
 
     /**
+     * Return approved nightlife venues near the given coordinates (JSON).
+     */
+    public function nightlife(Request $request)
+    {
+        $lat = $request->get('lat');
+        $lng = $request->get('lng');
+        $radius = (float) $request->get('radius', 50);
+
+        $query = Restaurant::where('restaurant_type', 'nightlife')->visible()->with('city');
+
+        if (is_numeric($lat) && is_numeric($lng)) {
+            $lat = (float) $lat;
+            $lng = (float) $lng;
+
+            $haversine = '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) '
+                . '* cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude))))';
+
+            $query->select('restaurants.*')
+                ->selectRaw($haversine . ' as distance_km', [$lat, $lng, $lat])
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->having('distance_km', '<=', $radius)
+                ->orderBy('distance_km', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $query->withAvg('reviews as avg_rating', 'restaurant_rating');
+
+        $query = $this->applyFilters($query, $request);
+
+        $hasCoords = is_numeric($lat) && is_numeric($lng);
+        $query = $this->applySort($query, $request, $hasCoords);
+
+        $restaurants = $query->limit(12)->get();
+
+        return response()->json([
+            'success' => true,
+            'restaurants' => $this->format($restaurants),
+        ]);
+    }
+
+    /**
      * Return approved (visible) restaurants filtered by a location name or id
      * (city / state / country). JSON.
      */
@@ -238,6 +281,10 @@ class PublicRestaurantController extends Controller
         $countryId = $request->get('country_id');
 
         $query = Restaurant::visible()->with('city');
+
+        if ($request->filled('restaurant_type')) {
+            $query->where('restaurant_type', $request->input('restaurant_type'));
+        }
 
         if ($cityId) {
             $query->where('city_id', $cityId);

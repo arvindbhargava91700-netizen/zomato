@@ -108,6 +108,16 @@
                                 <span>Brand: <strong>{{ $restaurant->brand->name }}</strong></span>
                             </span>
                         @endif
+                        @if($restaurant->nightlifeBanner)
+                            <span class="badge bg-dark text-white d-inline-flex align-items-center gap-2">
+                                @if($restaurant->nightlifeBanner->banner)
+                                    <img src="{{ asset($restaurant->nightlifeBanner->banner) }}" alt="{{ $restaurant->nightlifeBanner->title }}" class="rounded border" style="width: 22px; height: 22px; object-fit: cover;">
+                                @else
+                                    <i class="feather-moon"></i>
+                                @endif
+                                <span>Nightlife: <strong>{{ $restaurant->nightlifeBanner->title }}</strong></span>
+                            </span>
+                        @endif
                         <p class="text-muted mb-0 fs-12"><i class="feather-map-pin me-1"></i>{{ $restaurant->address }}</p>
                     </div>
                 </div>

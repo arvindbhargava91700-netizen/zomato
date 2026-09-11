@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Restaurant;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Models\NightlifeBanner;
 use App\Models\Restaurant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class RestaurantController extends Controller
     public function index(): View
     {
         $owner = auth()->user();
-        $restaurants = Restaurant::with('brand')->where('user_id', $owner?->id)->latest()->paginate(10);
+        $restaurants = Restaurant::with(['brand', 'nightlifeBanner'])->where('user_id', $owner?->id)->latest()->paginate(10);
 
         return view('manage.restaurant.restaurants.index', compact('restaurants'));
     }
@@ -55,8 +56,9 @@ class RestaurantController extends Controller
 
         $countries = \App\Models\Country::orderBy('name')->pluck('name', 'id');
         $brands = Brand::where('status', 'active')->orderBy('name')->get();
+        $nightlifeBanners = NightlifeBanner::where('status', 'active')->orderBy('title')->get();
 
-        return view('manage.restaurant.restaurants.create', compact('countries', 'brands'));
+        return view('manage.restaurant.restaurants.create', compact('countries', 'brands', 'nightlifeBanners'));
     }
 
     /**
@@ -73,6 +75,7 @@ class RestaurantController extends Controller
 
         $request->validate([
             'brand_id' => ['nullable', 'exists:brands,id'],
+            'nightlife_banner_id' => ['nullable', 'exists:nightlife_banners,id'],
             'restaurant_type' => ['nullable', 'in:restaurant,brand,nightlife'],
             'restaurant_name' => ['required', 'string', 'max:255'],
             'restaurant_slug' => ['nullable', 'string', 'max:255', Rule::unique('restaurants', 'restaurant_slug')],
@@ -108,7 +111,7 @@ class RestaurantController extends Controller
         ]);
 
         $data = $request->only(
-            'brand_id', 'restaurant_type', 'restaurant_name', 'owner_name', 'email', 'mobile', 'address', 'postal_code',
+            'brand_id', 'nightlife_banner_id', 'restaurant_type', 'restaurant_name', 'owner_name', 'email', 'mobile', 'address', 'postal_code',
             'country_id', 'state_id', 'city_id',
             'latitude', 'longitude', 'opening_time', 'closing_time', 'minimum_order_amount',
             'delivery_radius', 'estimated_delivery_time', 'commission_percentage', 'dining_commission_percentage', 'gst_number',
@@ -151,7 +154,7 @@ class RestaurantController extends Controller
     public function show(Restaurant $restaurant): View
     {
         $this->authorizeOwner($restaurant);
-        $restaurant->load('brand');
+        $restaurant->load('brand', 'nightlifeBanner');
         return view('manage.restaurant.restaurants.show', compact('restaurant'));
     }
 
@@ -163,7 +166,8 @@ class RestaurantController extends Controller
         $this->authorizeOwner($restaurant);
         $countries = \App\Models\Country::orderBy('name')->pluck('name', 'id');
         $brands = Brand::where('status', 'active')->orderBy('name')->get();
-        return view('manage.restaurant.restaurants.edit', compact('restaurant', 'countries', 'brands'));
+        $nightlifeBanners = NightlifeBanner::where('status', 'active')->orderBy('title')->get();
+        return view('manage.restaurant.restaurants.edit', compact('restaurant', 'countries', 'brands', 'nightlifeBanners'));
     }
 
     /**
@@ -175,6 +179,7 @@ class RestaurantController extends Controller
 
         $request->validate([
             'brand_id' => ['nullable', 'exists:brands,id'],
+            'nightlife_banner_id' => ['nullable', 'exists:nightlife_banners,id'],
             'restaurant_name' => ['required', 'string', 'max:255'],
             'restaurant_slug' => ['nullable', 'string', 'max:255', Rule::unique('restaurants', 'restaurant_slug')->ignore($restaurant->id)],
             'owner_name' => ['required', 'string', 'max:255'],
@@ -209,7 +214,7 @@ class RestaurantController extends Controller
         ]);
 
         $data = $request->only(
-            'brand_id', 'restaurant_name', 'owner_name', 'email', 'mobile', 'address', 'postal_code',
+            'brand_id', 'nightlife_banner_id', 'restaurant_name', 'owner_name', 'email', 'mobile', 'address', 'postal_code',
             'country_id', 'state_id', 'city_id',
             'latitude', 'longitude', 'opening_time', 'closing_time', 'minimum_order_amount',
             'delivery_radius', 'estimated_delivery_time', 'commission_percentage', 'dining_commission_percentage', 'gst_number',

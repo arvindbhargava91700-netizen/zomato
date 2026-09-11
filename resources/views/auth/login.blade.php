@@ -31,7 +31,7 @@
 
   
 
-            <form method="POST" action="{{ route('login') }}" class="auth-form">
+            <form method="POST" action="{{ route('login') }}" class="auth-form" id="authLoginForm">
                 @csrf
                             <h2>Login </h2>
                             <h5>
@@ -55,7 +55,13 @@
                             <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                         @enderror
                             </div>
-                            <button  type="submit"  class="btn btn-login theme-btn submit-btn w-100 rounded-2">CONTINUE</button>
+                            <button type="submit" class="btn btn-login theme-btn submit-btn w-100 rounded-2" id="authLoginBtn">
+                                <span class="btn-text">CONTINUE</span>
+                                <span class="btn-spinner d-none">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    Signing in...
+                                </span>
+                            </button>
                             <p class="fw-normal content-color">
                                 By creating an account, I accept the
                                 <span class="fw-semibold">
@@ -82,6 +88,21 @@
                 icon.classList.remove('ri-eye-line');
                 icon.classList.add('ri-eye-off-line');
             }
+        });
+
+        // Submit spinner
+        var loginForm = document.getElementById('authLoginForm');
+        loginForm.addEventListener('submit', function (e) {
+            if (!loginForm.checkValidity()) {
+                loginForm.reportValidity();
+                return;
+            }
+            e.preventDefault();
+            var btn = document.getElementById('authLoginBtn');
+            btn.disabled = true;
+            btn.querySelector('.btn-text').classList.add('d-none');
+            btn.querySelector('.btn-spinner').classList.remove('d-none');
+            setTimeout(function () { loginForm.submit(); }, 350);
         });
     </script>
 

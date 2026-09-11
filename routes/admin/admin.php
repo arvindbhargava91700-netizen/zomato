@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\SmsConfigurationController;
 use App\Http\Controllers\Admin\EmailTemplateController;
 use App\Http\Controllers\Admin\FoodVariantController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\NightlifeBannerController;
 use App\Http\Controllers\Admin\PaymentGatewayController;
 use App\Http\Controllers\Admin\ProfileController;
 
@@ -84,6 +85,12 @@ Route::middleware('admin')->group(function () {
     Route::post('brands/{id}/restore', [BrandController::class, 'restore'])->name('brands.restore');
     Route::delete('brands/{id}/force-delete', [BrandController::class, 'forceDelete'])->name('brands.force-delete');
     Route::resource('brands', BrandController::class);
+
+    // Nightlife Banner Management Routes
+    Route::patch('nightlife-banners/{nightlife_banner}/toggle-status', [NightlifeBannerController::class, 'toggleStatus'])->name('nightlife-banners.toggle-status');
+    Route::post('nightlife-banners/{id}/restore', [NightlifeBannerController::class, 'restore'])->name('nightlife-banners.restore');
+    Route::delete('nightlife-banners/{id}/force-delete', [NightlifeBannerController::class, 'forceDelete'])->name('nightlife-banners.force-delete');
+    Route::resource('nightlife-banners', NightlifeBannerController::class);
 
     // Promo Code / Campaign Management Routes
     Route::patch('promo-codes/{promo_code}/toggle-status', [PromoCodeController::class, 'toggleStatus'])->name('promo-codes.toggle-status');

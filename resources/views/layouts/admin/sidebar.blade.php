@@ -27,7 +27,7 @@
                 <!-- ============================================= -->
                 <!-- Restaurants Management -->
                 <!-- ============================================= -->
-                <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.restaurants.*', 'admin.dining-offers.*', 'admin.restaurant-offers.*', 'admin.restaurant-blogs.*', 'admin.food-categories.*', 'admin.promo-codes.*', 'admin.brands.*') ? 'active' : '' }}">
+                <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.restaurants.*', 'admin.dining-offers.*', 'admin.restaurant-offers.*', 'admin.restaurant-blogs.*', 'admin.food-categories.*', 'admin.promo-codes.*', 'admin.brands.*', 'admin.nightlife-banners.*') ? 'active' : '' }}">
                     <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon">
                             <i class="feather-shopping-bag"></i>
@@ -61,6 +61,11 @@
                         <li class="nxl-item {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.brands.index') }}" class="nxl-link">
                                 <i class="feather-award me-2"></i> Brands
+                            </a>
+                        </li>
+                        <li class="nxl-item {{ request()->routeIs('admin.nightlife-banners.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.nightlife-banners.index') }}" class="nxl-link">
+                                <i class="feather-moon me-2"></i> Nightlife Banners
                             </a>
                         </li>
                         <li class="nxl-item {{ request()->routeIs('admin.dining-offers.*') ? 'active' : '' }}">

@@ -71,6 +71,23 @@
                             </div>
                             @error('brand_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
+                        <div class="col-md-6" id="nightlife_field_wrapper" @if(old('restaurant_type', 'restaurant') !== 'nightlife') style="display: none;" @endif>
+                            <label for="nightlife_banner_id" class="form-label fw-semibold">Nightlife Banner <small class="text-muted">(Optional, active banners)</small></label>
+                            <div class="d-flex align-items-center gap-2">
+                                <select name="nightlife_banner_id" id="nightlife_banner_id" class="form-select @error('nightlife_banner_id') is-invalid @enderror" onchange="updateNightlifePreview(this)">
+                                    <option value="" data-banner="">-- Select Nightlife Banner --</option>
+                                    @foreach($nightlifeBanners as $banner)
+                                        <option value="{{ $banner->id }}" data-banner="{{ $banner->banner ? asset($banner->banner) : '' }}" {{ old('nightlife_banner_id') == $banner->id ? 'selected' : '' }}>
+                                            {{ $banner->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div id="nightlife_preview_box" class="flex-shrink-0" style="display: none;">
+                                    <img id="nightlife_preview_img" src="" alt="Nightlife Banner" class="rounded border shadow-sm" style="width: 70px; height: 40px; object-fit: cover;">
+                                </div>
+                            </div>
+                            @error('nightlife_banner_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                        </div>
                         <div class="col-md-4">
                             <label for="restaurant_slug" class="form-label fw-semibold">Slug <small class="text-muted">(Optional, auto-generated)</small></label>
                             <input type="text" name="restaurant_slug" id="restaurant_slug" class="form-control @error('restaurant_slug') is-invalid @enderror" value="{{ old('restaurant_slug') }}" placeholder="spice-hub">
@@ -497,9 +514,10 @@
                 loadCities($(this).val(), null);
             });
 
-            // Show brand list only when Restaurant Type = Brand
+            // Show brand/nightlife lists only when the matching Restaurant Type is selected
             $('input[name="restaurant_type"]').on('change', function () {
                 $('#brand_field_wrapper').toggle($(this).val() === 'brand');
+                $('#nightlife_field_wrapper').toggle($(this).val() === 'nightlife');
             });
 
             // Submit loading state
@@ -627,6 +645,19 @@
             var img = document.getElementById('brand_preview_img');
             if (logo) {
                 img.src = logo;
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+            }
+        }
+
+        function updateNightlifePreview(select) {
+            var opt = select.options[select.selectedIndex];
+            var banner = opt ? opt.getAttribute('data-banner') : '';
+            var box = document.getElementById('nightlife_preview_box');
+            var img = document.getElementById('nightlife_preview_img');
+            if (banner) {
+                img.src = banner;
                 box.style.display = 'block';
             } else {
                 box.style.display = 'none';

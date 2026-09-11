@@ -112,6 +112,14 @@
                                             <span class="badge bg-soft-warning text-warning border border-warning"><i class="feather-award me-1"></i>Brand</span>
                                         @elseif($rtype === 'nightlife')
                                             <span class="badge bg-dark text-white"><i class="feather-moon me-1"></i>Nightlife</span>
+                                            @if($restaurant->nightlifeBanner)
+                                                <span class="badge bg-secondary text-white fs-11 fw-semibold d-inline-flex align-items-center gap-1 mt-1">
+                                                    @if($restaurant->nightlifeBanner->banner)
+                                                        <img src="{{ asset($restaurant->nightlifeBanner->banner) }}" alt="{{ $restaurant->nightlifeBanner->title }}" class="rounded border" style="width: 18px; height: 18px; object-fit: cover;">
+                                                    @endif
+                                                    {{ $restaurant->nightlifeBanner->title }}
+                                                </span>
+                                            @endif
                                         @else
                                             <span class="badge bg-soft-primary text-primary border border-primary"><i class="feather-flag me-1"></i>Restaurant</span>
                                         @endif

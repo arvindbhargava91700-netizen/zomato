@@ -22,6 +22,7 @@ class Restaurant extends Model
 protected $fillable = [
         'user_id',
         'brand_id',
+        'nightlife_banner_id',
         'restaurant_name',
         'restaurant_type',
         'restaurant_slug',
@@ -135,6 +136,14 @@ protected $fillable = [
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class, 'brand_id');
+    }
+
+    /**
+     * Relationship to Nightlife Banner.
+     */
+    public function nightlifeBanner(): BelongsTo
+    {
+        return $this->belongsTo(NightlifeBanner::class, 'nightlife_banner_id');
     }
 
     /**

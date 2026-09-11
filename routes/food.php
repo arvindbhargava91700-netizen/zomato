@@ -17,6 +17,7 @@ Route::get('/restaurants', [App\Http\Controllers\PublicRestaurantController::cla
 Route::get('/restaurants/nearby', [App\Http\Controllers\PublicRestaurantController::class, 'nearby'])->name('public.restaurants.nearby');
 Route::get('/restaurants/location-suggest', [App\Http\Controllers\PublicRestaurantController::class, 'locationSuggest'])->name('public.restaurants.location-suggest');
 Route::get('/restaurants/search-location', [App\Http\Controllers\PublicRestaurantController::class, 'searchLocation'])->name('public.restaurants.search-location');
+Route::get('/restaurants/nightlife', [App\Http\Controllers\PublicRestaurantController::class, 'nightlife'])->name('public.restaurants.nightlife');
 Route::get('/restaurants/{restaurant:restaurant_slug}', [App\Http\Controllers\PublicRestaurantController::class, 'show'])->name('public.restaurants.show');
 Route::get('/dining-offers/by-location', [frontController::class, 'diningOffersByLocation'])->name('public.dining-offers.location');
 Route::get('/dining-out', [frontController::class, 'diningOutListing'])->name('dining.out');

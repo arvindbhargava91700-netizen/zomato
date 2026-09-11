@@ -491,9 +491,399 @@
         </div>
     </section>
 
-    <section id="home-nightlife" class="nightlife-section">
-        <h2>Night life</h2>
+    <!-- nightlife section starts -->
+    <section id="home-nightlife" class="nightlife-section section-b-space d-none">
+        <div class="container">
+            <div class="title">
+                <h2><i class="ri-moon-line"></i> Nightlife Near You</h2>
+                <div class="loader-line"></div>
+                <div class="sub-title">
+                    <p>Discover the best pubs, bars, and nightlife venues around you.</p>
+                </div>
+            </div>
+            <div class="nightlife-filter-bar d-flex align-items-center flex-wrap gap-2 mb-sm-4 mb-3">
+                <span class="nightlife-filter-label"><i class="ri-magic-fill"></i> Nightlife Filters</span>
+                <span class="nightlife-filter-divider"></span>
+                <button type="button" class="filter-chip nightlife-chip" data-qf="open_now"><i class="ri-time-line"></i><span class="chip-label">Open Now</span></button>
+                <button type="button" class="filter-chip nightlife-chip" data-qf="serves_alcohol"><i class="ri-cup-line"></i><span class="chip-label">Serves Alcohol</span></button>
+                <button type="button" class="filter-chip nightlife-chip" data-qf="pubs_bars"><i class="ri-store-2-line"></i><span class="chip-label">Pubs & Bars</span></button>
+                <button type="button" class="filter-chip nightlife-chip" data-qf="happy_hours"><i class="ri-goblet-line"></i><span class="chip-label">Happy Hours</span></button>
+                <button type="button" class="filter-chip nightlife-chip" data-qf="fine_dining"><i class="ri-restaurant-line"></i><span class="chip-label">Fine Dining</span></button>
+            </div>
+            <div class="row g-md-4 g-3" id="nightlife-list">
+                @for ($i = 0; $i < 8; $i++)
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+                        <div class="nightlife-card">
+                            <div class="nightlife-card-img placeholder-glow">
+                                <span class="w-100 d-block" style="height:180px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px 12px 0 0;"></span>
+                            </div>
+                            <div class="nightlife-card-body placeholder-glow">
+                                <span class="placeholder col-7 mb-2"></span>
+                                <span class="placeholder col-10 mb-2"></span>
+                                <span class="placeholder col-5"></span>
+                            </div>
+                        </div>
+                    </div>
+                @endfor
+            </div>
+            <div class="text-center mt-4 d-none" id="nightlife-empty">
+                <div class="nightlife-empty-state">
+                    <i class="ri-moon-line"></i>
+                    <h4>No nightlife venues found nearby</h4>
+                    <p>Try adjusting your location or check back later for new venues.</p>
+                </div>
+            </div>
+        </div>
     </section>
+    <!-- nightlife section end -->
+
+    <style>
+        /* ===== Nightlife Section ===== */
+        .nightlife-section {
+            background: linear-gradient(180deg, #0f0c29 0%, #1a1a2e 40%, #16213e 100%);
+            padding-top: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .nightlife-section::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .nightlife-section::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            right: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .nightlife-section .title h2 {
+            color: #fff;
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        .nightlife-section .title h2 i {
+            color: #a78bfa;
+        }
+        .nightlife-section .title .loader-line {
+            background: linear-gradient(90deg, #8b5cf6, #ec4899, #8b5cf6);
+            background-size: 200% 100%;
+            animation: nightlifeShimmer 2s ease-in-out infinite;
+        }
+        @keyframes nightlifeShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .nightlife-section .title .sub-title p {
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Nightlife filter bar */
+        .nightlife-filter-bar {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 18px;
+            padding: 14px 16px;
+            backdrop-filter: blur(14px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        .nightlife-filter-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.25));
+            border: 1px solid rgba(139, 92, 246, 0.45);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.25);
+        }
+        .nightlife-filter-label i {
+            color: #f0abfc;
+            font-size: 16px;
+            animation: labelGlow 2.4s ease-in-out infinite;
+        }
+        @keyframes labelGlow {
+            0%, 100% { text-shadow: 0 0 6px rgba(240, 171, 252, 0.6); transform: rotate(0deg); }
+            50% { text-shadow: 0 0 16px rgba(240, 171, 252, 0.95); transform: rotate(-8deg) scale(1.08); }
+        }
+        .nightlife-filter-divider {
+            width: 1px;
+            height: 28px;
+            background: linear-gradient(180deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+            margin: 0 4px;
+            flex-shrink: 0;
+        }
+
+        /* Nightlife filter chips */
+        .nightlife-filter-bar .nightlife-chip {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 15px 6px 6px;
+            border-radius: 999px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        }
+        .nightlife-filter-bar .nightlife-chip i {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            background: rgba(139, 92, 246, 0.18);
+            color: #a78bfa;
+        }
+        .nightlife-chip[data-qf="open_now"] i { background: rgba(56, 189, 248, 0.18); color: #38bdf8; }
+        .nightlife-chip[data-qf="serves_alcohol"] i { background: rgba(251, 191, 36, 0.18); color: #fbbf24; }
+        .nightlife-chip[data-qf="pubs_bars"] i { background: rgba(52, 211, 153, 0.18); color: #34d399; }
+        .nightlife-chip[data-qf="happy_hours"] i { background: rgba(244, 114, 182, 0.18); color: #f472b6; }
+        .nightlife-chip[data-qf="fine_dining"] i { background: rgba(129, 140, 248, 0.18); color: #818cf8; }
+
+        .nightlife-filter-bar .nightlife-chip:hover {
+            transform: translateY(-3px);
+            border-color: rgba(139, 92, 246, 0.75);
+            background: rgba(139, 92, 246, 0.22);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+        }
+        .nightlife-filter-bar .nightlife-chip:hover i {
+            color: #fff;
+            background: rgba(139, 92, 246, 0.45);
+            transform: rotate(-8deg) scale(1.12);
+        }
+        .nightlife-filter-bar .nightlife-chip.active {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-color: transparent;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 26px rgba(236, 72, 153, 0.45);
+        }
+        .nightlife-filter-bar .nightlife-chip.active i {
+            background: rgba(255, 255, 255, 0.22);
+            color: #fff;
+        }
+        .nightlife-filter-bar .nightlife-chip.active::after {
+            content: '\eb7b';
+            font-family: 'remixicon';
+            font-size: 11px;
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            flex-shrink: 0;
+            animation: chipCheckIn 0.3s ease;
+        }
+        @keyframes chipCheckIn {
+            from { transform: scale(0) rotate(-90deg); opacity: 0; }
+            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* Nightlife cards */
+        .nightlife-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.35s ease;
+            backdrop-filter: blur(10px);
+        }
+        .nightlife-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.25);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        .nightlife-card-img {
+            position: relative;
+            overflow: hidden;
+        }
+        .nightlife-card-img img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .nightlife-card:hover .nightlife-card-img img {
+            transform: scale(1.05);
+        }
+        .nightlife-card-rating {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 9px;
+            border-radius: 8px;
+            background: rgba(139, 92, 246, 0.9);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+        }
+        .nightlife-card-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .nightlife-card-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .nightlife-card-status.open {
+            background: linear-gradient(135deg, #10b981, #059669);
+            animation: pulseOpen 1.8s infinite;
+        }
+        .nightlife-card-status.closed {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .nightlife-card-type {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            color: #e0d4fc;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nightlife-card-body {
+            padding: 14px 16px;
+        }
+        .nightlife-card-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nightlife-card-name:hover {
+            color: #c4b5fd;
+        }
+        .nightlife-card-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .nightlife-card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .nightlife-card-meta .meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.55);
+        }
+        .nightlife-card-meta .meta-item i {
+            color: #8b5cf6;
+            font-size: 14px;
+        }
+        .nightlife-card-cost {
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #c4b5fd;
+        }
+
+        /* Nightlife empty state */
+        .nightlife-empty-state {
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.5);
+        }
+        .nightlife-empty-state i {
+            font-size: 48px;
+            color: rgba(139, 92, 246, 0.4);
+            margin-bottom: 12px;
+        }
+        .nightlife-empty-state h4 {
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+        }
+        .nightlife-empty-state p {
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+        }
+
+        /* Stars on nightlife cards */
+        .nightlife-stars {
+            color: #facc15;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .nightlife-section {
+                padding-top: 30px;
+            }
+            .nightlife-card-name {
+                font-size: 14px;
+            }
+        }
+    </style>
 
 
     <section id="home-app" class="app-section">
@@ -1141,6 +1531,158 @@
                 }
             }
 
+            // ============================================================
+            // Nightlife section
+            // ============================================================
+            window.$nightlifeList = $('#nightlife-list');
+            window.$nightlifeEmpty = $('#nightlife-empty');
+            window.nightlifeState = null;
+            window.nightlifeFilters = { open_now: false, serves_alcohol: false, pubs_bars: false, happy_hours: false, fine_dining: false };
+
+            function nightlifeSkeletonCard() {
+                return ''
+                    + '<div class="col-xl-3 col-lg-4 col-md-6">'
+                    +   '<div class="nightlife-card">'
+                    +     '<div class="nightlife-card-img placeholder-glow">'
+                    +       '<span class="w-100 d-block" style="height:180px;background:linear-gradient(135deg,#1a1a2e,#16213e);"></span>'
+                    +     '</div>'
+                    +     '<div class="nightlife-card-body placeholder-glow">'
+                    +       '<span class="placeholder col-7 mb-2"></span>'
+                    +       '<span class="placeholder col-10 mb-2"></span>'
+                    +       '<span class="placeholder col-5"></span>'
+                    +     '</div>'
+                    +   '</div>'
+                    + '</div>';
+            }
+
+            function showNightlifeSkeleton() {
+                var html = '';
+                for (var i = 0; i < 8; i++) { html += nightlifeSkeletonCard(); }
+                $nightlifeList.html(html);
+                $nightlifeEmpty.addClass('d-none');
+            }
+
+            function nightlifeCardHtml(r) {
+                var link = menuUrl + '?slug=' + r.slug;
+                var img = assetBase + (r.logo ? r.logo : 'front/assets/images/product/vp-1.png');
+                var place = r.city ? r.city : '';
+                var dist = (r.distance_km !== null && r.distance_km !== undefined)
+                    ? parseFloat(r.distance_km).toFixed(1) + ' km' : '—';
+                var time = (r.estimated_delivery_time !== null && r.estimated_delivery_time !== undefined)
+                    ? r.estimated_delivery_time + ' min' : '—';
+                var desc = r.description ? r.description : 'Great nightlife experience';
+                var rating = (r.rating !== null && r.rating !== undefined)
+                    ? '<div class="nightlife-card-rating"><i class="ri-star-fill"></i> ' + parseFloat(r.rating).toFixed(1) + '</div>'
+                    : '';
+                var cost = (r.cost_for_two !== null && r.cost_for_two !== undefined)
+                    ? '₹' + parseFloat(r.cost_for_two).toFixed(0) + ' for two'
+                    : '';
+
+                var statusBadge = '';
+                if (r.is_open) {
+                    statusBadge = '<div class="nightlife-card-status open"><span class="dot"></span> Open now</div>';
+                } else if (r.opening_time) {
+                    statusBadge = '<div class="nightlife-card-status closed"><span class="dot"></span> Opens at ' + r.opening_time + '</div>';
+                }
+
+                var typeBadge = '<div class="nightlife-card-type"><i class="ri-moon-line"></i> Nightlife</div>';
+
+                return ''
+                    + '<div class="col-xl-3 col-lg-4 col-md-6">'
+                    +   '<div class="nightlife-card">'
+                    +     '<div class="nightlife-card-img">'
+                    +       '<a href="' + link + '"><img src="' + img + '" alt="' + escapeHtml(r.name) + '"></a>'
+                    +       rating
+                    +       statusBadge
+                    +       typeBadge
+                    +     '</div>'
+                    +     '<div class="nightlife-card-body">'
+                    +       '<a href="' + link + '" class="nightlife-card-name">' + escapeHtml(r.name) + '</a>'
+                    +       '<div class="nightlife-card-desc">' + escapeHtml(desc) + '</div>'
+                    +       '<div class="nightlife-card-meta">'
+                    +         '<span class="meta-item"><i class="ri-map-pin-line"></i> ' + escapeHtml(place) + '</span>'
+                    +         '<span class="meta-item"><i class="ri-map-pin-distance-line"></i> ' + dist + '</span>'
+                    +         '<span class="meta-item"><i class="ri-time-line"></i> ' + time + '</span>'
+                    +       '</div>'
+                    +       (cost ? '<div class="nightlife-card-cost">' + cost + '</div>' : '')
+                    +     '</div>'
+                    +   '</div>'
+                    + '</div>';
+            }
+
+            function renderNightlife(list) {
+                if (!list || !list.length) {
+                    $nightlifeList.html('');
+                    $nightlifeEmpty.removeClass('d-none');
+                    return;
+                }
+                $nightlifeEmpty.addClass('d-none');
+                var html = '';
+                $.each(list, function (i, r) { html += nightlifeCardHtml(r); });
+                $nightlifeList.html(html);
+            }
+
+            function loadNightlife() {
+                showNightlifeSkeleton();
+                var data = $.extend({}, nightlifeState || {});
+                if (nightlifeFilters.open_now) data.open_now = 1;
+                if (nightlifeFilters.serves_alcohol) data.serves_alcohol = 1;
+                if (nightlifeFilters.pubs_bars) data.pubs_bars = 1;
+                if (nightlifeFilters.happy_hours) data.happy_hours = 1;
+                if (nightlifeFilters.fine_dining) data.fine_dining = 1;
+                var url = '{{ route('public.restaurants.nightlife') }}';
+                var hasLocParams = data.city_id || data.state_id || data.country_id || data.location;
+                if (hasLocParams) {
+                    url = '{{ route('public.restaurants.search-location') }}';
+                    data.restaurant_type = 'nightlife';
+                }
+                $.ajax({
+                    url: url,
+                    data: data,
+                    dataType: 'json',
+                    success: function (res) { renderNightlife(res.restaurants || []); },
+                    error: function () {
+                        $nightlifeList.html('<div class="col-12"><div class="text-center py-5" style="color:rgba(255,255,255,0.5);">'
+                            + '<i class="ri-error-warning-line" style="font-size:32px;"></i>'
+                            + '<p class="mt-2">Unable to load nightlife venues. Please try again.</p></div></div>');
+                    }
+                });
+            }
+
+            function fetchNightlifeNearby(lat, lng) {
+                nightlifeState = { lat: lat, lng: lng };
+                loadNightlife();
+            }
+
+            function fetchNightlifeByLocation(params) {
+                nightlifeState = params;
+                loadNightlife();
+            }
+
+            // Sync the main location state to nightlife when location changes
+            var origFetchNearby = fetchNearby;
+            fetchNearby = function(lat, lng) {
+                origFetchNearby(lat, lng);
+                fetchNightlifeNearby(lat, lng);
+            };
+            var origFetchByLocation = fetchByLocation;
+            fetchByLocation = function(params) {
+                origFetchByLocation(params);
+                fetchNightlifeByLocation(params);
+            };
+
+            // Nightlife filter chips
+            $('.nightlife-chip').on('click', function () {
+                var key = $(this).data('qf');
+                nightlifeFilters[key] = !nightlifeFilters[key];
+                $(this).toggleClass('active', nightlifeFilters[key]);
+                if (nightlifeState) {
+                    loadNightlife();
+                } else {
+                    showNightlifeSkeleton();
+                }
+            });
+
             // ---- Recent locations (localStorage) ----
             function getRecent() {
                 try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; }
@@ -1529,6 +2071,13 @@
             $featPopular.toggleClass('d-none', showNightlife);
             $featApp.toggleClass('d-none', showNightlife);
             $featNight.toggleClass('d-none', !showNightlife);
+
+            // Load nightlife data when tab is first shown
+            if (showNightlife && window.$nightlifeList && window.$nightlifeList.children().length === 0) {
+                if (window.nightlifeState) {
+                    loadNightlife();
+                }
+            }
 
             setTimeout(function () {
                 if (window.sliderTwo) sliderTwo.update();
