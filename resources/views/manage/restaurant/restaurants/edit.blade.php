@@ -76,14 +76,29 @@
                     @method('PUT')
 
                     <!-- Section 1: Basic Information -->
-                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">1. Basic Information</h5>
+                    <div class="section-title-wrap">
+                        <span class="section-badge">1</span>
+                        <h5 class="section-title mb-0">Basic Information</h5>
+                    </div>
                     <div class="row g-3 mb-4">
+                        @php $rtype = old('restaurant_type', $restaurant->restaurant_type ?? 'restaurant'); @endphp
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Restaurant Type <span class="text-danger">*</span></label>
+                            <div class="type-picker">
+                                <input type="radio" name="restaurant_type" id="type_restaurant" value="restaurant" {{ $rtype === 'restaurant' ? 'checked' : '' }}>
+                                <label for="type_restaurant"><i class="feather-flag"></i><span>Restaurant</span></label>
+                                <input type="radio" name="restaurant_type" id="type_brand" value="brand" {{ $rtype === 'brand' ? 'checked' : '' }}>
+                                <label for="type_brand"><i class="feather-award"></i><span>Brand</span></label>
+                                <input type="radio" name="restaurant_type" id="type_nightlife" value="nightlife" {{ $rtype === 'nightlife' ? 'checked' : '' }}>
+                                <label for="type_nightlife"><i class="feather-moon"></i><span>Nightlife</span></label>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <label for="restaurant_name" class="form-label fw-semibold">Restaurant Name <span class="text-danger">*</span></label>
                             <input type="text" name="restaurant_name" id="restaurant_name" class="form-control @error('restaurant_name') is-invalid @enderror" value="{{ old('restaurant_name', $restaurant->restaurant_name) }}" required>
                             @error('restaurant_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" id="brand_field_wrapper" @if($rtype !== 'brand') style="display: none;" @endif>
                             <label for="brand_id" class="form-label fw-semibold">Brand <small class="text-muted">(Optional, active brands)</small></label>
                             <div class="d-flex align-items-center gap-2">
                                 <select name="brand_id" id="brand_id" class="form-select @error('brand_id') is-invalid @enderror" onchange="updateBrandPreview(this)">
@@ -100,7 +115,7 @@
                             </div>
                             @error('brand_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" id="nightlife_field_wrapper" @if($rtype !== 'nightlife') style="display: none;" @endif>
                             <label for="nightlife_banner_id" class="form-label fw-semibold">Nightlife Banner <small class="text-muted">(Optional, active banners)</small></label>
                             <div class="d-flex align-items-center gap-2">
                                 <select name="nightlife_banner_id" id="nightlife_banner_id" class="form-select @error('nightlife_banner_id') is-invalid @enderror" onchange="updateNightlifePreview(this)">
@@ -118,7 +133,7 @@
                             @error('nightlife_banner_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-4">
-                            <label for="restaurant_slug" class="form-label fw-semibold">Slug</label>
+                            <label for="restaurant_slug" class="form-label fw-semibold">Slug <small class="text-muted">(Optional, auto-generated)</small></label>
                             <input type="text" name="restaurant_slug" id="restaurant_slug" class="form-control @error('restaurant_slug') is-invalid @enderror" value="{{ old('restaurant_slug', $restaurant->restaurant_slug) }}">
                             @error('restaurant_slug') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
@@ -138,8 +153,11 @@
                         </div>
                     </div>
 
-                    <!-- Section 2: Contact Details -->
-                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">2. Contact & Address</h5>
+                    <!-- Section 2: Contact & Address -->
+                    <div class="section-title-wrap">
+                        <span class="section-badge">2</span>
+                        <h5 class="section-title mb-0">Contact & Address</h5>
+                    </div>
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label for="email" class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
@@ -219,7 +237,10 @@
                     </div>
 
                     <!-- Section 3: Operations & Financials -->
-                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">3. Operations & Financials</h5>
+                    <div class="section-title-wrap">
+                        <span class="section-badge">3</span>
+                        <h5 class="section-title mb-0">Operations & Financials</h5>
+                    </div>
                     <div class="row g-3 mb-4">
                         <div class="col-md-3">
                             <label for="opening_time" class="form-label fw-semibold">Opening Time</label>
@@ -265,7 +286,10 @@
                     </div>
 
                     <!-- Section 4: Licenses & Branding -->
-                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">4. Licenses & Branding</h5>
+                    <div class="section-title-wrap">
+                        <span class="section-badge">4</span>
+                        <h5 class="section-title mb-0">Licenses & Branding</h5>
+                    </div>
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label for="gst_number" class="form-label fw-semibold">GST Number</label>
@@ -335,9 +359,22 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
-                        <a href="{{ route('restaurant.restaurants.index') }}" class="btn btn-light border px-4 fw-semibold">Cancel</a>
-                        <button type="submit" class="btn btn-danger text-white px-5 fw-semibold" style="background-color: #cb202d; border: none;">Update Restaurant</button>
+                    <div class="d-flex justify-content-end align-items-center gap-2 mt-4 pt-3 border-top action-bar">
+                        <a href="{{ route('restaurant.restaurants.index') }}" class="btn btn-cancel px-4 fw-semibold">
+                            <i class="feather-x me-1"></i>
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="btn btn-zomato px-4 fw-semibold" id="updateRestaurantBtn">
+                            <span class="btn-icons">
+                                <i class="feather-save me-1"></i>
+                                Update Restaurant
+                            </span>
+                            <span class="btn-loading d-none">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Updating...
+                            </span>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -349,6 +386,130 @@
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <style>
+        /* Action Bar */
+        .action-bar {
+            border-color: #e9ecef !important;
+        }
+        .action-bar .btn {
+            height: 46px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 150px;
+        }
+
+        /* Cancel Button */
+        .btn-cancel {
+            background: #ffffff !important;
+            border: 1.5px solid #d9d9d9 !important;
+            color: #555555 !important;
+            transition: all 0.2s ease;
+        }
+        .btn-cancel:hover {
+            border-color: #cb202d !important;
+            color: #cb202d !important;
+            background: #ffffff !important;
+        }
+
+        /* Save Button - Zomato Red */
+        .btn-zomato {
+            background-color: #cb202d !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(203, 32, 45, .25) !important;
+            transition: all .2s ease;
+            letter-spacing: .3px;
+        }
+        .btn-zomato:hover,
+        .btn-zomato:focus,
+        .btn-zomato:active {
+            background-color: #a81a25 !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 20px rgba(203, 32, 45, .35) !important;
+            transform: translateY(-1px);
+        }
+        .btn-zomato:disabled {
+            background-color: #a81a25 !important;
+            color: #ffffff !important;
+            opacity: .85;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Loading Spinner */
+        .btn-loading {
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-loading.d-none {
+            display: none !important;
+        }
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #f1f1f1;
+        }
+        .section-badge {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #cb202d;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .section-title {
+            font-weight: 700;
+            color: #1c1c1c;
+            font-size: 1.05rem;
+        }
+        .type-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 4px;
+        }
+        .type-picker input {
+            display: none;
+        }
+        .type-picker label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #6b7280;
+            background: #fff;
+            transition: all .2s ease;
+        }
+        .type-picker label i {
+            font-size: 16px;
+        }
+        .type-picker label:hover {
+            border-color: #cb202d;
+            color: #cb202d;
+        }
+        .type-picker input:checked + label {
+            border-color: #cb202d;
+            background: #cb202d0d;
+            color: #cb202d;
+        }
+    </style>
 @endpush
 
 @push('scripts')
@@ -364,6 +525,7 @@
             var initialCity = '{{ old('city_id', $restaurant->city_id) }}';
             var initialLat = parseFloat('{{ old('latitude', $restaurant->latitude) }}');
             var initialLng = parseFloat('{{ old('longitude', $restaurant->longitude) }}');
+            var slugEdited = false;
 
             function clearGeoErrors() {
                 ['country_id', 'state_id', 'city_id'].forEach(function (f) {
@@ -429,6 +591,39 @@
             });
             $('#state_id').on('change', function () {
                 loadCities($(this).val(), null);
+            });
+
+            // Show brand/nightlife lists only when the matching Restaurant Type is selected
+            $('input[name="restaurant_type"]').on('change', function () {
+                $('#brand_field_wrapper').toggle($(this).val() === 'brand');
+                $('#nightlife_field_wrapper').toggle($(this).val() === 'nightlife');
+            });
+
+            // Submit loading state
+            $('form').on('submit', function () {
+                var $btn = $(this).find('button[type="submit"]');
+                if ($btn.hasClass('is-loading')) {
+                    return false;
+                }
+                $btn.addClass('is-loading').prop('disabled', true);
+                $btn.find('.btn-icons').addClass('d-none');
+                $btn.find('.btn-loading').removeClass('d-none');
+            });
+
+            // Automatic Slug Generation (only when the slug hasn't been edited manually)
+            $('#restaurant_slug').on('input', function () {
+                slugEdited = true;
+            });
+            $('#restaurant_name').on('input', function () {
+                if (slugEdited) { return; }
+                var name = $(this).val();
+                var slug = name.toString().toLowerCase().trim()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]+/g, '')
+                    .replace(/\-\-+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
+                $('#restaurant_slug').val(slug);
             });
 
             function resolveAndApply(lat, lng, addressData) {

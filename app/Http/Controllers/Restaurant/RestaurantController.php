@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Restaurant;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Models\Country;
 use App\Models\NightlifeBanner;
 use App\Models\Restaurant;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +24,7 @@ class RestaurantController extends Controller
         $owner = auth()->user();
         $restaurant = Restaurant::where('user_id', $owner?->id)->first();
 
-        if (!$restaurant) {
+        if (! $restaurant) {
             abort(403, 'No restaurant assigned to your account. Please contact administrator.');
         }
 
@@ -54,7 +55,7 @@ class RestaurantController extends Controller
                 ->with('info', 'You already have a registered restaurant. Each vendor account is limited to 1 restaurant.');
         }
 
-        $countries = \App\Models\Country::orderBy('name')->pluck('name', 'id');
+        $countries = Country::orderBy('name')->pluck('name', 'id');
         $brands = Brand::where('status', 'active')->orderBy('name')->get();
         $nightlifeBanners = NightlifeBanner::where('status', 'active')->orderBy('title')->get();
 
@@ -126,21 +127,21 @@ class RestaurantController extends Controller
         $data['created_by'] = $owner->id;
 
         if ($request->hasFile('logo')) {
-            $logoName = time() . '_logo_' . Str::random(5) . '.' . $request->file('logo')->extension();
+            $logoName = time().'_logo_'.Str::random(5).'.'.$request->file('logo')->extension();
             $request->file('logo')->move(public_path('uploads/restaurants/logos'), $logoName);
-            $data['logo'] = 'uploads/restaurants/logos/' . $logoName;
+            $data['logo'] = 'uploads/restaurants/logos/'.$logoName;
         }
 
         if ($request->hasFile('banner')) {
-            $bannerName = time() . '_banner_' . Str::random(5) . '.' . $request->file('banner')->extension();
+            $bannerName = time().'_banner_'.Str::random(5).'.'.$request->file('banner')->extension();
             $request->file('banner')->move(public_path('uploads/restaurants/banners'), $bannerName);
-            $data['banner'] = 'uploads/restaurants/banners/' . $bannerName;
+            $data['banner'] = 'uploads/restaurants/banners/'.$bannerName;
         }
 
         if ($request->hasFile('qr_code')) {
-            $qrName = time() . '_qr_' . Str::random(5) . '.' . $request->file('qr_code')->extension();
+            $qrName = time().'_qr_'.Str::random(5).'.'.$request->file('qr_code')->extension();
             $request->file('qr_code')->move(public_path('uploads/restaurants/qr_codes'), $qrName);
-            $data['qr_code'] = 'uploads/restaurants/qr_codes/' . $qrName;
+            $data['qr_code'] = 'uploads/restaurants/qr_codes/'.$qrName;
         }
 
         Restaurant::create($data);
@@ -155,6 +156,7 @@ class RestaurantController extends Controller
     {
         $this->authorizeOwner($restaurant);
         $restaurant->load('brand', 'nightlifeBanner');
+
         return view('manage.restaurant.restaurants.show', compact('restaurant'));
     }
 
@@ -164,9 +166,10 @@ class RestaurantController extends Controller
     public function edit(Restaurant $restaurant): View
     {
         $this->authorizeOwner($restaurant);
-        $countries = \App\Models\Country::orderBy('name')->pluck('name', 'id');
+        $countries = Country::orderBy('name')->pluck('name', 'id');
         $brands = Brand::where('status', 'active')->orderBy('name')->get();
         $nightlifeBanners = NightlifeBanner::where('status', 'active')->orderBy('title')->get();
+
         return view('manage.restaurant.restaurants.edit', compact('restaurant', 'countries', 'brands', 'nightlifeBanners'));
     }
 
@@ -180,6 +183,7 @@ class RestaurantController extends Controller
         $request->validate([
             'brand_id' => ['nullable', 'exists:brands,id'],
             'nightlife_banner_id' => ['nullable', 'exists:nightlife_banners,id'],
+            'restaurant_type' => ['nullable', 'in:restaurant,brand,nightlife'],
             'restaurant_name' => ['required', 'string', 'max:255'],
             'restaurant_slug' => ['nullable', 'string', 'max:255', Rule::unique('restaurants', 'restaurant_slug')->ignore($restaurant->id)],
             'owner_name' => ['required', 'string', 'max:255'],
@@ -214,7 +218,7 @@ class RestaurantController extends Controller
         ]);
 
         $data = $request->only(
-            'brand_id', 'nightlife_banner_id', 'restaurant_name', 'owner_name', 'email', 'mobile', 'address', 'postal_code',
+            'brand_id', 'nightlife_banner_id', 'restaurant_type', 'restaurant_name', 'owner_name', 'email', 'mobile', 'address', 'postal_code',
             'country_id', 'state_id', 'city_id',
             'latitude', 'longitude', 'opening_time', 'closing_time', 'minimum_order_amount',
             'delivery_radius', 'estimated_delivery_time', 'commission_percentage', 'dining_commission_percentage', 'gst_number',
@@ -222,7 +226,7 @@ class RestaurantController extends Controller
             'description', 'status'
         );
 
-        if (!empty($data['restaurant_slug']) && $data['restaurant_slug'] !== $restaurant->restaurant_slug) {
+        if (! empty($data['restaurant_slug']) && $data['restaurant_slug'] !== $restaurant->restaurant_slug) {
             $data['restaurant_slug'] = Str::slug($data['restaurant_slug']);
         } else {
             unset($data['restaurant_slug']);
@@ -234,27 +238,27 @@ class RestaurantController extends Controller
             if ($restaurant->logo && File::exists(public_path($restaurant->logo))) {
                 File::delete(public_path($restaurant->logo));
             }
-            $logoName = time() . '_logo_' . Str::random(5) . '.' . $request->file('logo')->extension();
+            $logoName = time().'_logo_'.Str::random(5).'.'.$request->file('logo')->extension();
             $request->file('logo')->move(public_path('uploads/restaurants/logos'), $logoName);
-            $data['logo'] = 'uploads/restaurants/logos/' . $logoName;
+            $data['logo'] = 'uploads/restaurants/logos/'.$logoName;
         }
 
         if ($request->hasFile('banner')) {
             if ($restaurant->banner && File::exists(public_path($restaurant->banner))) {
                 File::delete(public_path($restaurant->banner));
             }
-            $bannerName = time() . '_banner_' . Str::random(5) . '.' . $request->file('banner')->extension();
+            $bannerName = time().'_banner_'.Str::random(5).'.'.$request->file('banner')->extension();
             $request->file('banner')->move(public_path('uploads/restaurants/banners'), $bannerName);
-            $data['banner'] = 'uploads/restaurants/banners/' . $bannerName;
+            $data['banner'] = 'uploads/restaurants/banners/'.$bannerName;
         }
 
         if ($request->hasFile('qr_code')) {
             if ($restaurant->qr_code && File::exists(public_path($restaurant->qr_code))) {
                 File::delete(public_path($restaurant->qr_code));
             }
-            $qrName = time() . '_qr_' . Str::random(5) . '.' . $request->file('qr_code')->extension();
+            $qrName = time().'_qr_'.Str::random(5).'.'.$request->file('qr_code')->extension();
             $request->file('qr_code')->move(public_path('uploads/restaurants/qr_codes'), $qrName);
-            $data['qr_code'] = 'uploads/restaurants/qr_codes/' . $qrName;
+            $data['qr_code'] = 'uploads/restaurants/qr_codes/'.$qrName;
         }
 
         $data['updated_by'] = auth()->id();
@@ -293,4 +297,3 @@ class RestaurantController extends Controller
         }
     }
 }
-
