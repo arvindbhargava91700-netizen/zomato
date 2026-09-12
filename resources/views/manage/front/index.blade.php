@@ -543,7 +543,7 @@
             background: linear-gradient(180deg, #0f0c29 0%, #1a1a2e 40%, #16213e 100%);
             padding-top: 50px;
             position: relative;
-            overflow: hidden;
+            overflow: hidden; 
         }
         .nightlife-section::before {
             content: '';
