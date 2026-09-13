@@ -44,11 +44,11 @@
                 <p class="mb-1">{{ $food->short_description ?: $food->description }}</p>
                 @if ($isCustomized)
                     <div class="variant-tags d-flex align-items-center flex-wrap gap-1 mt-1">
-                        @foreach ($food->variants as $variant)
-                            <span class="badge bg-light text-dark border fw-normal" style="font-size: 11px;">
-                                {{ $variant->variant_name }}: {{ $currencySymbol }}{{ number_format($variant->sale_price ?: $variant->price, 0) }}
-                            </span>
-                        @endforeach
+                            @foreach ($food->variants as $variant)
+                                <span id="variant-{{ $variant->id }}" class="badge bg-light text-dark border fw-normal" style="font-size: 11px;">
+                                    {{ $variant->variant_name }}: {{ $currencySymbol }}{{ number_format($variant->sale_price ?: $variant->price, 0) }}
+                                </span>
+                            @endforeach
                     </div>
                 @endif
             </div>

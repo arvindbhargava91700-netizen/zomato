@@ -7,6 +7,7 @@ use App\Models\AuditLog;
 use App\Models\Booking;
 use App\Models\Brand;
 use App\Models\City;
+use App\Models\NightlifeBanner;
 use App\Models\CompanySetting;
 use App\Models\Country;
 use App\Models\Cuisine;
@@ -250,6 +251,12 @@ class frontController extends Controller
             ->latest()
             ->get();
 
+        $collections = NightlifeBanner::withCount('restaurants')
+            ->where('status', 'active')
+            ->latest()
+            ->take(8)
+            ->get();
+
         $deals = $this->getFilteredDiningOffers($request);
 
         $locationId = $request->query('location_id') ?? $request->query('city_id');
@@ -261,7 +268,7 @@ class frontController extends Controller
             $location = 'Lucknow';
         }
 
-        return view('manage.front.index', compact('categories', 'cuisines', 'brands', 'deals'))
+        return view('manage.front.index', compact('categories', 'cuisines', 'brands', 'deals', 'collections'))
             ->with('location_id', $locationId)
             ->with('location_type', $locationType)
             ->with('location', $location);
@@ -1879,6 +1886,35 @@ class frontController extends Controller
                 );
             }
         }
+    }
+
+    public function collectionsList()
+    {
+        $collections = NightlifeBanner::withCount('restaurants')
+            ->where('status', 'active')
+            ->latest()
+            ->get();
+
+        return view('manage.front.collections', compact('collections'));
+    }
+
+    public function collectionDetails(Request $request)
+    {
+        // Check for both lightlife (typo in prompt) and nightlife just in case
+        $slug = $request->query('nightlife') ?? $request->query('lightlife');
+        
+        if (!$slug) {
+            return redirect()->route('collections.index');
+        }
+
+        $collection = NightlifeBanner::withCount('restaurants')
+            ->where('slug', $slug)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $restaurants = $collection->restaurants()->with(['city'])->paginate(12);
+
+        return view('manage.front.collectionDetails', compact('collection', 'restaurants'));
     }
 }
 

@@ -250,7 +250,55 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('contact') }}">Contact</a>
                             </li>
-                           
+                            @auth
+                                <li class="nav-item d-lg-none w-100 px-3 mt-4 mb-4">
+                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form-mobile').submit();" class="btn w-100 d-flex align-items-center justify-content-center gap-2 rounded-3" style="background-color: #feeceb; color: #cb202d; font-weight: 600; padding: 12px; border: 1px solid #f8d7da;">
+                                        <i class="ri-logout-box-r-line fs-5"></i> Logout
+                                    </a>
+                                    <form id="logout-form-mobile" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </li>
+                            @else
+                                <li class="nav-item d-lg-none mt-4 w-100 px-3">
+                                    <h6 class="text-muted text-uppercase" style="font-size: 11px; letter-spacing: 1px;">Account & Registration</h6>
+                                </li>
+                                <li class="nav-item d-lg-none w-100 px-3 mt-2">
+                                    <div class="d-flex flex-column gap-2">
+                                        <a href="{{ route('login') }}" class="btn w-100 d-flex align-items-center justify-content-center gap-2 rounded-3" style="background-color: rgba(var(--theme-color), 0.1); color: rgba(var(--theme-color), 1); font-weight: 600; padding: 10px;">
+                                            <i class="ri-login-box-line fs-5"></i> Login
+                                        </a>
+                                        <a href="{{ route('register') }}" class="btn theme-btn w-100 d-flex align-items-center justify-content-center gap-2 rounded-3 m-0" style="padding: 10px;">
+                                            <i class="ri-user-add-line fs-5"></i> Sign Up
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="nav-item d-lg-none w-100 px-3 mt-4">
+                                    <h6 class="text-muted text-uppercase" style="font-size: 11px; letter-spacing: 1px;">Partner with us</h6>
+                                </li>
+                                <li class="nav-item d-lg-none w-100 px-3 mt-2 mb-4">
+                                    <div class="d-flex flex-column gap-2">
+                                        <a href="{{ route('vendor.register') }}" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background: #f8f9fa; border: 1px solid #eee; transition: all 0.3s;">
+                                            <div class="icon-box d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px; background: #e3f2fd; color: #1976d2;">
+                                                <i class="ri-restaurant-2-line fs-5"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="m-0 text-dark" style="font-size: 14px; font-weight: 600;">Become a Vendor</h6>
+                                                <p class="m-0 text-muted" style="font-size: 11px;">Register your restaurant</p>
+                                            </div>
+                                        </a>
+                                        <a href="{{ route('delivery-partner.register') }}" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background: #f8f9fa; border: 1px solid #eee; transition: all 0.3s;">
+                                            <div class="icon-box d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px; background: #fbe9e7; color: #d84315;">
+                                                <i class="ri-bike-line fs-5"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="m-0 text-dark" style="font-size: 14px; font-weight: 600;">Delivery Partner</h6>
+                                                <p class="m-0 text-muted" style="font-size: 11px;">Earn by delivering food</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </li>
+                            @endauth
                         </ul>
                     </div>
                 </div>

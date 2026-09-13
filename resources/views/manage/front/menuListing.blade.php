@@ -177,15 +177,26 @@
                                             <nav id="navbar" class="product-items pb-0">
                                                 <ul class="nav nav-pills">
                                                     @forelse (optional($restaurant)->categories ?? collect() as $cat)
-                                                        <li>
-                                                            <a class="nav-link d-flex align-items-center justify-content-between"
-                                                                href="#cat-{{ $cat->id }}">
-                                                                <span>{{ $cat->name }}</span>
-                                                                <span class="badge rounded-pill bg-light text-secondary border fs-11">{{ $cat->foods->count() }}</span>
-                                                            </a>
-                                                        </li>
+                                                        @foreach($cat->foods as $food)
+                                                            <li>
+                                                                <a class="nav-link" href="#food-{{ $food->id }}">{{ $food->name }}</a>
+                                                            </li>
+                                                            @if($food->variants && $food->variants->count() > 0)
+                                                            <li>
+                                                                <nav class="nav nav-pills sub-nav-pills">
+                                                                    <ul>
+                                                                        @foreach($food->variants as $variant)
+                                                                            <li>
+                                                                                <a class="nav-link" href="#variant-{{ $variant->id }}">{{ $variant->variant_name }}</a>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                </nav>
+                                                            </li>
+                                                            @endif
+                                                        @endforeach
                                                     @empty
-                                                        <li><a class="nav-link" href="#!">No categories</a></li>
+                                                        <li><a class="nav-link" href="#!">No items</a></li>
                                                     @endforelse
                                                 </ul>
                                             </nav>
@@ -197,14 +208,11 @@
                                                 data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0">
                                                 <div class="product-details-box-list">
                                                     @forelse (optional($restaurant)->categories ?? collect() as $cat)
-                                                        <div class="product-details-box-title">{{ $cat->name }}</div>
-                                                        <div id="cat-{{ $cat->id }}">
-                                                            @forelse ($cat->foods as $food)
+                                                        @foreach ($cat->foods as $food)
+                                                            <div id="food-{{ $food->id }}">
                                                                 @include('manage.front.partials.menu-food', ['food' => $food])
-                                                            @empty
-                                                                <p class="content-color">No items in this category.</p>
-                                                            @endforelse
-                                                        </div>
+                                                            </div>
+                                                        @endforeach
                                                     @empty
                                                         <p class="content-color">No menu available for this restaurant.</p>
                                                     @endforelse

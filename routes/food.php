@@ -23,6 +23,10 @@ Route::get('/dining-offers/by-location', [frontController::class, 'diningOffersB
 Route::get('/dining-out', [frontController::class, 'diningOutListing'])->name('dining.out');
 Route::get('/dining-slots/{restaurant}', [frontController::class, 'getDiningSlots'])->name('public.dining.slots');
 
+// Collections Routes
+Route::get('/collections', [frontController::class, 'collectionsList'])->name('collections.index');
+Route::get('/collection', [frontController::class, 'collectionDetails'])->name('collections.show');
+
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');

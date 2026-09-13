@@ -210,25 +210,25 @@
     <div class="mobile-menu d-md-none d-block mobile-cart">
         <ul>
             <li class="active">
-                <a href="index.html" class="menu-box">
+                <a href="{{ route('index') }}" class="menu-box">
                     <i class="ri-home-4-line"></i>
                     <span>Home</span>
                 </a>
             </li>
             <li>
-                <a href="wishlist.html" class="menu-box">
+                <a href="{{ route('wish.list') }}" class="menu-box">
                     <i class="ri-heart-3-line"></i>
                     <span>Wishlist</span>
                 </a>
             </li>
             <li>
-                <a href="checkout.html" class="menu-box">
+                <a href="{{ route('checkout') }}" class="menu-box">
                     <i class="ri-shopping-cart-2-line"></i>
                     <span>Cart</span>
                 </a>
             </li>
             <li>
-                <a href="index.html" class="menu-box">
+                <a href="{{ route('profile') }}" class="menu-box">
                     <i class="ri-user-line"></i>
                     <span>Profile</span>
                 </a>

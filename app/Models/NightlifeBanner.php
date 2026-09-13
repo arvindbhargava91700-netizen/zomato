@@ -56,4 +56,12 @@ class NightlifeBanner extends Model
     {
         return $this->belongsTo(Admin::class, 'updated_by');
     }
+
+    /**
+     * Relationship to Restaurants in this collection.
+     */
+    public function restaurants()
+    {
+        return $this->hasMany(Restaurant::class, 'nightlife_banner_id');
+    }
 }

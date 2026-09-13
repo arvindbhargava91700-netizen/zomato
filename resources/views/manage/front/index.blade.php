@@ -18,18 +18,66 @@
             <h1>Zomo</h1>
             <h2>Discover restaurants that deliver near you</h2>
             <div class="search-section">
-                <form class="auth-form search-head" target="_blank">
+                <form action="{{ route('public.restaurants.index') }}" method="GET" class="auth-form search-head" id="restaurant-search-form">
                     <div class="form-group">
                         <div class="form-input mb-0">
-                            <input type="search" class="form-control search" id="inputusername"
-                                placeholder="Search for Restaurant">
+                            <input type="search" name="search" class="form-control search" id="inputusername"
+                                placeholder="Search for Restaurant" value="{{ request('search') }}">
                             <i class="ri-search-line search-icon"></i>
                         </div>
                     </div>
                 </form>
-                <a class="btn theme-btn mt-0" href="#" role="button">Search</a>
+                <button type="submit" form="restaurant-search-form" class="btn theme-btn mt-0" id="homeSearchBtn">
+                    <span class="btn-text">Search</span>
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="homeSearchSpinner" style="width: 1.2rem; height: 1.2rem;"></span>
+                </button>
+                <script>
+                    document.getElementById('restaurant-search-form').addEventListener('submit', function() {
+                        var btnText = document.querySelector('#homeSearchBtn .btn-text');
+                        var spinner = document.getElementById('homeSearchSpinner');
+                        var submitBtn = document.getElementById('homeSearchBtn');
+                        
+                        btnText.classList.add('d-none');
+                        spinner.classList.remove('d-none');
+                        submitBtn.setAttribute('disabled', 'disabled');
+                    });
+                </script>
             </div>
-            <ul class="home-features-list d-md-flex d-none">
+            <style>
+                @media (max-width: 767px) {
+                    .home-features-list {
+                        flex-wrap: nowrap !important;
+                        gap: 5px;
+                        padding: 0 5px;
+                        margin-top: 10px;
+                    }
+                    .home-features-list li {
+                        flex: 1;
+                        min-width: 0;
+                    }
+                    .home-features-box {
+                        padding: 4px 4px !important;
+                        display: flex !important;
+                        flex-direction: column !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        border-radius: 8px !important;
+                        height: 100%;
+                    }
+                    .home-features-box img.icon {
+                        width: 22px !important;
+                        height: 22px !important;
+                        margin: 0 0 2px 0 !important;
+                    }
+                    .home-features-box h6 {
+                        font-size: 10.5px !important;
+                        margin: 0 !important;
+                        white-space: nowrap;
+                        text-align: center;
+                    }
+                }
+            </style>
+            <ul class="home-features-list d-flex flex-nowrap justify-content-center">
                 <li>
                     <a href="{{ route('dining.out', ['location' => $location ?? 'Lucknow']) }}" class="home-features-box" id="dinningOut">
                         <img class="img-fluid icon" src="front/assets/images/svg/routing.svg" alt="routing">
@@ -38,16 +86,16 @@
                 </li>
     
                 <li>
-                    <div class="home-features-box " id="delivery">
+                    <div class="home-features-box" id="delivery">
                         <img class="img-fluid icon" src="front/assets/images/svg/truck.svg" alt="truck">
                         <h6>Delivery</h6>
                     </div>
                 </li>
                  <li>
                     <div class="home-features-box night" id="nightlife">
-                            <img class="img-fluid icon" src="front/assets/images/svg/3d-rotate.svg" alt="3d-rotate">
-                            <h6>NightLife</h6>
-                        </div>
+                        <img class="img-fluid icon" src="front/assets/images/svg/3d-rotate.svg" alt="3d-rotate">
+                        <h6>NightLife</h6>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -494,8 +542,40 @@
     <!-- nightlife section starts -->
     <section id="home-nightlife" class="nightlife-section section-b-space d-none">
         <div class="container">
-            <div class="title">
-                <h2><i class="ri-moon-line"></i> Nightlife Near You</h2>
+            <!-- Collections Section -->
+            <div class="nightlife-collections mb-5 pt-3">
+                <div class="d-flex justify-content-between align-items-end mb-4">
+                    <div>
+                        <h2 class="text-white fw-bold mb-1" style="font-size: 28px;">Collections</h2>
+                        <h6 class="text-white-50 fw-normal m-0" style="font-size: 15px;">Explore curated lists of top restaurants, cafes, pubs, and bars in <span id="collections-city-name">your city</span>, based on trends</h6>
+                    </div>
+                    <a href="{{ route('collections.index') }}" class="text-danger text-decoration-none d-none d-md-block" style="font-weight: 500;">All collections in your city <i class="ri-arrow-right-s-fill"></i></a>
+                </div>
+                
+                <div class="row g-3">
+                    @forelse($collections as $collection)
+                        <div class="col-lg-3 col-md-6 col-6">
+                            <a href="{{ route('collections.show', ['nightlife' => $collection->slug]) }}" class="collection-card">
+                                <div class="collection-img-wrap">
+                                    <img src="{{ $collection->banner ? asset($collection->banner) : asset('front/assets/images/banner/banner1.jpg') }}" alt="{{ $collection->title }}">
+                                    <div class="collection-overlay"></div>
+                                </div>
+                                <div class="collection-content">
+                                    <h6>{{ $collection->title }}</h6>
+                                    <span>{{ $collection->restaurants_count }} Places <i class="ri-arrow-right-s-fill ms-1"></i></span>
+                                </div>
+                            </a>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            <p class="text-white-50">No collections available.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="title mt-5">
+                <h2 id="nightlife-section-title"><i class="ri-moon-line"></i> Nightlife Near You</h2>
                 <div class="loader-line"></div>
                 <div class="sub-title">
                     <p>Discover the best pubs, bars, and nightlife venues around you.</p>
@@ -538,6 +618,58 @@
     <!-- nightlife section end -->
 
     <style>
+        /* ===== Collections Component ===== */
+        .collection-card {
+            display: block;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 250px;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .collection-img-wrap {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .collection-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .collection-card:hover .collection-img-wrap img {
+            transform: scale(1.05);
+        }
+        .collection-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.05) 100%);
+        }
+        .collection-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            color: #fff;
+        }
+        .collection-content h6 {
+            color: #fff;
+            margin-bottom: 2px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .collection-content span {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+        }
+
         /* ===== Nightlife Section ===== */
         .nightlife-section {
             background: linear-gradient(180deg, #0f0c29 0%, #1a1a2e 40%, #16213e 100%);
@@ -1611,6 +1743,14 @@
             }
 
             function renderNightlife(list) {
+                var titleText = 'Nightlife Near You';
+                if (list && list.length > 0) {
+                    var cityName = list[0].city ? 'in ' + list[0].city : 'Near You';
+                    titleText = list.length + ' Nightlife Restaurants ' + cityName;
+                    $('#collections-city-name').text(list[0].city || 'your city');
+                }
+                $('#nightlife-section-title').html('<i class="ri-moon-line"></i> ' + titleText);
+
                 if (!list || !list.length) {
                     $nightlifeList.html('');
                     $nightlifeEmpty.removeClass('d-none');
