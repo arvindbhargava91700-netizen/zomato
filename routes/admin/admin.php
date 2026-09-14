@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\ProfileController;
 
 use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\RestaurantBlogController;
+use App\Http\Controllers\Admin\RestaurantFeatureController;
 use App\Http\Controllers\Admin\RestaurantOfferController;
 use App\Http\Controllers\Admin\RoleController;
 
@@ -73,6 +74,12 @@ Route::middleware('admin')->group(function () {
     Route::patch('restaurants/{restaurant}/toggle-status', [RestaurantController::class, 'toggleStatus'])->name('restaurants.toggle-status');
     Route::post('restaurants/{restaurant}/approval', [RestaurantController::class, 'updateApproval'])->name('restaurants.approval');
     Route::resource('restaurants', RestaurantController::class);
+
+    // Restaurant Feature Management Routes
+    Route::patch('restaurant-features/{restaurantFeature}/toggle-status', [RestaurantFeatureController::class, 'toggleStatus'])->name('restaurant-features.toggle-status');
+    Route::post('restaurant-features/{id}/restore', [RestaurantFeatureController::class, 'restore'])->name('restaurant-features.restore');
+    Route::delete('restaurant-features/{id}/force-delete', [RestaurantFeatureController::class, 'forceDelete'])->name('restaurant-features.force-delete');
+    Route::resource('restaurant-features', RestaurantFeatureController::class);
 
     // Food Category Management Routes
     Route::patch('food-categories/{food_category}/toggle-status', [FoodCategoryController::class, 'toggleStatus'])->name('food-categories.toggle-status');

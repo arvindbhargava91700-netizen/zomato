@@ -235,6 +235,18 @@
                                 <strong class="text-dark">{{ $restaurant->fssai_number ?? 'N/A' }}</strong>
                             </div>
                         </div>
+                        <hr>
+                        <h6 class="fw-bold text-dark mb-3"><i class="feather-star me-1 text-danger"></i>Features</h6>
+                        @php $features = $restaurant->featureLabels(); @endphp
+                        @if(count($features) > 0)
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($features as $feature)
+                                    <span class="badge bg-light text-dark border px-3 py-2 fs-12">{{ $feature }}</span>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-muted mb-0 fs-12">No features added yet.</p>
+                        @endif
                     </div>
                 </div>
             </div>

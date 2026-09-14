@@ -26,9 +26,7 @@
                         <div class="footer-logo-part">
                             <img class="img-fluid logo" src="{{ asset($companyLogo) }}" alt="{{ $companyName }}">
                             <p>
-                                Welcome to our online order website! Here, you can browse our
-                                wide selection of products and place orders from the comfort
-                                of your own home.
+                                {{ $companySetting->about_text ?? 'Welcome to our online order website! Here, you can browse our wide selection of products and place orders from the comfort of your own home.' }}
                             </p>
                             <div class="social-media-part">
                                 <ul class="social-icon">
@@ -78,23 +76,18 @@
                                     <h5 class="footer-title">Company</h5>
                                     <ul class="content">
                                         <li>
-                                            <a class="nav-links" href="about.html">
-                                                <h6>About us</h6>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="nav-links" href="contact.html">
+                                            <a class="nav-links" href="{{ route('contact') }}">
                                                 <h6>Contact us</h6>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-links" href="offer.html">
-                                                <h6>Offer</h6>
+                                            <a class="nav-links" href="{{ route('faq.list') }}">
+                                                <h6>FAQs</h6>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-links" href="faq.html">
-                                                <h6>FAQs</h6>
+                                            <a class="nav-links" href="{{ route('blog.list') }}">
+                                                <h6>Blogs</h6>
                                             </a>
                                         </li>
                                     </ul>
@@ -105,22 +98,22 @@
                                     <h5 class="footer-title">Account</h5>
                                     <ul class="content">
                                         <li>
-                                            <a class="nav-links" href="my-order.html">
+                                            <a class="nav-links" href="{{ route('my.orders') }}">
                                                 <h6>My orders</h6>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-links" href="wishlist.html">
+                                            <a class="nav-links" href="{{ route('wish.list') }}">
                                                 <h6>Wishlist</h6>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-links" href="checkout.html">
+                                            <a class="nav-links" href="{{ route('checkout') }}">
                                                 <h6>Shopping Cart</h6>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-links" href="saved-address.html">
+                                            <a class="nav-links" href="{{ route('saved.address') }}">
                                                 <h6>Saved Address</h6>
                                             </a>
                                         </li>
@@ -132,28 +125,22 @@
                                     <h5 class="footer-title">Useful links</h5>
                                     <ul class="content">
                                         <li>
-                                            <a class="nav-links" href="{{ route('blog.list') }}">
-                                                <h6>Blogs</h6>
-                                            </a>
-                                        </li>
-
-                                        <li>
-                                            <a class="nav-links" href="signin.html">
+                                            <a class="nav-links" href="{{ route('login') }}">
                                                 <h6>Login</h6>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-links" href="signup.html">
+                                            <a class="nav-links" href="{{ route('register') }}">
                                                 <h6>Register</h6>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-links" href="profile.html">
+                                            <a class="nav-links" href="{{ route('profile') }}">
                                                 <h6>Profile</h6>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-links" href="setting.html">
+                                            <a class="nav-links" href="{{ route('setting') }}">
                                                 <h6>Settings</h6>
                                             </a>
                                         </li>
@@ -164,31 +151,17 @@
                                 <div>
                                     <h5 class="footer-title">Top Brands</h5>
                                     <ul class="content">
-                                        <li>
-                                            <a class="nav-links" href="menu-listing.html">
-                                                <h6>PizzaBoy</h6>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="nav-links" href="menu-listing.html">
-                                                <h6>Saladish</h6>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="nav-links" href="menu-listing.html">
-                                                <h6>IcePops</h6>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="nav-links" href="menu-listing.html">
-                                                <h6>Maxican Hoy</h6>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="nav-links" href="menu-listing.html">
-                                                <h6>La Foodie</h6>
-                                            </a>
-                                        </li>
+                                        @forelse($topBrands as $brand)
+                                            <li>
+                                                <a class="nav-links" href="{{ route('menu.list', ['brand' => $brand->slug]) }}">
+                                                    <h6>{{ $brand->name }}</h6>
+                                                </a>
+                                            </li>
+                                        @empty
+                                            <li>
+                                                <h6 class="text-muted">No brands available</h6>
+                                            </li>
+                                        @endforelse
                                     </ul>
                                 </div>
                             </div>
@@ -198,7 +171,7 @@
             </div>
             <div class="bottom-footer-part">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                    <h6>@ Copyright 2024 {{ $companyName }}. All rights Reserved.</h6>
+                    <h6>@ Copyright {{ date('Y') }} {{ $companyName }}. All rights Reserved.</h6>
                     <img class="img-fluid cards" src="{{ asset('front/assets/images/icons/footer-card.png') }}" alt="card">
                 </div>
             </div>

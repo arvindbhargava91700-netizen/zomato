@@ -285,9 +285,18 @@
                         </div>
                     </div>
 
-                    <!-- Section 4: Licenses & Branding -->
+                    <!-- Section 4: Restaurant Features & Amenities -->
                     <div class="section-title-wrap">
                         <span class="section-badge">4</span>
+                        <h5 class="section-title mb-0">Restaurant Features & Amenities</h5>
+                    </div>
+                    <div class="mb-4">
+                        @include('manage.partials.restaurant-features', ['selected' => old('features', $restaurant->features ?? [])])
+                    </div>
+
+                    <!-- Section 5: Licenses & Branding -->
+                    <div class="section-title-wrap">
+                        <span class="section-badge">5</span>
                         <h5 class="section-title mb-0">Licenses & Branding</h5>
                     </div>
                     <div class="row g-3 mb-4">

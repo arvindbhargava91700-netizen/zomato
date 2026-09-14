@@ -51,6 +51,8 @@ class UpdateRestaurantRequest extends FormRequest
             'pet_friendly' => ['nullable', 'boolean'],
             'outdoor_seating' => ['nullable', 'boolean'],
             'serves_alcohol' => ['nullable', 'boolean'],
+            'features' => ['nullable', 'array'],
+            'features.*' => ['nullable', 'string'],
             'status' => ['required', 'in:active,inactive,pending'],
         ];
     }

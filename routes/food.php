@@ -179,6 +179,12 @@ Route::middleware('role:restaurant_owner')->prefix('restaurant')->name('restaura
     Route::delete('/food-variants/{id}/force-delete', [App\Http\Controllers\Restaurant\FoodVariantController::class, 'forceDelete'])->name('food-variants.force-delete');
     Route::resource('food-variants', App\Http\Controllers\Restaurant\FoodVariantController::class);
 
+    // Menus (Upload menu with images)
+    Route::patch('/menus/{menu}/toggle-status', [App\Http\Controllers\Restaurant\MenuController::class, 'toggleStatus'])->name('menus.toggle-status');
+    Route::post('/menus/{id}/restore', [App\Http\Controllers\Restaurant\MenuController::class, 'restore'])->name('menus.restore');
+    Route::delete('/menus/{id}/force-delete', [App\Http\Controllers\Restaurant\MenuController::class, 'forceDelete'])->name('menus.force-delete');
+    Route::resource('menus', App\Http\Controllers\Restaurant\MenuController::class);
+
     // Dining Offers (Book-a-table discounts)
     Route::patch('/dining-offers/{dining_offer}/toggle-status', [App\Http\Controllers\Restaurant\DiningOfferController::class, 'toggleStatus'])->name('dining-offers.toggle-status');
     Route::resource('dining-offers', App\Http\Controllers\Restaurant\DiningOfferController::class);

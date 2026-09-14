@@ -22,6 +22,7 @@ use App\Models\PaymentGateway;
 use App\Models\PromoCode;
 use App\Models\Restaurant;
 use App\Models\RestaurantBlog;
+use App\Models\RestaurantMenu;
 use App\Models\Review;
 use App\Models\Setting;
 use App\Models\ContactMessage;
@@ -493,6 +494,14 @@ class frontController extends Controller
             $allCategories = $foodCategories->concat($ownCategories)->sortBy('sort_order')->values();
 
             $restaurant->setRelation('categories', $allCategories);
+
+            $menus = RestaurantMenu::where('restaurant_id', $restaurant->id)
+                ->where('status', 'active')
+                ->orderBy('sort_order', 'asc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $restaurant->setRelation('menus', $menus);
         }
 
         return view('manage.front.menuListing', compact('restaurant'));

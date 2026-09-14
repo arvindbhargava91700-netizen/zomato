@@ -126,7 +126,7 @@
                         <div class="panel-icon"><i class="ri-rocket-2-line"></i></div>
                         <h2>Everything you need to succeed</h2>
                         <p>
-                            As a Zomo vendor you get access to powerful tools built to help
+                            As a {{ $companyName }} vendor you get access to powerful tools built to help
                             your restaurant grow and run smoothly every single day.
                         </p>
                         <ul>
@@ -240,7 +240,7 @@
             <div class="vendor-cta d-flex align-items-center justify-content-between flex-wrap gap-4">
                 <div class="position-relative">
                     <h2>Ready to grow your restaurant business?</h2>
-                    <p>Join Zomo today and get your restaurant in front of thousands of hungry customers.</p>
+                    <p>Join {{ $companyName }} today and get your restaurant in front of thousands of hungry customers.</p>
                 </div>
                 <a href="#register-form" class="btn btn-white mt-0">
                     <i class="ri-arrow-right-up-line me-2"></i>Get Started Now

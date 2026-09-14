@@ -230,8 +230,14 @@
                         </div>
                     </div>
 
-                    <!-- Section 4: Licenses & Branding -->
-                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">4. Licenses & Branding</h5>
+                    <!-- Section 4: Restaurant Features & Amenities -->
+                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">4. Restaurant Features & Amenities</h5>
+                    <div class="mb-4">
+                        @include('manage.partials.restaurant-features', ['selected' => old('features', [])])
+                    </div>
+
+                    <!-- Section 5: Licenses & Branding -->
+                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">5. Licenses & Branding</h5>
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label for="gst_number" class="form-label fw-semibold">GST Number</label>

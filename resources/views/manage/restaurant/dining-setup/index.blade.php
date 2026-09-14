@@ -159,7 +159,7 @@
                             </div>
                         </div>
 
-                        @if($tables->isEmpty())
+                        @if($totalTables == 0)
                             <div class="text-center py-5 border rounded-3 bg-light">
                                 <div class="avatar-lg bg-soft-primary text-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:60px; height:60px; font-size:26px;">
                                     <i class="feather-grid"></i>
@@ -176,83 +176,124 @@
                                 </div>
                             </div>
                         @else
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle border mb-0" id="customerList">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th style="width: 60px;">#</th>
-                                            <th>Table Number</th>
-                                            <th>Guest Capacity</th>
-                                            <th>Current Status</th>
-                                            <th>Assigned Bookings</th>
-                                            <th class="text-end" style="width: 140px;">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($tables as $idx => $table)
+                            <!-- Filter Bar -->
+                            <form action="{{ route('restaurant.dining-setup.index') }}" method="GET" class="mb-3">
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-md-5">
+                                        <label class="form-label small fw-bold text-muted mb-1">Search Table</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i class="feather-search text-muted"></i></span>
+                                            <input type="text" name="search" class="form-control" placeholder="Search by table number..."
+                                                   value="{{ request('search') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-bold text-muted mb-1">Status</label>
+                                        <select name="status" class="form-select">
+                                            <option value="">All Statuses</option>
+                                            <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Available</option>
+                                            <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>Maintenance</option>
+                                            <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary fw-semibold px-3"><i class="feather-filter me-1"></i> Filter</button>
+                                        <a href="{{ route('restaurant.dining-setup.index') }}" class="btn btn-light border text-secondary fw-semibold">Reset</a>
+                                    </div>
+                                </div>
+                            </form>
+
+                            @if($tables->isEmpty())
+                                <div class="text-center py-4 border rounded-3 bg-light">
+                                    <i class="feather-search text-muted" style="font-size: 32px;"></i>
+                                    <h6 class="fw-bold mt-2 mb-1">No Tables Found</h6>
+                                    <p class="text-muted small mb-2">No tables match your current filter. Try adjusting your search or status.</p>
+                                    <a href="{{ route('restaurant.dining-setup.index') }}" class="btn btn-sm btn-outline-primary">Clear Filters</a>
+                                </div>
+                            @else
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle border mb-0" >
+                                        <thead class="table-light">
                                             <tr>
-                                                <td class="text-muted fw-semibold">{{ $idx + 1 }}</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <div class="table-avatar bg-dark text-white fw-bold rounded-2 px-2 py-1 fs-12 font-monospace">
-                                                            {{ $table->table_number }}
-                                                        </div>
-                                                        <span class="fw-bold text-dark">{{ $table->table_number }}</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-soft-info text-info fs-12 px-2 py-1">
-                                                        <i class="feather-users me-1"></i> {{ $table->capacity }} {{ $table->capacity == 1 ? 'Person' : 'Persons' }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    @if($table->status === 'available')
-                                                        <span class="badge bg-soft-success text-success px-2 py-1"><i class="feather-check-circle me-1"></i> Available</span>
-                                                    @elseif($table->status === 'maintenance')
-                                                        <span class="badge bg-soft-warning text-warning px-2 py-1"><i class="feather-tool me-1"></i> In Maintenance</span>
-                                                    @else
-                                                        <span class="badge bg-soft-secondary text-secondary px-2 py-1"><i class="feather-slash me-1"></i> Inactive</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <span class="text-muted small">
-                                                        {{ $table->bookings()->where('book_date', '>=', now()->toDateString())->count() }} upcoming bookings
-                                                    </span>
-                                                </td>
-                                                <td class="text-end">
-                                                    <div class="d-inline-flex gap-1">
-                                                        <!-- Toggle Status -->
-                                                        <form action="{{ route('restaurant.dining-setup.tables.toggle-status', $table->id) }}" method="POST" class="d-inline">
-                                                             @csrf
-                                                             @method('PATCH')
-                                                             <button type="submit" class="btn btn-sm btn-light border p-1 px-2" title="Toggle Maintenance / Available">
-                                                                 <i class="feather-power text-{{ $table->status === 'available' ? 'success' : 'warning' }}"></i>
-                                                             </button>
-                                                         </form>
-
-                                                        <!-- Edit Button (Direct Page) -->
-                                                        <a href="{{ route('restaurant.dining-setup.tables.edit', $table->id) }}"
-                                                           class="btn btn-sm btn-light border p-1 px-2 text-primary"
-                                                           title="Edit Table">
-                                                            <i class="feather-edit-2"></i>
-                                                        </a>
-
-
-                                                        <!-- Delete Button -->
-                                                        <form action="{{ route('restaurant.dining-setup.tables.destroy', $table->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete table {{ $table->table_number }}?');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-light border p-1 px-2 text-danger" title="Delete Table">
-                                                                <i class="feather-trash-2"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
+                                                <th style="width: 60px;">#</th>
+                                                <th>Table Number</th>
+                                                <th>Guest Capacity</th>
+                                                <th>Current Status</th>
+                                                <th>Assigned Bookings</th>
+                                                <th class="text-end" style="width: 140px;">Actions</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($tables as $idx => $table)
+                                                <tr>
+                                                    <td class="text-muted fw-semibold">{{ ($tables->currentPage() - 1) * $tables->perPage() + $loop->iteration }}</td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <div class="table-avatar bg-dark text-white fw-bold rounded-2 px-2 py-1 fs-12 font-monospace">
+                                                                {{ $table->table_number }}
+                                                            </div>
+                                                            <span class="fw-bold text-dark">{{ $table->table_number }}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-soft-info text-info fs-12 px-2 py-1">
+                                                            <i class="feather-users me-1"></i> {{ $table->capacity }} {{ $table->capacity == 1 ? 'Person' : 'Persons' }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        @if($table->status === 'available')
+                                                            <span class="badge bg-soft-success text-success px-2 py-1"><i class="feather-check-circle me-1"></i> Available</span>
+                                                        @elseif($table->status === 'maintenance')
+                                                            <span class="badge bg-soft-warning text-warning px-2 py-1"><i class="feather-tool me-1"></i> In Maintenance</span>
+                                                        @else
+                                                            <span class="badge bg-soft-secondary text-secondary px-2 py-1"><i class="feather-slash me-1"></i> Inactive</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted small">
+                                                            {{ $table->bookings()->where('book_date', '>=', now()->toDateString())->count() }} upcoming bookings
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="d-inline-flex gap-1">
+                                                            <!-- Toggle Status -->
+                                                            <form action="{{ route('restaurant.dining-setup.tables.toggle-status', $table->id) }}" method="POST" class="d-inline">
+                                                                 @csrf
+                                                                 @method('PATCH')
+                                                                 <button type="submit" class="btn btn-sm btn-light border p-1 px-2" title="Toggle Maintenance / Available">
+                                                                     <i class="feather-power text-{{ $table->status === 'available' ? 'success' : 'warning' }}"></i>
+                                                                 </button>
+                                                             </form>
+
+                                                            <!-- Edit Button (Direct Page) -->
+                                                            <a href="{{ route('restaurant.dining-setup.tables.edit', $table->id) }}"
+                                                               class="btn btn-sm btn-light border p-1 px-2 text-primary"
+                                                               title="Edit Table">
+                                                                <i class="feather-edit-2"></i>
+                                                            </a>
+
+
+                                                            <!-- Delete Button -->
+                                                            <form action="{{ route('restaurant.dining-setup.tables.destroy', $table->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete table {{ $table->table_number }}?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-light border p-1 px-2 text-danger" title="Delete Table">
+                                                                    <i class="feather-trash-2"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                @if($tables->hasPages())
+                                    <div class="d-flex justify-content-end mt-3">
+                                        {{ $tables->links() }}
+                                    </div>
+                                @endif
+                            @endif
                         @endif
                     </div>
 

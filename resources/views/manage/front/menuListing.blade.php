@@ -159,6 +159,12 @@
                             Book a table
                         </button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu-list"
+                            type="button" role="tab">
+                            Menu
+                        </button>
+                    </li>
                 </ul>
 
                 <div class="tab-content" id="myTabContent">
@@ -658,6 +664,29 @@
 
                     {{-- 5. BOOK A TABLE TAB --}}
                     <div class="tab-pane fade" id="book" role="tabpanel" tabindex="0">
+                        @php
+                            $allFrontSlots = $restaurant ? $restaurant->generateTimeSlots() : [];
+                            $lunchSlots = array_values(array_filter($allFrontSlots, fn($s) => ($s['meal'] ?? 'dinner') === 'lunch'));
+                            $dinnerSlots = array_values(array_filter($allFrontSlots, fn($s) => ($s['meal'] ?? 'dinner') === 'dinner'));
+
+                            $hasLunch = !empty($lunchSlots);
+                            $hasDinner = !empty($dinnerSlots);
+
+                            $hasTables = $restaurant && $restaurant->tables()->where('status', \App\Models\RestaurantTable::STATUS_AVAILABLE)->count() > 0;
+
+                            $defaultTime = '19:00';
+                            $defaultMeal = 'dinner';
+                            if ($hasDinner) {
+                                $has19 = in_array('19:00', array_column($dinnerSlots, 'time'));
+                                $defaultTime = $has19 ? '19:00' : $dinnerSlots[0]['time'];
+                                $defaultMeal = 'dinner';
+                            } elseif ($hasLunch) {
+                                $defaultTime = $lunchSlots[0]['time'];
+                                $defaultMeal = 'lunch';
+                            }
+                        @endphp
+
+                        @if (($hasLunch || $hasDinner) && $hasTables)
                         <div class="row justify-content-center">
                             <div class="col-lg-8 col-md-10 col-12">
                                 <div class="product-details-box">
@@ -708,26 +737,6 @@
                                                             @endfor
                                                         </select>
                                                     </div>
-
-                                                    @php
-                                                        $allFrontSlots = $restaurant ? $restaurant->generateTimeSlots() : [];
-                                                        $lunchSlots = array_values(array_filter($allFrontSlots, fn($s) => ($s['meal'] ?? 'dinner') === 'lunch'));
-                                                        $dinnerSlots = array_values(array_filter($allFrontSlots, fn($s) => ($s['meal'] ?? 'dinner') === 'dinner'));
-
-                                                        $hasLunch = !empty($lunchSlots);
-                                                        $hasDinner = !empty($dinnerSlots);
-
-                                                        $defaultTime = '19:00';
-                                                        $defaultMeal = 'dinner';
-                                                        if ($hasDinner) {
-                                                            $has19 = in_array('19:00', array_column($dinnerSlots, 'time'));
-                                                            $defaultTime = $has19 ? '19:00' : $dinnerSlots[0]['time'];
-                                                            $defaultMeal = 'dinner';
-                                                        } elseif ($hasLunch) {
-                                                            $defaultTime = $lunchSlots[0]['time'];
-                                                            $defaultMeal = 'lunch';
-                                                        }
-                                                    @endphp
 
                                                     <!-- 3. Select Time / Meal -->
                                                     <div class="zomato-dropdown-item" id="zomatoTimeBox" title="Click to change meal/time">
@@ -1066,8 +1075,42 @@
                                 </div>
                             </div>
                         </div>
+                    @else
+                        <div class="booking-unavailable-msg">
+                            <div class="booking-unavailable-icon">
+                                <i class="ri-calendar-close-line"></i>
+                            </div>
+                            <h4>Booking Not Available</h4>
+                            <p>Table booking is not available at this time. Please try again later or contact the restaurant directly.</p>
+                        </div>
+                    @endif
                     </div>
 
+                    {{-- 6. MENU TAB --}}
+                    <div class="tab-pane fade" id="menu-list" role="tabpanel" tabindex="0">
+                        <div class="row g-3">
+                            @if ($restaurant && $restaurant->menus && $restaurant->menus->isNotEmpty())
+                                @foreach ($restaurant->menus as $menu)
+                                    <div class="col-lg-3 col-6">
+                                        <div class="menu-image-box">
+                                            <img class="img-fluid rounded menu-thumb"
+                                                src="{{ asset($menu->image) }}"
+                                                alt="{{ $menu->name }}"
+                                                data-full="{{ asset($menu->image) }}"
+                                                data-name="{{ $menu->name }}">
+                                            @if ($menu->name)
+                                                <span class="menu-thumb-label">{{ $menu->name }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="col-12">
+                                    <p class="content-color">No menu available.</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -1075,10 +1118,131 @@
     </section>
     <!-- tab section end -->
 
+    {{-- Menu Image Zoom Modal --}}
+    <div class="modal fade" id="menuZoomModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content menu-zoom-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="menuZoomModalTitle">Menu</h5>
+                    <div class="menu-zoom-controls">
+                        <button type="button" class="btn menu-zoom-btn" id="menuZoomIn" title="Zoom in"><i class="ri-zoom-in-line"></i></button>
+                        <button type="button" class="btn menu-zoom-btn" id="menuZoomOut" title="Zoom out"><i class="ri-zoom-out-line"></i></button>
+                        <button type="button" class="btn menu-zoom-btn" id="menuZoomReset" title="Reset zoom"><i class="ri-restart-line"></i></button>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="menu-zoom-viewport" id="menuZoomViewport">
+                        <img src="" alt="Menu" class="menu-zoom-image" id="menuZoomImage">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <style>
         /* =======================================
            Zomato-style Dining Offers & Overview UI
         ======================================= */
+
+        /* Menu Images Grid */
+        .menu-image-box {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px;
+            border: 1px solid #f1f1f1;
+            cursor: zoom-in;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+        .menu-image-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+        }
+        .menu-thumb {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            display: block;
+            transition: transform .3s ease;
+        }
+        .menu-image-box:hover .menu-thumb {
+            transform: scale(1.05);
+        }
+        .menu-thumb-label {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 22px 12px 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(to top, rgba(0,0,0,0.65), transparent);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Menu Zoom Modal */
+        .menu-zoom-modal .modal-header {
+            border-bottom: 1px solid #f1f1f1;
+            padding: 12px 18px;
+        }
+        .menu-zoom-controls {
+            display: inline-flex;
+            gap: 6px;
+        }
+        .menu-zoom-btn {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #334155;
+            border-radius: 8px;
+            font-size: 17px;
+            transition: all .2s ease;
+        }
+        .menu-zoom-btn:hover {
+            background: #fc8019;
+            border-color: #fc8019;
+            color: #ffffff;
+        }
+        .menu-zoom-viewport {
+            height: 72vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f7f5 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23ececec" d="M0 0h12v12H0zM12 12h12v12H12z"/></svg>');
+            background-size: 24px 24px;
+            position: relative;
+            border-radius: 10px;
+            cursor: grab;
+        }
+        .menu-zoom-viewport:active {
+            cursor: grabbing;
+        }
+        .menu-zoom-image {
+            max-width: 100%;
+            max-height: 100%;
+            transform-origin: center center;
+            transition: transform .12s ease-out;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .menu-zoom-modal .modal-body {
+            padding: 14px;
+            background: #f8f7f5;
+        }
+        .menu-zoom-modal .btn-close {
+            font-size: 12px;
+        }
+
         .dining-offers-main-card {
             background: #ffffff;
             border: 1px solid #eef2f6;
@@ -1373,6 +1537,41 @@
             margin-top: 14px;
             color: #999;
             font-size: 12px;
+        }
+
+        /* Booking Unavailable Message */
+        .booking-unavailable-msg {
+            text-align: center;
+            padding: 48px 24px;
+            background: #fff;
+            border: 1px solid #f1f1f1;
+            border-radius: 16px;
+        }
+        .booking-unavailable-icon {
+            width: 62px;
+            height: 62px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #fff1ee;
+            color: #ef4f5f;
+            font-size: 30px;
+        }
+        .booking-unavailable-msg h4 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+        .booking-unavailable-msg p {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 0;
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Booking Offer Cards */
@@ -1706,6 +1905,80 @@
     <script src="{{ asset('admin/assets/vendors/js/sweetalert2.min.js') }}"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
+        /* ===== Menu Image Zoom Lightbox ===== */
+        $(function () {
+            var zoomScale = 1;
+            var zoomMin = 1;
+            var zoomMax = 4;
+            var zoomStep = 0.25;
+            var zoomImage = $('#menuZoomImage');
+            var zoomViewport = $('#menuZoomViewport');
+            var zoomModal = $('#menuZoomModal');
+
+            function zoomApply() {
+                zoomImage.css('transform', 'scale(' + zoomScale + ')');
+            }
+
+            function zoomReset() {
+                zoomScale = 1;
+                zoomApply();
+            }
+
+            function zoomSet(scale) {
+                zoomScale = Math.min(zoomMax, Math.max(zoomMin, scale));
+                zoomApply();
+            }
+
+            zoomModal.on('show.bs.modal', function (event) {
+                var img = $(event.relatedTarget);
+                zoomImage.attr('src', img.data('full'));
+                zoomImage.attr('alt', img.data('name') || 'Menu');
+                $('#menuZoomModalTitle').text(img.data('name') || 'Menu');
+                zoomReset();
+                zoomImage.css('left', '0').css('top', '0');
+            });
+
+            zoomModal.on('hidden.bs.modal', function () {
+                zoomImage.attr('src', '');
+                zoomReset();
+            });
+
+            $('#menuZoomIn').on('click', function () { zoomSet(zoomScale + zoomStep); });
+            $('#menuZoomOut').on('click', function () { zoomSet(zoomScale - zoomStep); });
+            $('#menuZoomReset').on('click', zoomReset);
+
+            zoomViewport.on('wheel', function (e) {
+                e.preventDefault();
+                zoomSet(zoomScale + (e.originalEvent.deltaY < 0 ? zoomStep : -zoomStep));
+            });
+
+            var dragging = false;
+            var startX = 0, startY = 0, imgOffsetX = 0, imgOffsetY = 0;
+
+            zoomViewport.on('mousedown', function (e) {
+                if (zoomScale <= 1) return;
+                dragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                var pos = zoomImage.position();
+                imgOffsetX = pos.left;
+                imgOffsetY = pos.top;
+            });
+
+            zoomViewport.on('mousemove', function (e) {
+                if (!dragging) return;
+                e.preventDefault();
+                zoomImage.css('left', (imgOffsetX + (e.clientX - startX)) + 'px');
+                zoomImage.css('top', (imgOffsetY + (e.clientY - startY)) + 'px');
+            });
+
+            $(window).on('mouseup', function () { dragging = false; });
+
+            $(document).on('click', '.menu-thumb', function () {
+                zoomModal.modal('show', this);
+            });
+        });
+
         $(function () {
 
             var SYMBOL = window.CURRENCY_SYMBOL || '₹';
@@ -2515,7 +2788,7 @@
                                             });
                                         },
                                         complete: function () {
-                                            $submit.prop('disabled', false);
+                                            $submit.prop('disabled', false).html('<i class="ri-calendar-check-line me-2"></i><span id="bookSubmitBtnText">Request Booking</span>');
                                             updateCoverChargeUI();
                                         }
                                     });
@@ -2594,7 +2867,7 @@
                             });
                         },
                         complete: function () {
-                            $submit.prop('disabled', false);
+                            $submit.prop('disabled', false).html('<i class="ri-calendar-check-line me-2"></i><span id="bookSubmitBtnText">Request Booking</span>');
                             updateCoverChargeUI();
                         }
                     });

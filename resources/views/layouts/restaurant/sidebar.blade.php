@@ -99,6 +99,29 @@
                 </li>
 
                 <!-- ============================================= -->
+                <!-- Menus -->
+                <!-- ============================================= -->
+                <li class="nxl-item nxl-hasmenu {{ request()->routeIs('restaurant.menus.*') ? 'active' : '' }}">
+                    <a href="javascript:void(0);" class="nxl-link">
+                        <span class="nxl-micon">
+                            <i class="feather-book-open"></i>
+                        </span>
+                        <span class="nxl-mtext">Menus</span>
+                        <span class="nxl-arrow">
+                            <i class="feather-chevron-right"></i>
+                        </span>
+                    </a>
+                    <ul class="nxl-submenu">
+                        <li class="nxl-item {{ request()->routeIs('restaurant.menus.index') ? 'active' : '' }}">
+                            <a href="{{ route('restaurant.menus.index') }}" class="nxl-link">All Menus</a>
+                        </li>
+                        <li class="nxl-item {{ request()->routeIs('restaurant.menus.create') ? 'active' : '' }}">
+                            <a href="{{ route('restaurant.menus.create') }}" class="nxl-link">Upload Menu</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- ============================================= -->
                 <!-- Earnings -->
                 <!-- ============================================= -->
                 <li class="nxl-item {{ request()->routeIs('restaurant.earnings.*') ? 'active' : '' }}">

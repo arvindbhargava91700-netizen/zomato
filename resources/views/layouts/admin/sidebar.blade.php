@@ -63,6 +63,11 @@
                                 <i class="feather-award me-2"></i> Brands
                             </a>
                         </li>
+                        <li class="nxl-item {{ request()->routeIs('admin.restaurant-features.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.restaurant-features.index') }}" class="nxl-link">
+                                <i class="feather-star me-2"></i> Restaurant Features
+                            </a>
+                        </li>
                         <li class="nxl-item {{ request()->routeIs('admin.nightlife-banners.*') ? 'active' : '' }}">
                             <a href="{{ route('admin.nightlife-banners.index') }}" class="nxl-link">
                                 <i class="feather-moon me-2"></i> Nightlife Banners

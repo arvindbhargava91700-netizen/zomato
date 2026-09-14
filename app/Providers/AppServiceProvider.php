@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Brand;
 use App\Models\CompanySetting;
 use App\Models\Setting;
 use Illuminate\Pagination\Paginator;
@@ -49,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('companyFavicon', $this->companyFavicon());
             $view->with('companySetting', CompanySetting::firstSetting());
             $view->with('socialLinks', $this->socialLinks());
+            $view->with('topBrands', Brand::active()->orderBy('name')->take(5)->get());
         });
     }
 

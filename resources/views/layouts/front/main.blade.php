@@ -5,9 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="zomo">
-    <meta name="keywords" content="zomo">
-    <meta name="author" content="zomo">
+    <meta name="description" content="{{ $companyName }}">
+    <meta name="keywords" content="{{ $companyName }}">
+    <meta name="author" content="{{ $companyName }}">
     <link rel="icon" href="{{ asset($companyFavicon) }}" type="image/x-icon">
     <title>@yield('title', $companyName)</title>
     <link rel="apple-touch-icon" href="{{ asset($companyFavicon) }}">
@@ -15,7 +15,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="zomo">
+    <meta name="apple-mobile-web-app-title" content="{{ $companyName }}">
     <meta name="msapplication-TileImage" content="{{ asset($companyFavicon) }}">
     <meta name="msapplication-TileColor" content="#FFFFFF">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

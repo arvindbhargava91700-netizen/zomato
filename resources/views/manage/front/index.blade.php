@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="container text-center position-relative">
-            <h1>Zomo</h1>
+            <h1>{{ $companyName }}</h1>
             <h2>Discover restaurants that deliver near you</h2>
             <div class="search-section">
                 <form action="{{ route('public.restaurants.index') }}" method="GET" class="auth-form search-head" id="restaurant-search-form">
@@ -1025,7 +1025,7 @@
                     <img class="img-fluid phone" src="front/assets/images/service-phone.png" alt="app-phone">
                 </div>
                 <div class="app-content">
-                    <h2>Zomo App : Online & Mobile Ordering</h2>
+                    <h2>{{ $companyName }} App : Online & Mobile Ordering</h2>
                     <h5>
                         Get the app for free and place takeout orders online whenever you
                         want.

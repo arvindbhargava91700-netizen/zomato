@@ -102,6 +102,8 @@ class RestaurantController extends Controller
         $data['pet_friendly'] = $request->boolean('pet_friendly');
         $data['outdoor_seating'] = $request->boolean('outdoor_seating');
         $data['serves_alcohol'] = $request->boolean('serves_alcohol');
+        $data['features'] = $request->input('features', []);
+        $this->syncFeatureColumns($data, $request);
         $data['created_by'] = Auth::guard('admin')->id();
 
         Restaurant::create($data);
@@ -175,11 +177,33 @@ class RestaurantController extends Controller
         $data['pet_friendly'] = $request->boolean('pet_friendly');
         $data['outdoor_seating'] = $request->boolean('outdoor_seating');
         $data['serves_alcohol'] = $request->boolean('serves_alcohol');
+        $data['features'] = $request->input('features', []);
+        $this->syncFeatureColumns($data, $request);
         $data['updated_by'] = Auth::guard('admin')->id();
 
         $restaurant->update($data);
 
         return redirect()->route('admin.restaurants.index')->with('success', 'Restaurant details updated successfully.');
+    }
+
+    /**
+     * Keep the dedicated boolean feature columns in sync with the JSON features
+     * values selected on the form (features: the restaurant_features IDs).
+     */
+    protected function syncFeatureColumns(array &$data, Request $request): void
+    {
+        $featureIds = is_array($data['features'] ?? null) ? array_map('intval', $data['features']) : [];
+        $slugs = \App\Models\RestaurantFeature::whereIn('id', $featureIds)->pluck('slug');
+
+        $booleanColumns = [
+            'is_pure_veg', 'credit_card', 'buffet', 'happy_hours', 'serves_alcohol',
+            'pubs_bars', 'fine_dining', 'wifi', 'cafes', 'hygiene_rated',
+            'online_bookings', 'outdoor_seating',
+        ];
+
+        foreach ($booleanColumns as $column) {
+            $data[$column] = $slugs->contains($column) || $slugs->contains(str_replace('_', '-', $column));
+        }
     }
 
     /**

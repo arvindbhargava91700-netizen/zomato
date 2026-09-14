@@ -181,6 +181,25 @@
                     </div>
                 </div>
             @endif
+            @php $features = $restaurant->featureLabels(); @endphp
+            @if(!empty($restaurant->features))
+                <div class="col-12">
+                    <div class="card stretch stretch-full border-0 shadow-sm rounded-3">
+                        <div class="card-header bg-white py-3 border-bottom">
+                            <h5 class="card-title mb-0 fw-bold">Features & Amenities</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($features as $feature)
+                                    <span class="badge bg-light text-dark border px-3 py-2 fs-12">
+                                        <i class="feather-check-circle text-success me-1"></i>{{ $feature }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
     <!-- [ Main Content ] end -->

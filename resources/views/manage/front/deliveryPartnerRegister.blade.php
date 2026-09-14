@@ -625,7 +625,7 @@
             <div class="vendor-cta d-flex align-items-center justify-content-between flex-wrap gap-4">
                 <div class="position-relative">
                     <h2>Ready to start delivering?</h2>
-                    <p>Join Zomo today and start earning with every delivery you make.</p>
+                    <p>Join {{ $companyName }} today and start earning with every delivery you make.</p>
                 </div>
                 <a href="#register-form" class="btn btn-white mt-0">
                     <i class="ri-arrow-right-up-line me-2"></i>Get Started Now

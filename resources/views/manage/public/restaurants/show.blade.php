@@ -39,6 +39,26 @@
         </div>
     </div>
 
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-dark"><i class="feather-star me-2 text-danger"></i>Features</h5>
+        </div>
+        <div class="card-body p-4">
+            @php $features = $restaurant->featureLabels(); @endphp
+            @if(count($features) > 0)
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach($features as $feature)
+                        <span class="badge bg-light text-dark border px-3 py-2 fs-12">
+                            <i class="feather-check-circle text-success me-1"></i>{{ $feature }}
+                        </span>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-muted mb-0">No features added yet.</p>
+            @endif
+        </div>
+    </div>
+
     <div class="row g-4">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-3 h-100">

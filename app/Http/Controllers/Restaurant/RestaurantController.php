@@ -98,6 +98,8 @@ class RestaurantController extends Controller
             'commission_percentage' => ['nullable', 'numeric', 'between:0,100'],
             'dining_commission_percentage' => ['nullable', 'numeric', 'between:0,100'],
             'is_pure_veg' => ['nullable', 'boolean'],
+            'features' => ['nullable', 'array'],
+            'features.*' => ['nullable', 'string'],
             'gst_number' => ['nullable', 'string', 'max:50'],
             'fssai_number' => ['nullable', 'string', 'max:50'],
             'pan_number' => ['nullable', 'string', 'max:20'],
@@ -123,6 +125,8 @@ class RestaurantController extends Controller
         $data['user_id'] = $owner->id;
         $data['restaurant_slug'] = $request->restaurant_slug ?? Str::slug($request->restaurant_name);
         $data['is_pure_veg'] = $request->boolean('is_pure_veg');
+        $data['features'] = $request->input('features', []);
+        $this->syncFeatureColumns($data);
         $data['approval_status'] = 'pending';
         $data['created_by'] = $owner->id;
 
@@ -204,6 +208,8 @@ class RestaurantController extends Controller
             'commission_percentage' => ['nullable', 'numeric', 'between:0,100'],
             'dining_commission_percentage' => ['nullable', 'numeric', 'between:0,100'],
             'is_pure_veg' => ['nullable', 'boolean'],
+            'features' => ['nullable', 'array'],
+            'features.*' => ['nullable', 'string'],
             'gst_number' => ['nullable', 'string', 'max:50'],
             'fssai_number' => ['nullable', 'string', 'max:50'],
             'pan_number' => ['nullable', 'string', 'max:20'],
@@ -233,6 +239,8 @@ class RestaurantController extends Controller
         }
 
         $data['is_pure_veg'] = $request->boolean('is_pure_veg');
+        $data['features'] = $request->input('features', []);
+        $this->syncFeatureColumns($data);
 
         if ($request->hasFile('logo')) {
             if ($restaurant->logo && File::exists(public_path($restaurant->logo))) {
@@ -266,6 +274,26 @@ class RestaurantController extends Controller
         $restaurant->update($data);
 
         return redirect()->route('restaurant.restaurants.index')->with('success', 'Restaurant updated successfully.');
+    }
+
+    /**
+     * Keep the dedicated boolean feature columns in sync with the JSON features
+     * values selected on the form (features: the restaurant_features IDs).
+     */
+    protected function syncFeatureColumns(array &$data): void
+    {
+        $featureIds = is_array($data['features'] ?? null) ? array_map('intval', $data['features']) : [];
+        $slugs = \App\Models\RestaurantFeature::whereIn('id', $featureIds)->pluck('slug');
+
+        $booleanColumns = [
+            'is_pure_veg', 'credit_card', 'buffet', 'happy_hours', 'serves_alcohol',
+            'pubs_bars', 'fine_dining', 'wifi', 'cafes', 'hygiene_rated',
+            'online_bookings', 'outdoor_seating',
+        ];
+
+        foreach ($booleanColumns as $column) {
+            $data[$column] = $slugs->contains($column) || $slugs->contains(str_replace('_', '-', $column));
+        }
     }
 
     /**

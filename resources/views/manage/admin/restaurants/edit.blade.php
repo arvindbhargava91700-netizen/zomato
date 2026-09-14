@@ -159,7 +159,7 @@
                         </div>
                     </div>
 
-                    <!-- Section 3.1: Restaurant Amenities -->
+                    <!-- Section 3.1: Restaurant Features & Amenities -->
                     <div class="row g-3 mb-4">
                         <div class="col-md-4">
                             <div class="form-check">
@@ -167,18 +167,9 @@
                                 <label class="form-check-label fw-semibold" for="pet_friendly"><i class="feather-heart me-1 text-danger"></i> Pet Friendly</label>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input type="checkbox" name="outdoor_seating" id="outdoor_seating" class="form-check-input" value="1" {{ old('outdoor_seating', $restaurant->outdoor_seating) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-semibold" for="outdoor_seating"><i class="feather-sun me-1 text-warning"></i> Outdoor Seating</label>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input type="checkbox" name="serves_alcohol" id="serves_alcohol" class="form-check-input" value="1" {{ old('serves_alcohol', $restaurant->serves_alcohol) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-semibold" for="serves_alcohol"><i class="feather-wine me-1 text-danger"></i> Serves Alcohol</label>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="mb-4">
+                        @include('manage.partials.restaurant-features', ['selected' => old('features', $restaurant->features ?? [])])
                     </div>
 
                     <!-- Section 4: Licenses & Branding -->

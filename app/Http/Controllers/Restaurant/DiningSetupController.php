@@ -32,14 +32,26 @@ class DiningSetupController extends Controller
                 ->with('error', 'No restaurant profile found.');
         }
 
-        $tables = $restaurant->tables()->orderBy('table_number')->get();
+        // All tables for metrics (unfiltered)
+        $allTables = $restaurant->tables()->orderByRaw('LENGTH(table_number), table_number')->get();
+        $totalTables = $allTables->count();
+        $availableTablesCount = $allTables->where('status', RestaurantTable::STATUS_AVAILABLE)->count();
+        $maintenanceTablesCount = $allTables->where('status', RestaurantTable::STATUS_MAINTENANCE)->count();
+        $inactiveTablesCount = $allTables->where('status', RestaurantTable::STATUS_INACTIVE)->count();
+        $totalSeatingCapacity = $allTables->where('status', RestaurantTable::STATUS_AVAILABLE)->sum('capacity');
 
-        // Calculate table metrics
-        $totalTables = $tables->count();
-        $availableTablesCount = $tables->where('status', RestaurantTable::STATUS_AVAILABLE)->count();
-        $maintenanceTablesCount = $tables->where('status', RestaurantTable::STATUS_MAINTENANCE)->count();
-        $inactiveTablesCount = $tables->where('status', RestaurantTable::STATUS_INACTIVE)->count();
-        $totalSeatingCapacity = $tables->where('status', RestaurantTable::STATUS_AVAILABLE)->sum('capacity');
+        // Filtered + Paginated table list
+        $tablesQuery = $restaurant->tables();
+
+        if ($request->filled('search')) {
+            $tablesQuery->where('table_number', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status') && in_array($request->status, [RestaurantTable::STATUS_AVAILABLE, RestaurantTable::STATUS_MAINTENANCE, RestaurantTable::STATUS_INACTIVE], true)) {
+            $tablesQuery->where('status', $request->status);
+        }
+
+        $tables = $tablesQuery->orderByRaw('LENGTH(table_number), table_number')->paginate(10)->withQueryString();
 
         // Target Date for Slot Inspector
         $selectedDate = $request->query('date', Carbon::today()->toDateString());

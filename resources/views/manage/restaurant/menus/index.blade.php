@@ -1,6 +1,6 @@
 @extends('layouts.restaurant.main')
 
-@section('title', 'Food Items - Zomato Partner')
+@section('title', 'Menus - Zomato Partner')
 
 @section('content')
     <div class="nxl-content">
@@ -8,17 +8,17 @@
         <div class="page-header">
             <div class="page-header-left d-flex align-items-center">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">My Food Menu</h5>
+                    <h5 class="m-b-10">My Menus</h5>
                 </div>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('restaurant.dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item">Food Items</li>
+                    <li class="breadcrumb-item">Menus</li>
                 </ul>
             </div>
             <div class="page-header-right ms-auto d-flex align-items-center gap-2">
-                <a href="{{ route('restaurant.foods.create') }}" class="btn btn-danger text-white fw-semibold"
+                <a href="{{ route('restaurant.menus.create') }}" class="btn btn-danger text-white fw-semibold"
                     style="background-color: #cb202d; border: none;">
-                    <i class="feather-plus me-1"></i> Add Food Item
+                    <i class="feather-plus me-1"></i> Upload New Menu
                 </a>
             </div>
         </div>
@@ -37,38 +37,28 @@
             <!-- Filter Card -->
             <div class="card stretch stretch-full mb-4 border-0 shadow-sm rounded-3">
                 <div class="card-body p-3">
-                    <form action="{{ route('restaurant.foods.index') }}" method="GET" class="row g-2 align-items-center">
-                        <div class="col-md-4">
+                    <form action="{{ route('restaurant.menus.index') }}" method="GET" class="row g-2 align-items-center">
+                        <div class="col-md-5">
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0"><i
                                         class="feather-search text-muted"></i></span>
                                 <input type="text" name="search" class="form-control border-start-0"
-                                    placeholder="Search item name or SKU..." value="{{ request('search') }}">
+                                    placeholder="Search menu name..." value="{{ request('search') }}">
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <select name="category_id" class="form-select">
-                                <option value="">All Categories</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                @endforeach
+                            <select name="status" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <select name="food_type" class="form-select">
-                                <option value="">All Types</option>
-                                <option value="veg" {{ request('food_type') === 'veg' ? 'selected' : '' }}>Veg</option>
-                                <option value="non_veg" {{ request('food_type') === 'non_veg' ? 'selected' : '' }}>Non-Veg
-                                </option>
-                                <option value="egg" {{ request('food_type') === 'egg' ? 'selected' : '' }}>Egg</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 d-flex gap-2">
+                        <div class="col-md-4 d-flex gap-2">
                             <button type="submit" class="btn btn-primary fw-semibold px-3">Filter</button>
-                            <a href="{{ route('restaurant.foods.index') }}"
+                            <a href="{{ route('restaurant.menus.index') }}"
                                 class="btn btn-light border text-secondary fw-semibold">Reset</a>
-                            <a href="{{ route('restaurant.foods.index', ['trashed' => 1]) }}"
-                                class="btn btn-outline-danger fw-semibold" title="View Trashed Foods">
+                            <a href="{{ route('restaurant.menus.index', ['trashed' => 1]) }}"
+                                class="btn btn-outline-danger fw-semibold" title="View Trashed Menus">
                                 <i class="feather-trash-2 me-1"></i> Trashed
                             </a>
                         </div>
@@ -79,92 +69,52 @@
             <!-- Table Card -->
             <div class="card stretch stretch-full border-0 shadow-sm rounded-3">
                 <div class="card-header border-bottom py-3">
-                    <h5 class="card-title mb-0 fw-bold">Menu for {{ $restaurant->restaurant_name }}</h5>
+                    <h5 class="card-title mb-0 fw-bold">Menus for {{ $restaurant->restaurant_name }}</h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="customerList">
+                        <table class="table table-hover align-middle mb-0" >
                             <thead class="table-light">
                                 <tr>
-                                    <th class="ps-4">Item</th>
-                                    <th>Category</th>
-                                    <th>Type</th>
-                                    <th>Price</th>
-                                    <th>Badges</th>
+                                    <th class="ps-4">Menu</th>
+                                    <th>Images</th>
                                     <th>Status</th>
+                                    <th>Order</th>
                                     <th class="text-end pe-4">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($foods as $food)
+                                @forelse($menus as $menu)
                                     <tr>
                                         <td class="ps-4">
                                             <div class="d-flex align-items-center gap-3">
-                                                @if($food->image)
-                                                    <img src="{{ asset($food->image) }}" alt="Food" class="rounded border"
+                                                @if($menu->image)
+                                                    <img src="{{ asset($menu->image) }}" alt="Menu" class="rounded border"
                                                         style="width: 50px; height: 50px; object-fit: cover;">
                                                 @else
                                                     <div class="rounded bg-light d-flex align-items-center justify-content-center border"
                                                         style="width: 50px; height: 50px;">
-                                                        <i class="feather-grid text-muted fs-4"></i>
+                                                        <i class="feather-book text-muted fs-4"></i>
                                                     </div>
                                                 @endif
                                                 <div>
-                                                    <div class="fw-bold text-dark fs-6">{{ $food->name }}</div>
-                                                    <span class="text-muted fs-12">SKU: {{ $food->sku ?? 'N/A' }}</span>
+                                                    <div class="fw-bold text-dark fs-6">{{ $menu->name }}</div>
+                                                    <span class="text-muted fs-12">Slug: {{ $menu->slug }}</span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            <span
-                                                class="badge bg-soft-info text-info fw-semibold fs-12">{{ $food->category->name ?? 'N/A' }}</span>
+                                            <span class="badge bg-soft-info text-info fw-semibold fs-12">
+                                                <i class="feather-image me-1"></i> {{ $menu->image ? 'Image Uploaded' : 'No Image' }}
+                                            </span>
                                         </td>
                                         <td>
-                                            @if($food->food_type === 'veg')
-                                                <span class="badge bg-success"><i class="feather-disc me-1"></i> Veg</span>
-                                            @elseif($food->food_type === 'non_veg')
-                                                <span class="badge bg-danger"><i class="feather-disc me-1"></i> Non-Veg</span>
-                                            @else
-                                                <span class="badge bg-warning text-dark"><i class="feather-disc me-1"></i>
-                                                    Egg</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($food->discount_price)
-                                                <div class="fw-bold text-dark">
-                                                    ₹{{ number_format($food->discount_price, 2) }}
-                                                </div>
-                                                <small class="text-success text-decoration-line-through">
-                                                    ₹{{ number_format($food->base_price, 2) }}
-                                                </small>
-                                            @else
-                                                <div class="fw-bold text-dark">
-                                                    ₹{{ number_format($food->base_price, 2) }}
-                                                </div>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-1 flex-wrap">
-                                                @if($food->is_featured)
-                                                    <span class="badge bg-warning text-dark fs-10"
-                                                        title="Featured Item">Featured</span>
-                                                @endif
-                                                @if($food->is_recommended)
-                                                    <span class="badge bg-info text-white fs-10"
-                                                        title="Chef Recommended">Recommended</span>
-                                                @endif
-                                                @if($food->is_spicy)
-                                                    <span class="badge bg-danger text-white fs-10" title="Spicy Dish">Spicy</span>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td>
-                                            @if(!$food->trashed())
-                                                <form action="{{ route('restaurant.foods.toggle-status', $food->id) }}"
+                                            @if(!$menu->trashed())
+                                                <form action="{{ route('restaurant.menus.toggle-status', $menu->id) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf
                                                     @method('PATCH')
-                                                    @if($food->status === 'active')
+                                                    @if($menu->status === 'active')
                                                         <button type="submit"
                                                             class="btn btn-sm btn-success border-0 px-3 rounded-pill fw-semibold"
                                                             title="Click to Deactivate">Active</button>
@@ -178,22 +128,25 @@
                                                 <span class="badge bg-danger">Soft Deleted</span>
                                             @endif
                                         </td>
+                                        <td>
+                                            <span class="fw-bold text-dark">{{ $menu->sort_order }}</span>
+                                        </td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex align-items-center justify-content-end gap-1">
-                                                @if(!$food->trashed())
-                                                    <a href="{{ route('restaurant.foods.show', $food->id) }}"
+                                                @if(!$menu->trashed())
+                                                    <a href="{{ route('restaurant.menus.show', $menu->id) }}"
                                                         class="btn btn-sm btn-light border text-info p-2 rounded-2"
                                                         data-bs-toggle="tooltip" title="View Details">
                                                         <i class="feather-eye"></i>
                                                     </a>
-                                                    <a href="{{ route('restaurant.foods.edit', $food->id) }}"
+                                                    <a href="{{ route('restaurant.menus.edit', $menu->id) }}"
                                                         class="btn btn-sm btn-light border text-primary p-2 rounded-2"
                                                         data-bs-toggle="tooltip" title="Edit">
                                                         <i class="feather-edit"></i>
                                                     </a>
-                                                    <form action="{{ route('restaurant.foods.destroy', $food->id) }}" method="POST"
+                                                    <form action="{{ route('restaurant.menus.destroy', $menu->id) }}" method="POST"
                                                         class="d-inline"
-                                                        onsubmit="return confirm('Are you sure you want to soft delete this food item?');">
+                                                        onsubmit="return confirm('Are you sure you want to soft delete this menu?');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
@@ -203,7 +156,7 @@
                                                         </button>
                                                     </form>
                                                 @else
-                                                    <form action="{{ route('restaurant.foods.restore', $food->id) }}" method="POST"
+                                                    <form action="{{ route('restaurant.menus.restore', $menu->id) }}" method="POST"
                                                         class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-success p-2 rounded-2"
@@ -211,9 +164,9 @@
                                                             <i class="feather-rotate-ccw"></i> Restore
                                                         </button>
                                                     </form>
-                                                    <form action="{{ route('restaurant.foods.force-delete', $food->id) }}"
+                                                    <form action="{{ route('restaurant.menus.force-delete', $menu->id) }}"
                                                         method="POST" class="d-inline"
-                                                        onsubmit="return confirm('Are you sure you want to permanently delete this food item?');">
+                                                        onsubmit="return confirm('Are you sure you want to permanently delete this menu?');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-danger p-2 rounded-2"
@@ -226,17 +179,27 @@
                                         </td>
                                     </tr>
                                 @empty
-                                  
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="text-center py-5 text-muted">
+                                                <i class="feather-book-open fs-1 text-secondary opacity-50 d-block mb-2"></i>
+                                                <p class="mb-2 fw-medium">No menus uploaded yet.</p>
+                                                <a href="{{ route('restaurant.menus.create') }}" class="btn btn-danger btn-sm text-white fw-semibold" style="background-color: #cb202d; border: none;">
+                                                    <i class="feather-upload me-1"></i> Upload your first menu
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                @if($foods->hasPages())
+                @if($menus->hasPages())
                     <div class="card-footer bg-white py-3 border-top">
                         <div class="d-flex justify-content-end">
-                            {{ $foods->links() }}
+                            {{ $menus->links() }}
                         </div>
                     </div>
                 @endif

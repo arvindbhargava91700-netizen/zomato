@@ -15,6 +15,23 @@ class Restaurant extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Get a flat list of the selected feature labels for this restaurant.
+     * The restaurant's `features` JSON column holds restaurant_features IDs.
+     *
+     * @return array<int, string>
+     */
+    public function featureLabels(): array
+    {
+        if (empty($this->features)) {
+            return [];
+        }
+
+        $features = RestaurantFeature::whereIn('id', $this->features)->orderBy('sort_order')->pluck('name');
+
+        return $features->all();
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -60,6 +77,7 @@ protected $fillable = [
         'pet_friendly',
         'outdoor_seating',
         'serves_alcohol',
+        'features',
         'credit_card',
         'buffet',
         'happy_hours',
@@ -84,6 +102,7 @@ protected $fillable = [
     protected function casts(): array
     {
         return [
+            'features' => 'array',
             'is_pure_veg' => 'boolean',
             'pet_friendly' => 'boolean',
             'outdoor_seating' => 'boolean',
