@@ -18,9 +18,10 @@ class SettingController extends Controller
      */
     public function accountSettings(): View
     {
+        $user = auth()->user();
         $setting = CompanySetting::firstSetting();
 
-        return view('manage.delivery-partner.settings.account', compact('setting'));
+        return view('manage.delivery-partner.settings.account', compact('user', 'setting'));
     }
 
     /**
@@ -31,6 +32,10 @@ class SettingController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'bank_name' => 'nullable|string|max:255',
+            'bank_account' => 'nullable|string|max:50',
+            'ifsc_code' => 'nullable|string|max:20',
             'password' => 'required|string',
             'new_password' => 'required|string|min:8|same:password_confirmation',
             'password_confirmation' => 'required|string|min:8',
@@ -45,6 +50,10 @@ class SettingController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'bank_name' => $request->bank_name,
+            'bank_account' => $request->bank_account,
+            'ifsc_code' => $request->ifsc_code,
             'password' => Hash::make($request->new_password),
         ]);
 

@@ -135,6 +135,18 @@
                         @endif
                     </a>
                 </li>
+                
+                <!-- ============================================= -->
+                <!-- Withdrawals -->
+                <!-- ============================================= -->
+                <li class="nxl-item {{ request()->routeIs('restaurant.withdrawals.*') ? 'active' : '' }}">
+                    <a href="{{ route('restaurant.withdrawals.index') }}" class="nxl-link">
+                        <span class="nxl-micon">
+                            <i class="feather-arrow-up-circle"></i>
+                        </span>
+                        <span class="nxl-mtext">Withdrawals</span>
+                    </a>
+                </li>
 
                 <!-- ============================================= -->
                 <!-- Dining Setup & Tables -->
@@ -206,6 +218,27 @@
                         @if($myOpenTickets > 0)
                             <span class="badge bg-soft-danger text-danger rounded-pill ms-auto">{{ $myOpenTickets }}</span>
                         @endif
+                    </a>
+                </li>
+                <!-- Notifications -->
+                <li class="nxl-item {{ request()->routeIs('restaurant.notifications.*') ? 'active' : '' }}">
+                    <a href="{{ route('restaurant.notifications.index') }}" class="nxl-link">
+                        <span class="nxl-micon">
+                            <i class="feather-bell"></i>
+                        </span>
+                        <span class="nxl-mtext">Notifications</span>
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            <span class="badge bg-soft-danger text-danger rounded-pill ms-auto">{{ auth()->user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </a>
+                </li>
+                 <!-- Account & Bank Settings -->
+                <li class="nxl-item {{ request()->routeIs('restaurant.account.settings*') ? 'active' : '' }}">
+                    <a href="{{ route('restaurant.account.settings') }}" class="nxl-link">
+                        <span class="nxl-micon">
+                            <i class="feather-settings"></i>
+                        </span>
+                        <span class="nxl-mtext">Account Settings</span>
                     </a>
                 </li>
             </ul>

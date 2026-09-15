@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminLogController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\DeliveryPartnerController;
@@ -26,8 +27,11 @@ use App\Http\Controllers\Admin\RestaurantOfferController;
 use App\Http\Controllers\Admin\RoleController;
 
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\WalletTransactionController;
+use App\Http\Controllers\Admin\WithdrawalController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use Illuminate\Support\Facades\Route;
@@ -47,7 +51,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
 // Authenticated Admin Routes
-Route::middleware('admin')->group(function () {
+Route::middleware('admin')->group(function () { 
     Route::match(['get', 'post'], '/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
@@ -126,6 +130,13 @@ Route::middleware('admin')->group(function () {
     // Role Management Routes
     Route::resource('roles', RoleController::class)->except(['show']);
 
+    // Sub Admin Management Routes
+    Route::patch('sub-admins/{sub_admin}/toggle-status', [SubAdminController::class, 'toggleStatus'])->name('sub-admins.toggle-status');
+    Route::resource('sub-admins', SubAdminController::class)->except(['show']);
+
+    // Admin Logs Route
+    Route::get('logs', [AdminLogController::class, 'index'])->name('logs.index');
+
 // User Management Routes
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::get('users/create', [UserController::class, 'create'])->name('users.create');
@@ -137,6 +148,15 @@ Route::middleware('admin')->group(function () {
     // Payment Transactions Routes
     Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
+        // Wallet Transactions Ledger Routes
+    Route::get('wallet-transactions', [WalletTransactionController::class, 'index'])->name('wallet-transactions.index');
+    Route::get('wallet-transactions/{transaction}', [WalletTransactionController::class, 'show'])->name('wallet-transactions.show');
+
+    // Withdrawal / Payout Management Routes
+    Route::get('withdrawals', [WithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::get('withdrawals/{withdrawal}', [WithdrawalController::class, 'show'])->name('withdrawals.show');
+    Route::post('withdrawals/{withdrawal}/approve', [WithdrawalController::class, 'approve'])->name('withdrawals.approve');
+    Route::post('withdrawals/{withdrawal}/reject', [WithdrawalController::class, 'reject'])->name('withdrawals.reject');
 
     // Delivery Partner (KYC) Management Routes
     Route::get('delivery-partners', [DeliveryPartnerController::class, 'index'])->name('delivery-partners.index');

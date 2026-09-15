@@ -114,6 +114,36 @@
 
 
 
+                                    <!-- ============================================= -->
+                    <!-- User Management (Dedicated Section) -->
+                    <!-- ============================================= -->
+                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.users.*', 'admin.delivery-partners.*') ? 'active' : '' }}">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-users"></i></span>
+                            <span class="nxl-mtext">User Management</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item">
+                                <a class="nxl-link {{ request()->routeIs('admin.users.*') && request('type') === 'customer' ? 'active' : '' }}" href="{{ route('admin.users.index', ['type' => 'customer']) }}">
+                                    <i class="feather-user me-2"></i>Customer List
+                                </a>
+                            </li>
+                            <li class="nxl-item">
+                                <a class="nxl-link {{ request()->routeIs('admin.users.*') && request('type') === 'restaurant_owner' ? 'active' : '' }}" href="{{ route('admin.users.index', ['type' => 'restaurant_owner']) }}">
+                                    <i class="feather-shopping-bag me-2"></i>Vendor List
+                                </a>
+                            </li>
+                            <li class="nxl-item">
+                                <a class="nxl-link {{ request()->routeIs('admin.delivery-partners.*') ? 'active' : '' }}" href="{{ route('admin.delivery-partners.index') }}">
+                                    <i class="feather-truck me-2"></i>Delivery Partner List
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+
+
+
                                     <li class="nxl-item nxl-hasmenu">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-award"></i></span>
@@ -121,14 +151,27 @@
                         </a>
                         <ul class="nxl-submenu">
 
-                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}"><i class="feather-user me-2"></i>Roles & Permissions</a></li>
-                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}"><i class="feather-users me-2"></i>Users</a></li>
                             <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="{{ route('admin.settings.index') }}"><i class="feather-settings me-2"></i>Company Settings</a></li>
                             <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.email-configuration.*') ? 'active' : '' }}" href="{{ route('admin.email-configuration.edit') }}"><i class="feather-mail me-2"></i>Email Configuration</a></li>
                             <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.sms-configuration.*') ? 'active' : '' }}" href="{{ route('admin.sms-configuration.edit') }}"><i class="feather-message-square me-2"></i>SMS Configuration</a></li>
                             <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.email-templates.*') ? 'active' : '' }}" href="{{ route('admin.email-templates.index') }}"><i class="feather-file-text me-2"></i>Email Templates</a></li>
                         </ul>
                     </li>
+
+
+                        <li class="nxl-item nxl-hasmenu">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-award"></i></span>
+                            <span class="nxl-mtext">Roles & Permissions</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+
+                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}"><i class="feather-user me-2"></i>Roles list</a></li>
+                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.sub-admins.*') ? 'active' : '' }}" href="{{ route('admin.sub-admins.index') }}"><i class="feather-user-plus me-2"></i>Sub Admins</a></li>
+                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}" href="{{ route('admin.logs.index') }}"><i class="feather-activity me-2"></i>Admin Logs</a></li>
+</ul>
+                  
+                        </li>
 
                     <!-- ============================================= -->
                     <!-- Payment Gateways (Dedicated Section) -->
@@ -228,6 +271,38 @@
                             <span class="nxl-mtext">Payment Transactions</span>
                         </a>
                     </li>
+                      <!-- ============================================= -->
+                    <!-- Wallet Transactions -->
+                    <!-- ============================================= -->
+                    <li class="nxl-item {{ request()->routeIs('admin.wallet-transactions.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.wallet-transactions.index') }}" class="nxl-link">
+                            <span class="nxl-micon">
+                                <i class="feather-dollar-sign"></i>
+                            </span>
+                            <span class="nxl-mtext">Wallet Transactions</span>
+                        </a>
+                    </li>
+
+                    <!-- ============================================= -->
+                    <!-- Withdrawal Requests -->
+                    <!-- ============================================= -->
+                    <li class="nxl-item {{ request()->routeIs('admin.withdrawals.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.withdrawals.index') }}" class="nxl-link d-flex align-items-center justify-content-between">
+                            <span class="d-flex align-items-center">
+                                <span class="nxl-micon">
+                                    <i class="feather-arrow-up-circle"></i>
+                                </span>
+                                <span class="nxl-mtext">Withdrawals</span>
+                            </span>
+                            @php
+                                $pendingWithdrawalsCount = \App\Models\Withdrawal::where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingWithdrawalsCount > 0)
+                                <span class="badge bg-danger rounded-pill">{{ $pendingWithdrawalsCount }}</span>
+                            @endif
+                        </a>
+                    </li>
+
 
                     <!-- ============================================= -->
                     <!-- Earnings -->

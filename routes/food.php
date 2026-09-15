@@ -137,7 +137,9 @@ Route::middleware('role:restaurant_owner')->prefix('restaurant')->name('restaura
     Route::get('/dashboard', [RestaurantDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/earnings', [App\Http\Controllers\Restaurant\EarningsController::class, 'index'])->name('earnings.index');
-
+  Route::get('/withdrawals', [App\Http\Controllers\Restaurant\WithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::get('/withdrawals/create', [App\Http\Controllers\Restaurant\WithdrawalController::class, 'create'])->name('withdrawals.create');
+    Route::post('/withdrawals', [App\Http\Controllers\Restaurant\WithdrawalController::class, 'store'])->name('withdrawals.store');
     Route::get('/orders', [App\Http\Controllers\Restaurant\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [App\Http\Controllers\Restaurant\OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/accept', [App\Http\Controllers\Restaurant\OrderController::class, 'accept'])->name('orders.accept');
@@ -152,6 +154,12 @@ Route::middleware('role:restaurant_owner')->prefix('restaurant')->name('restaura
     Route::post('/profile/password', [App\Http\Controllers\Restaurant\ProfileController::class, 'changePassword'])->name('password.update');
     Route::get('/account-settings', [App\Http\Controllers\Restaurant\SettingController::class, 'accountSettings'])->name('account.settings');
     Route::post('/account-settings', [App\Http\Controllers\Restaurant\SettingController::class, 'accountSettingsUpdate'])->name('account.settings.update');
+
+    // Notifications (Restaurant Owner)
+    Route::get('/notifications', [App\Http\Controllers\Restaurant\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}/read', [App\Http\Controllers\Restaurant\NotificationController::class, 'show'])->name('notifications.show');
+    Route::post('/notifications/{id}/read', [App\Http\Controllers\Restaurant\NotificationController::class, 'markRead'])->name('notifications.mark-read');
+    Route::post('/notifications/read-all', [App\Http\Controllers\Restaurant\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 
     Route::get('/restaurants', [App\Http\Controllers\Restaurant\RestaurantController::class, 'index'])->name('restaurants.index');
     Route::get('/restaurants/create', [App\Http\Controllers\Restaurant\RestaurantController::class, 'create'])->name('restaurants.create');
@@ -253,7 +261,11 @@ Route::middleware('role:delivery_partner')->prefix('delivery-partner')->name('de
     Route::get('/dashboard', [DeliveryDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/earnings', [App\Http\Controllers\DeliveryPartner\EarningsController::class, 'index'])->name('earnings.index');
-
+ Route::get('/transactions', [App\Http\Controllers\DeliveryPartner\TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{transaction}', [App\Http\Controllers\DeliveryPartner\TransactionController::class, 'show'])->name('transactions.show');
+    Route::get('/withdrawals', [App\Http\Controllers\DeliveryPartner\WithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::get('/withdrawals/create', [App\Http\Controllers\DeliveryPartner\WithdrawalController::class, 'create'])->name('withdrawals.create');
+    Route::post('/withdrawals', [App\Http\Controllers\DeliveryPartner\WithdrawalController::class, 'store'])->name('withdrawals.store');
     Route::get('/orders/available', [App\Http\Controllers\DeliveryPartner\OrderController::class, 'available'])->name('orders.available');
     Route::get('/orders/deliveries', [App\Http\Controllers\DeliveryPartner\OrderController::class, 'deliveries'])->name('orders.deliveries');
     Route::get('/orders/{order}', [App\Http\Controllers\DeliveryPartner\OrderController::class, 'show'])->name('orders.show');
@@ -271,6 +283,13 @@ Route::middleware('role:delivery_partner')->prefix('delivery-partner')->name('de
     Route::post('/profile/password', [App\Http\Controllers\DeliveryPartner\ProfileController::class, 'changePassword'])->name('password.update');
     Route::get('/account-settings', [App\Http\Controllers\DeliveryPartner\SettingController::class, 'accountSettings'])->name('account.settings');
     Route::post('/account-settings', [App\Http\Controllers\DeliveryPartner\SettingController::class, 'accountSettingsUpdate'])->name('account.settings.update');
+
+    // Notifications (Delivery Partner)
+    Route::get('/notifications', [App\Http\Controllers\DeliveryPartner\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}/read', [App\Http\Controllers\DeliveryPartner\NotificationController::class, 'show'])->name('notifications.show');
+    Route::post('/notifications/{id}/read', [App\Http\Controllers\DeliveryPartner\NotificationController::class, 'markRead'])->name('notifications.mark-read');
+    Route::post('/notifications/read-all', [App\Http\Controllers\DeliveryPartner\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+
     Route::post('/kyc/submit', [App\Http\Controllers\DeliveryPartner\ProfileController::class, 'kycSubmit'])->name('kyc.submit');
     Route::match(['get', 'post', 'delete'], '/logout', [LoginController::class, 'logout'])->name('logout');
 

@@ -39,7 +39,7 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             @php $rtype = old('restaurant_type', 'restaurant'); @endphp
-                            <label class="form-label fw-semibold">Restaurant Type <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">Business Type <span class="text-danger">*</span></label>
                             <div class="type-picker">
                                 <input type="radio" name="restaurant_type" id="type_restaurant" value="restaurant" {{ $rtype === 'restaurant' ? 'checked' : '' }}>
                                 <label for="type_restaurant"><i class="feather-flag"></i><span>Restaurant</span></label>
@@ -47,6 +47,8 @@
                                 <label for="type_brand"><i class="feather-award"></i><span>Brand</span></label>
                                 <input type="radio" name="restaurant_type" id="type_nightlife" value="nightlife" {{ $rtype === 'nightlife' ? 'checked' : '' }}>
                                 <label for="type_nightlife"><i class="feather-moon"></i><span>Nightlife</span></label>
+                                <input type="radio" name="restaurant_type" id="type_cloud_kitchen" value="cloud_kitchen" {{ $rtype === 'cloud_kitchen' ? 'checked' : '' }}>
+                                <label for="type_cloud_kitchen"><i class="feather-home"></i><span>Cloud Kitchen</span></label>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -106,6 +108,26 @@
                                 <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                             </select>
                             @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="logo" class="form-label fw-semibold">Logo Image <small class="text-muted">(JPG, PNG, WEBP, Max 2MB)</small></label>
+                            <input type="file" name="logo" id="logo" class="form-control @error('logo') is-invalid @enderror" accept="image/*">
+                            @error('logo') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="banner" class="form-label fw-semibold">Banner Image <small class="text-muted">(JPG, PNG, WEBP, Max 4MB)</small></label>
+                            <input type="file" name="banner" id="banner" class="form-control @error('banner') is-invalid @enderror" accept="image/*">
+                            @error('banner') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="qr_code" class="form-label fw-semibold">QR Code Image <small class="text-muted">(JPG, PNG, WEBP, Max 2MB)</small></label>
+                            <input type="file" name="qr_code" id="qr_code" class="form-control @error('qr_code') is-invalid @enderror" accept="image/*">
+                            @error('qr_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-12">
+                            <label for="description" class="form-label fw-semibold">Description</label>
+                            <textarea name="description" id="description" rows="3" class="form-control @error('description') is-invalid @enderror" placeholder="About the restaurant, specialties...">{{ old('description') }}</textarea>
+                            @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
 
@@ -268,26 +290,6 @@
                             <label for="ifsc_code" class="form-label fw-semibold">IFSC Code</label>
                             <input type="text" name="ifsc_code" id="ifsc_code" class="form-control @error('ifsc_code') is-invalid @enderror" value="{{ old('ifsc_code') }}" placeholder="SBIN0001234">
                             @error('ifsc_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label for="logo" class="form-label fw-semibold">Logo Image <small class="text-muted">(JPG, PNG, WEBP, Max 2MB)</small></label>
-                            <input type="file" name="logo" id="logo" class="form-control @error('logo') is-invalid @enderror" accept="image/*">
-                            @error('logo') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label for="banner" class="form-label fw-semibold">Banner Image <small class="text-muted">(JPG, PNG, WEBP, Max 4MB)</small></label>
-                            <input type="file" name="banner" id="banner" class="form-control @error('banner') is-invalid @enderror" accept="image/*">
-                            @error('banner') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label for="qr_code" class="form-label fw-semibold">QR Code Image <small class="text-muted">(JPG, PNG, WEBP, Max 2MB)</small></label>
-                            <input type="file" name="qr_code" id="qr_code" class="form-control @error('qr_code') is-invalid @enderror" accept="image/*">
-                            @error('qr_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-12">
-                            <label for="description" class="form-label fw-semibold">Description</label>
-                            <textarea name="description" id="description" rows="3" class="form-control @error('description') is-invalid @enderror" placeholder="About the restaurant, specialties...">{{ old('description') }}</textarea>
-                            @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
 
@@ -520,7 +522,7 @@
                 loadCities($(this).val(), null);
             });
 
-            // Show brand/nightlife lists only when the matching Restaurant Type is selected
+            // Show brand/nightlife lists only when the matching Business Type is selected
             $('input[name="restaurant_type"]').on('change', function () {
                 $('#brand_field_wrapper').toggle($(this).val() === 'brand');
                 $('#nightlife_field_wrapper').toggle($(this).val() === 'nightlife');

@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Users Management - Admin Dashboard')
+@section('title', ($typeLabel ?? 'Users Management') . ' List - Admin Dashboard')
 
 @section('content')
 <div class="nxl-content">
@@ -8,16 +8,17 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">User Management</h5>
+                <h5 class="m-b-10">{{ $typeLabel ? $typeLabel . ' List' : 'User Management' }}</h5>
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item">Users</li>
+                <li class="breadcrumb-item">User Management</li>
+                <li class="breadcrumb-item">{{ $typeLabel ?? 'Users' }}</li>
             </ul>
         </div>
         <div class="page-header-right ms-auto d-flex align-items-center gap-2">
-            <a href="{{ route('admin.users.create') }}" class="btn btn-danger text-white fw-semibold" style="background-color: #cb202d; border: none;">
-                <i class="feather-plus me-1"></i> Create User
+            <a href="{{ route('admin.users.create', $type ? ['type' => $type] : []) }}" class="btn btn-danger text-white fw-semibold" style="background-color: #cb202d; border: none;">
+                <i class="feather-plus me-1"></i> Create {{ $typeLabel ?? 'User' }}
             </a>
         </div>
     </div>
@@ -37,6 +38,9 @@
         <div class="card stretch stretch-full mb-4 border-0 shadow-sm rounded-3">
             <div class="card-body p-3">
                 <form action="{{ route('admin.users.index') }}" method="GET" class="row g-2 align-items-center">
+                    @if($type)
+                        <input type="hidden" name="type" value="{{ $type }}">
+                    @endif
                     <div class="col-md-5">
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0"><i class="feather-search text-muted"></i></span>
@@ -53,7 +57,7 @@
                     </div>
                     <div class="col-md-3 d-flex gap-2">
                         <button type="submit" class="btn btn-primary fw-semibold px-4">Search</button>
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-light border text-secondary fw-semibold">Reset</a>
+                        <a href="{{ route('admin.users.index', $type ? ['type' => $type] : []) }}" class="btn btn-light border text-secondary fw-semibold">Reset</a>
                     </div>
                 </form>
             </div>

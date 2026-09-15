@@ -81,6 +81,9 @@
                                 <tr>
                                     <td class="ps-4">
                                         <div class="fw-bold text-dark fs-6">{{ $role->name }}</div>
+                                        @if($role->slug === 'super-admin')
+                                            <span class="badge bg-soft-danger text-danger fw-semibold fs-11 mt-1"><i class="feather-unlock me-1"></i>Full Access</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <span class="text-muted fs-12">{{ $role->slug }}</span>

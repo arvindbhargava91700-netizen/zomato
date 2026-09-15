@@ -19,6 +19,19 @@ class UserController extends Controller
     {
         $query = User::with('role');
 
+        $typeLabels = [
+            'customer' => 'Customer',
+            'restaurant_owner' => 'Vendor',
+            'delivery_partner' => 'Delivery Partner',
+        ];
+
+        $type = $request->filled('type') ? $request->type : null;
+        $typeLabel = $typeLabels[$type] ?? null;
+
+        if ($typeLabel) {
+            $query->whereHas('role', fn ($q) => $q->where('slug', $type));
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -35,7 +48,7 @@ class UserController extends Controller
 
         $roles = Role::orderBy('name')->get();
 
-        return view('manage.admin.users.index', compact('users', 'roles'));
+        return view('manage.admin.users.index', compact('users', 'roles', 'type', 'typeLabel'));
     }
 
     /**

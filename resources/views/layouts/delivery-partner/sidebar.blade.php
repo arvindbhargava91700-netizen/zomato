@@ -60,6 +60,25 @@
                         @endif
                     </a>
                 </li>
+                                <!-- Transactions -->
+                <li class="nxl-item {{ request()->routeIs('delivery-partner.transactions.*') ? 'active' : '' }}">
+                    <a href="{{ route('delivery-partner.transactions.index') }}" class="nxl-link">
+                        <span class="nxl-micon">
+                            <i class="feather-credit-card"></i>
+                        </span>
+                        <span class="nxl-mtext">Transactions</span>
+                    </a>
+                </li>
+
+                <!-- Withdrawals -->
+                <li class="nxl-item {{ request()->routeIs('delivery-partner.withdrawals.*') ? 'active' : '' }}">
+                    <a href="{{ route('delivery-partner.withdrawals.index') }}" class="nxl-link">
+                        <span class="nxl-micon">
+                            <i class="feather-arrow-up-circle"></i>
+                        </span>
+                        <span class="nxl-mtext">Withdrawals</span>
+                    </a>
+                </li>
 
                 <!-- Support Tickets -->
                 <li class="nxl-item {{ request()->routeIs('delivery-partner.tickets.*') ? 'active' : '' }}">
@@ -72,6 +91,29 @@
                         @if($myOpenTickets > 0)
                             <span class="badge bg-soft-danger text-danger rounded-pill ms-auto">{{ $myOpenTickets }}</span>
                         @endif
+                    </a>
+                </li>
+
+                <!-- Notifications -->
+                <li class="nxl-item {{ request()->routeIs('delivery-partner.notifications.*') ? 'active' : '' }}">
+                    <a href="{{ route('delivery-partner.notifications.index') }}" class="nxl-link">
+                        <span class="nxl-micon">
+                            <i class="feather-bell"></i>
+                        </span>
+                        <span class="nxl-mtext">Notifications</span>
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            <span class="badge bg-soft-danger text-danger rounded-pill ms-auto">{{ auth()->user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </a>
+                </li>
+
+                 <!-- Account & Bank Settings -->
+                <li class="nxl-item {{ request()->routeIs('delivery-partner.account.settings*') ? 'active' : '' }}">
+                    <a href="{{ route('delivery-partner.account.settings') }}" class="nxl-link">
+                        <span class="nxl-micon">
+                            <i class="feather-settings"></i>
+                        </span>
+                        <span class="nxl-mtext">Account Settings</span>
                     </a>
                 </li>
                 @endif

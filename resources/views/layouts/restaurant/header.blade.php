@@ -47,37 +47,54 @@
                         </a>
                     </div>
                    
+                    @php $recentNotifications = auth()->user()->notifications()->latest()->take(5)->get(); @endphp
                     <div class="dropdown nxl-h-item">
                         <a class="nxl-head-link me-3" data-bs-toggle="dropdown" href="#" role="button" data-bs-auto-close="outside">
                             <i class="feather-bell"></i>
-                            <span class="badge bg-danger nxl-h-badge">3</span>
+                            @if(auth()->user()->unreadNotifications->count() > 0)
+                                <span class="badge bg-danger nxl-h-badge">{{ auth()->user()->unreadNotifications->count() }}</span>
+                            @endif
                         </a>
                         <div class="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-notifications-menu">
                             <div class="d-flex justify-content-between align-items-center notifications-head">
                                 <h6 class="fw-bold text-dark mb-0">Notifications</h6>
-                                <a href="javascript:void(0);" class="fs-11 text-success text-end ms-auto" data-bs-toggle="tooltip" title="Make as Read">
-                                    <i class="feather-check"></i>
-                                    <span>Make as Read</span>
-                                </a>
+                                @if(auth()->user()->unreadNotifications->count() > 0)
+                                    <form method="POST" action="{{ route('restaurant.notifications.read-all') }}" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link p-0 border-0 fs-11 text-success text-end ms-auto text-decoration-none" data-bs-toggle="tooltip" title="Make as Read">
+                                            <i class="feather-check"></i>
+                                            <span>Make as Read</span>
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
-                            <div class="notifications-item">
-                                <img src="assets/images/avatar/2.png" alt="" class="rounded me-3 border" />
-                                <div class="notifications-desc">
-                                    <a href="javascript:void(0);" class="font-body text-truncate-2-line"> <span class="fw-semibold text-dark">Malanie Hanvey</span> We should talk about that at lunch!</a>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="notifications-date text-muted border-bottom border-bottom-dashed">2 minutes ago</div>
-                                        <div class="d-flex align-items-center float-end gap-2">
-                                            <a href="javascript:void(0);" class="d-block wd-8 ht-8 rounded-circle bg-gray-300" data-bs-toggle="tooltip" title="Make as Read"></a>
-                                            <a href="javascript:void(0);" class="text-danger" data-bs-toggle="tooltip" title="Remove">
-                                                <i class="feather-x fs-12"></i>
-                                            </a>
+                            @forelse($recentNotifications as $recentNotification)
+                                @php $recentData = $recentNotification->data; @endphp
+                                <div class="notifications-item">
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 me-3" style="width: 36px; height: 36px; {{ $recentNotification->read_at === null ? 'background: rgba(13,110,253,0.12); color:#0d6efd;' : 'background: rgba(100,116,139,0.12); color:#64748b;' }}">
+                                        <i class="{{ $recentData['icon'] ?? 'feather-bell' }}" style="font-size:15px;"></i>
+                                    </div>
+                                    <div class="notifications-desc">
+                                        <a href="{{ route('restaurant.notifications.show', $recentNotification->id) }}" class="font-body text-truncate-2-line">
+                                            <span class="fw-semibold text-dark">{{ $recentData['title'] ?? 'Notification' }}</span> {{ $recentData['message'] ?? '' }}
+                                        </a>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="notifications-date text-muted border-bottom border-bottom-dashed">{{ $recentNotification->created_at->diffForHumans() }}</div>
+                                            @if($recentNotification->read_at === null)
+                                                <a href="{{ route('restaurant.notifications.mark-read', $recentNotification->id) }}" class="d-block wd-8 ht-8 rounded-circle bg-gray-300" data-bs-toggle="tooltip" title="Make as Read"></a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @empty
+                                <div class="text-center py-4 text-muted fs-13">
+                                    <i class="feather-bell d-block mb-2 text-secondary"></i>
+                                    No notifications yet.
+                                </div>
+                            @endforelse
                             
                             <div class="text-center notifications-footer">
-                                <a href="javascript:void(0);" class="fs-13 fw-semibold text-dark">Alls Notifications</a>
+                                <a href="{{ route('restaurant.notifications.index') }}" class="fs-13 fw-semibold text-dark">All Notifications</a>
                             </div>
                         </div>
                     </div>

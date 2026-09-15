@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Restaurant;
 
 use App\Http\Controllers\Controller;
 use App\Models\CompanySetting;
+use App\Models\Restaurant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -18,9 +19,11 @@ class SettingController extends Controller
      */
     public function accountSettings(): View
     {
+        $user = auth()->user();
+        $restaurant = Restaurant::where('user_id', $user->id)->first();
         $setting = CompanySetting::firstSetting();
 
-        return view('manage.restaurant.settings.account', compact('setting'));
+        return view('manage.restaurant.settings.account', compact('user', 'restaurant', 'setting'));
     }
 
     /**

@@ -120,6 +120,8 @@
                                                     {{ $restaurant->nightlifeBanner->title }}
                                                 </span>
                                             @endif
+                                        @elseif($rtype === 'cloud_kitchen')
+                                            <span class="badge bg-soft-info text-info border border-info"><i class="feather-home me-1"></i>Cloud Kitchen</span>
                                         @else
                                             <span class="badge bg-soft-primary text-primary border border-primary"><i class="feather-flag me-1"></i>Restaurant</span>
                                         @endif

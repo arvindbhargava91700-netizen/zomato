@@ -77,7 +77,7 @@ class RestaurantController extends Controller
         $request->validate([
             'brand_id' => ['nullable', 'exists:brands,id'],
             'nightlife_banner_id' => ['nullable', 'exists:nightlife_banners,id'],
-            'restaurant_type' => ['nullable', 'in:restaurant,brand,nightlife'],
+            'restaurant_type' => ['nullable', 'in:restaurant,brand,nightlife,cloud_kitchen'],
             'restaurant_name' => ['required', 'string', 'max:255'],
             'restaurant_slug' => ['nullable', 'string', 'max:255', Rule::unique('restaurants', 'restaurant_slug')],
             'owner_name' => ['required', 'string', 'max:255'],
@@ -187,7 +187,7 @@ class RestaurantController extends Controller
         $request->validate([
             'brand_id' => ['nullable', 'exists:brands,id'],
             'nightlife_banner_id' => ['nullable', 'exists:nightlife_banners,id'],
-            'restaurant_type' => ['nullable', 'in:restaurant,brand,nightlife'],
+            'restaurant_type' => ['nullable', 'in:restaurant,brand,nightlife,cloud_kitchen'],
             'restaurant_name' => ['required', 'string', 'max:255'],
             'restaurant_slug' => ['nullable', 'string', 'max:255', Rule::unique('restaurants', 'restaurant_slug')->ignore($restaurant->id)],
             'owner_name' => ['required', 'string', 'max:255'],
