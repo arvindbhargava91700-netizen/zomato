@@ -57,8 +57,8 @@
                             </div>
                             <button type="submit" class="btn btn-login theme-btn submit-btn w-100 rounded-2" id="authLoginBtn">
                                 <span class="btn-text">CONTINUE</span>
-                                <span class="btn-spinner d-none">
-                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span class="btn-spinner d-none text-white">
+                                    <span class="spinner-border spinner-border-sm me-2 text-white" role="status" aria-hidden="true"></span>
                                     Signing in...
                                 </span>
                             </button>

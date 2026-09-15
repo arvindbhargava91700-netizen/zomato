@@ -47,14 +47,14 @@
                             <input type="text" name="search" class="form-control border-start-0" placeholder="Search by name or email..." value="{{ request('search') }}">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <select name="role_id" class="form-select">
                             <option value="">All Roles</option>
                             @foreach($roles as $role)
                                 <option value="{{ $role->id }}" {{ request('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> -->
                     <div class="col-md-3 d-flex gap-2">
                         <button type="submit" class="btn btn-primary fw-semibold px-4">Search</button>
                         <a href="{{ route('admin.users.index', $type ? ['type' => $type] : []) }}" class="btn btn-light border text-secondary fw-semibold">Reset</a>

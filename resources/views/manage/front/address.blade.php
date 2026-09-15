@@ -223,8 +223,14 @@
                                     <h6 class="fw-semibold dark-text">To Pay</h6>
                                     <h6 class="fw-semibold amount" id="co-total">{{ $currencySymbol }}0.00</h6>
                                 </div>
-                                <a href="#" id="checkout-btn"
-                                    class="btn theme-btn restaurant-btn rounded-2 w-100">CHECKOUT</a>
+                                <button type="button" id="checkout-btn"
+                                    class="btn theme-btn restaurant-btn rounded-2 w-100">
+                                    <span class="btn-text">CHECKOUT</span>
+                                    <span class="btn-spinner d-none text-white">
+                                        <span class="spinner-border spinner-border-sm me-2 text-white" role="status" aria-hidden="true"></span>
+                                        Processing...
+                                    </span>
+                                </button>
                                 <img class="dots-design" src="{{ asset('front/assets/images/svg/dots-design.svg') }}"
                                     alt="dots">
                             </div>
@@ -329,12 +335,18 @@
 
             $('#checkout-btn').on('click', function (e) {
                 e.preventDefault();
+                var $btn = $(this);
                 var id = localStorage.getItem('checkout_address_id');
                 if (!id) {
                     $('#address-error').removeClass('d-none');
                     $('html, body').animate({ scrollTop: $('#address-error').offset().top - 80 }, 400);
                     return;
                 }
+                
+                $btn.prop('disabled', true);
+                $btn.find('.btn-text').addClass('d-none');
+                $btn.find('.btn-spinner').removeClass('d-none');
+
                 window.location.href = '{{ route('payment') }}';
             });
         });

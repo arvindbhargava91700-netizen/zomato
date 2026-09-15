@@ -232,11 +232,11 @@
                                 <!-- 4. Cash on Delivery -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCash" aria-expanded="true" aria-controls="collapseCash">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCash" aria-expanded="false" aria-controls="collapseCash">
                                             Cash on Delivery
                                         </button>
                                     </h2>
-                                    <div id="collapseCash" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                    <div id="collapseCash" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                         <div class="accordion-body">
                                             <ul class="card-list">
                                                 <li>
@@ -247,7 +247,7 @@
                                                                 Cash on Delivery
                                                             </span>
                                                         </label>
-                                                        <input class="form-check-input" type="radio" name="payment_method" value="cash_on_delivery" id="cashRadio" checked>
+                                                        <input class="form-check-input" type="radio" name="payment_method" value="cash_on_delivery" id="cashRadio">
                                                     </div>
                                                 </li>
                                             </ul>
@@ -374,8 +374,14 @@
                                     <h6 class="fw-semibold dark-text">Total</h6>
                                     <h6 class="fw-semibold amount" id="co-total">{{ $currencySymbol }}0.00</h6>
                                 </div>
-                                <a href="{{ route('confirmOrder') }}" id="pay-now"
-                                    class="btn theme-btn restaurant-btn w-100 rounded-2">PAY NOW</a>
+                                <button type="button" id="pay-now"
+                                    class="btn theme-btn restaurant-btn w-100 rounded-2">
+                                    <span class="btn-text">PAY NOW</span>
+                                    <span class="btn-spinner d-none text-white">
+                                        <span class="spinner-border spinner-border-sm me-2 text-white" role="status" aria-hidden="true"></span>
+                                        Processing...
+                                    </span>
+                                </button>
                                 <img class="dots-design" src="{{ asset('front/assets/images/svg/dots-design.svg') }}"
                                     alt="dots">
                             </div>
@@ -394,25 +400,24 @@
             var C = window.CheckoutCart;
             var SYMBOL = window.CURRENCY_SYMBOL || '$';
             var delivery = localStorage.getItem('checkout_delivery_option') || 'standard';
-            // By default, Cash on Delivery is checked and its accordion is open
-            var savedPaymentMethod = localStorage.getItem('checkout_payment_method') || 'cash_on_delivery';
+            // No payment method selected by default, clear any previous selection
+            localStorage.removeItem('checkout_payment_method');
+            var savedPaymentMethod = '';
 
             function selectPaymentMethod(methodValue) {
                 $('input[name="payment_method"]').prop('checked', false);
+                if (!methodValue) return;
                 var $radio = $('input[name="payment_method"][value="' + methodValue + '"]');
                 if ($radio.length) {
                     $radio.first().prop('checked', true);
                     localStorage.setItem('checkout_payment_method', methodValue);
-                } else {
-                    $('#cashRadio').prop('checked', true);
-                    localStorage.setItem('checkout_payment_method', 'cash_on_delivery');
                 }
             }
 
             selectPaymentMethod(savedPaymentMethod);
 
             // Sync accordion state on load
-            if (savedPaymentMethod !== 'cash_on_delivery') {
+            if (savedPaymentMethod) {
                 var $activeCollapse = $('input[name="payment_method"]:checked').closest('.accordion-collapse');
                 if ($activeCollapse.length) {
                     $('#accordionExample .accordion-collapse').not('#collapseThree').removeClass('show');
@@ -421,9 +426,8 @@
                     $activeCollapse.prev('.accordion-header').find('.accordion-button').removeClass('collapsed').attr('aria-expanded', 'true');
                 }
             } else {
-                $('#accordionExample .accordion-collapse').not('#collapseCash, #collapseThree').removeClass('show');
-                $('#collapseCash').addClass('show');
-                $('#collapseCash').prev('.accordion-header').find('.accordion-button').removeClass('collapsed').attr('aria-expanded', 'true');
+                $('#accordionExample .accordion-collapse').not('#collapseThree').removeClass('show');
+                $('#accordionExample .accordion-button').not('[data-bs-target="#collapseThree"]').addClass('collapsed').attr('aria-expanded', 'false');
             }
 
             $(document).on('change', 'input[name="payment_method"]', function () {
@@ -446,19 +450,8 @@
                 $(this).find('input[type="radio"]').prop('checked', true).trigger('change');
             });
 
-            // When user expands a payment accordion, auto-select its first radio and uncheck others
-            $('#accordionExample .accordion-button').not('[data-bs-target="#collapseThree"]').on('click', function () {
-                var targetId = $(this).attr('data-bs-target');
-                if (targetId) {
-                    var $collapse = $(targetId);
-                    var $radio = $collapse.find('input[name="payment_method"]').first();
-                    if ($radio.length) {
-                        $('input[name="payment_method"]').not($radio).prop('checked', false);
-                        $radio.prop('checked', true);
-                        localStorage.setItem('checkout_payment_method', $radio.val());
-                    }
-                }
-            });
+            // When user expands a payment accordion, we intentionally do NOT auto-select
+            // the radio button anymore. The user must manually choose.
 
             $('input[name="delivery_option"][value="' + delivery + '"]').prop('checked', true);
             $('input[name="delivery_option"]').on('change', function () {
@@ -551,15 +544,22 @@
             }
 
             function sendPlaceOrder(extraData) {
+                var $btn = $('#pay-now');
+                function resetBtn() {
+                    $btn.prop('disabled', false);
+                    $btn.find('.btn-spinner').addClass('d-none');
+                    $btn.find('.btn-text').removeClass('d-none');
+                }
+
                 var addressId = localStorage.getItem('checkout_address_id');
                 if (!addressId) {
                     showError('Please select a delivery address first.');
-                    $('#pay-now').prop('disabled', false).text('PAY NOW');
+                    resetBtn();
                     return;
                 }
                 if (!C) {
                     showError('Cart is unavailable. Please try again.');
-                    $('#pay-now').prop('disabled', false).text('PAY NOW');
+                    resetBtn();
                     return;
                 }
 
@@ -569,11 +569,11 @@
 
                 if (items.length === 0) {
                     showError('Your cart is empty.');
-                    $('#pay-now').prop('disabled', false).text('PAY NOW');
+                    resetBtn();
                     return;
                 }
 
-                var selectedPaymentMethod = $('input[name="payment_method"]:checked').val() || localStorage.getItem('checkout_payment_method') || 'cash_on_delivery';
+                var selectedPaymentMethod = $('input[name="payment_method"]:checked').val();
                 var selectedDeliveryOption = $('input[name="delivery_option"]:checked').val() || localStorage.getItem('checkout_delivery_option') || 'standard';
 
                 var postData = $.extend({
@@ -585,7 +585,9 @@
                     items: items
                 }, extraData || {});
 
-                var $btn = $('#pay-now').prop('disabled', true).text('PROCESSING...');
+                $btn.prop('disabled', true);
+                $btn.find('.btn-text').addClass('d-none');
+                $btn.find('.btn-spinner').removeClass('d-none');
 
                 $.ajax({
                     url: '{{ route('place.order') }}',
@@ -597,12 +599,12 @@
                             clearPromo();
                             window.location.href = res.redirect;
                         } else {
-                            $btn.prop('disabled', false).text('PAY NOW');
+                            resetBtn();
                             showError('Could not place order. Please try again.');
                         }
                     },
                     error: function (xhr) {
-                        $btn.prop('disabled', false).text('PAY NOW');
+                        resetBtn();
                         var msg = 'Could not place order.';
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             msg = xhr.responseJSON.message;
@@ -614,24 +616,42 @@
 
             $('#pay-now').on('click', function (e) {
                 e.preventDefault();
+                var $btn = $(this);
+                function resetBtn() {
+                    $btn.prop('disabled', false);
+                    $btn.find('.btn-spinner').addClass('d-none');
+                    $btn.find('.btn-text').removeClass('d-none');
+                }
+
+                $btn.prop('disabled', true);
+                $btn.find('.btn-text').addClass('d-none');
+                $btn.find('.btn-spinner').removeClass('d-none');
 
                 var addressId = localStorage.getItem('checkout_address_id');
                 if (!addressId) {
                     showError('Please select a delivery address first.');
+                    resetBtn();
                     return;
                 }
                 if (!C) {
                     showError('Cart is unavailable. Please try again.');
+                    resetBtn();
                     return;
                 }
 
                 var items = C.getItems();
                 if (!items || items.length === 0) {
                     showError('Your cart is empty.');
+                    resetBtn();
                     return;
                 }
 
-                var selectedPaymentMethod = $('input[name="payment_method"]:checked').val() || localStorage.getItem('checkout_payment_method') || 'cash_on_delivery';
+                var selectedPaymentMethod = $('input[name="payment_method"]:checked').val();
+                if (!selectedPaymentMethod) {
+                    showError('Please choose a payment method.');
+                    resetBtn();
+                    return;
+                }
                 var grandTotal = parseFloat($('#co-total').text().replace(/[^0-9.]/g, '')) || (C.getTotals ? C.getTotals().total : 0);
 
                 // 1. Wallet Payment
@@ -709,11 +729,17 @@
                         },
                         theme: {
                             color: "#fc8019"
+                        },
+                        modal: {
+                            ondismiss: function() {
+                                resetBtn();
+                            }
                         }
                     };
 
                     var cardRzp = new Razorpay(cardOptions);
                     cardRzp.on('payment.failed', function (resp) {
+                        resetBtn();
                         showError('Card payment failed: ' + (resp.error.description || 'Transaction declined.'));
                     });
                     cardRzp.open();
@@ -750,11 +776,17 @@
                         },
                         theme: {
                             color: "#fc8019"
+                        },
+                        modal: {
+                            ondismiss: function() {
+                                resetBtn();
+                            }
                         }
                     };
 
                     var rzp = new Razorpay(rzpOptions);
                     rzp.on('payment.failed', function (resp) {
+                        resetBtn();
                         showError('Payment failed: ' + (resp.error.description || 'Transaction declined.'));
                     });
                     rzp.open();

@@ -52,7 +52,7 @@ class PublicRestaurantController extends Controller
         $lng = $request->get('lng');
         $radius = (float) $request->get('radius', 50);
 
-        $query = Restaurant::where('restaurant_type', 'restaurant')->visible()->with('city');
+        $query = Restaurant::whereIn('restaurant_type', ['restaurant','cloud_kitchen'])->visible()->with('city');
 
         if (is_numeric($lat) && is_numeric($lng)) {
             $lat = (float) $lat;
@@ -368,6 +368,7 @@ class PublicRestaurantController extends Controller
                 'distance_km' => $r->distance_km ?? null,
                 'estimated_delivery_time' => $r->estimated_delivery_time,
                 'cost_for_two' => $r->minimum_order_amount ? (float) $r->minimum_order_amount * 2 : null,
+                'restaurant_type' => $r->restaurant_type,
                 'rating' => $r->avg_rating !== null ? round((float) $r->avg_rating, 1) : null,
                 'opening_time' => $open ? $open->format('h:i A') : null,
                 'closing_time' => $close ? $close->format('h:i A') : null,

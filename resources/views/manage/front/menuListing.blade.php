@@ -68,9 +68,27 @@
                             </div>
                             <div class="distance d-flex align-items-center">
                                 <h4 class="text-white shop-time">4.0km</h4>
+                                @php
+                                    $reviewCount = $restaurant && $restaurant->reviews ? $restaurant->reviews->count() : 0;
+                                    
+                                    $avgRating = 0;
+                                    if ($reviewCount > 0) {
+                                        $avgRating = $restaurant->reviews->avg(function($r) {
+                                            return $r->restaurant_rating ?: ($r->food_rating ?: 0);
+                                        });
+                                    }
+                                    
+                                    $avgRatingDisplay = $avgRating > 0 ? number_format($avgRating, 1) : 'New';
+                                    
+                                    if ($reviewCount >= 1000) {
+                                        $reviewCountDisplay = floor($reviewCount / 1000) . 'k+ Reviews';
+                                    } else {
+                                        $reviewCountDisplay = $reviewCount . ' Review' . ($reviewCount !== 1 ? 's' : '');
+                                    }
+                                @endphp
                                 <h4 class="rating-star">
-                                    <span class="star"><i class="ri-star-s-fill"></i></span> 5.0
-                                    (1k+ Reviews)
+                                    <span class="star"><i class="ri-star-s-fill"></i></span> {{ $avgRatingDisplay }}
+                                    ({{ $reviewCountDisplay }})
                                 </h4>
                             </div>
                         </div>
@@ -108,9 +126,11 @@
                             <a href="#review" class="meta-action" data-tab="review">
                                 <i class="ri-chat-1-line"></i> Reviews
                             </a>
+                            @if(!$restaurant || $restaurant->restaurant_type !== 'cloud_kitchen')
                             <a href="#book" class="meta-action" data-tab="book">
                                 <i class="ri-calendar-check-line"></i> Book a table
                             </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -153,12 +173,14 @@
                             Reviews
                         </button>
                     </li>
+                    @if(!$restaurant || $restaurant->restaurant_type !== 'cloud_kitchen')
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="book-tab" data-bs-toggle="tab" data-bs-target="#book"
                             type="button" role="tab">
                             Book a table
                         </button>
                     </li>
+                    @endif
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu-list"
                             type="button" role="tab">
@@ -261,8 +283,14 @@
                                             <h6 class="fw-semibold dark-text">To Pay</h6>
                                             <h6 class="fw-semibold amount" id="cart-total">{{ $currencySymbol }}0.00</h6>
                                         </div>
-                                        <a href="{{ route('checkout') }}"
-                                            class="btn theme-btn restaurant-btn w-100 rounded-2">Proceed to payment</a>
+                                        <button type="button" id="proceed-to-checkout"
+                                            class="btn theme-btn restaurant-btn w-100 rounded-2">
+                                            <span class="btn-text">Proceed to payment</span>
+                                            <span class="btn-spinner d-none text-white">
+                                                <span class="spinner-border spinner-border-sm me-2 text-white" role="status" aria-hidden="true"></span>
+                                                Processing...
+                                            </span>
+                                        </button>
                                         <img class="dots-design"
                                             src="{{ asset('front/assets/images/svg/dots-design.svg') }}"
                                             alt="dots">
@@ -355,6 +383,12 @@
                                     {{-- 1. Table reservation widget --}}
                                     <div class="table-reservation-widget-card">
                                         <h4 class="widget-heading mb-2">Table reservation</h4>
+                                        @if($restaurant && $restaurant->restaurant_type === 'cloud_kitchen')
+                                            <div class="p-3 text-center bg-light rounded border border-warning" style="color: #856404; background-color: #fff3cd !important;">
+                                                <i class="ri-information-line fs-5 d-block mb-1"></i>
+                                                Table reservation is not available for Cloud Kitchens.
+                                            </div>
+                                        @else
                                         
                                         <div class="reservation-offer-badge mb-3">
                                             @if($restaurant && $restaurant->diningOffers->isNotEmpty())
@@ -403,6 +437,7 @@
                                         <button type="button" class="btn btn-zomato-red w-100" id="quickBookTableBtn">
                                             Book a table
                                         </button>
+                                        @endif
                                     </div>
 
                                     {{-- 2. Direction widget --}}
@@ -663,6 +698,7 @@
                     </div>
 
                     {{-- 5. BOOK A TABLE TAB --}}
+                    @if(!$restaurant || $restaurant->restaurant_type !== 'cloud_kitchen')
                     <div class="tab-pane fade" id="book" role="tabpanel" tabindex="0">
                         @php
                             $allFrontSlots = $restaurant ? $restaurant->generateTimeSlots() : [];
@@ -1085,6 +1121,7 @@
                         </div>
                     @endif
                     </div>
+                    @endif
 
                     {{-- 6. MENU TAB --}}
                     <div class="tab-pane fade" id="menu-list" role="tabpanel" tabindex="0">
@@ -1260,6 +1297,17 @@
             font-size: 13.5px;
             color: #64748b;
             margin-bottom: 18px;
+        }
+
+        /* Prevent background layout shift when modal opens */
+        body.modal-open {
+            overflow: visible !important;
+            padding-right: 0 !important;
+        }
+
+        /* Prevent the dark background color change when modal opens */
+        .modal-backdrop {
+            background-color: transparent !important;
         }
 
         /* Offer Cards */
@@ -2190,6 +2238,32 @@
                 renderCart();
             });
 
+            $('#proceed-to-checkout').on('click', function (e) {
+                e.preventDefault();
+                var $btn = $(this);
+                
+                // If cart is empty, do not proceed
+                if (Object.keys(cart).length === 0) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Your cart is empty',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
+                    }
+                    return;
+                }
+
+                $btn.prop('disabled', true);
+                $btn.find('.btn-text').addClass('d-none');
+                $btn.find('.btn-spinner').removeClass('d-none');
+                window.location.href = "{{ route('checkout') }}";
+            });
+
             renderCart();
         });
     </script>
@@ -2902,7 +2976,7 @@
             <div class="container">
                 <div class="filter-header">
                     <h5 class="title" id="customized-food-title">Custom Food</h5>
-                    <a href="#" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="filter-body">
                     <div class="filter-title">

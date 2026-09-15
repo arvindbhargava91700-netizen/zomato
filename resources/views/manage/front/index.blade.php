@@ -79,10 +79,10 @@
             </style>
             <ul class="home-features-list d-flex flex-nowrap justify-content-center">
                 <li>
-                    <a href="{{ route('dining.out', ['location' => $location ?? 'Lucknow']) }}" class="home-features-box" id="dinningOut">
+                    <div class="home-features-box" id="dinningOut" style="cursor: pointer;">
                         <img class="img-fluid icon" src="front/assets/images/svg/routing.svg" alt="routing">
                         <h6>Dinning Out</h6>
-                    </a>
+                    </div>
                 </li>
     
                 <li>
@@ -1524,7 +1524,7 @@
                 var rating = (r.rating !== null && r.rating !== undefined)
                     ? '<div class="product-rating-badge"><i class="ri-star-fill"></i> ' + parseFloat(r.rating).toFixed(1) + '</div>'
                     : '';
-                var cost = (r.cost_for_two !== null && r.cost_for_two !== undefined)
+                var cost = (r.cost_for_two !== null && r.cost_for_two !== undefined && parseFloat(r.cost_for_two) > 0)
                     ? '₹' + parseFloat(r.cost_for_two).toFixed(0) + ' for two'
                     : '';
 
@@ -1540,6 +1540,10 @@
                         + (r.closing_time ? ' – ' + r.closing_time : '') + '</h6>'
                     : '';
 
+                var cloudKitchenBadge = (r.restaurant_type === 'cloud_kitchen')
+                    ? ' <span class="badge bg-secondary ms-2" style="font-size: 11px; padding: 4px 6px;">Cloud Kitchen</span>'
+                    : '';
+
                 return ''
                     + '<div class="col-xl-3 col-lg-4 col-md-6">'
                     +   '<div class="vertical-product-box">'
@@ -1550,7 +1554,7 @@
                     +     '</div>'
                     +     '<div class="vertical-product-body">'
                     +       '<div class="d-flex align-items-center justify-content-between mt-sm-3 mt-2">'
-                    +         '<a href="' + link + '"><h4 class="vertical-product-title">' + escapeHtml(r.name) + '</h4></a>'
+                    +         '<a href="' + link + '"><h4 class="vertical-product-title d-flex align-items-center">' + escapeHtml(r.name) + cloudKitchenBadge + '</h4></a>'
                     +       '</div>'
                     +       '<h5 class="product-items">' + escapeHtml(desc) + '</h5>'
                         +       '<div class="location-distance d-flex align-items-center justify-content-between pt-sm-3 pt-2">'
@@ -1706,7 +1710,7 @@
                 var rating = (r.rating !== null && r.rating !== undefined)
                     ? '<div class="nightlife-card-rating"><i class="ri-star-fill"></i> ' + parseFloat(r.rating).toFixed(1) + '</div>'
                     : '';
-                var cost = (r.cost_for_two !== null && r.cost_for_two !== undefined)
+                var cost = (r.cost_for_two !== null && r.cost_for_two !== undefined && parseFloat(r.cost_for_two) > 0)
                     ? '₹' + parseFloat(r.cost_for_two).toFixed(0) + ' for two'
                     : '';
 
@@ -2229,7 +2233,7 @@
             applyFeature($(this).attr('id'));
         });
 
-        // Dinning Out is active by default on page load
+        // Dining Out is active by default on page load
         applyFeature('dinningOut');
 
         // Show already-selected filter names on initial load

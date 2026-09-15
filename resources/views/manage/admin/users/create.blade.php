@@ -44,12 +44,34 @@
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
+                        @php
+                            $type = request('type');
+                            $autoRoleName = null;
+                            if ($type == 'delivery_partner') {
+                                $autoRoleName = 'Delivery Partner';
+                            } elseif ($type == 'customer') {
+                                $autoRoleName = 'Customer';
+                            } elseif ($type == 'restaurant_owner') {
+                                $autoRoleName = 'Restorent Owner';
+                            }
+                            
+                            $selectedRoleId = old('role_id');
+                            $isReadOnly = false;
+                            
+                            if (!$selectedRoleId && $autoRoleName) {
+                                $autoRole = collect($roles)->firstWhere('name', $autoRoleName);
+                                if ($autoRole) {
+                                    $selectedRoleId = $autoRole->id;
+                                    $isReadOnly = true;
+                                }
+                            }
+                        @endphp
                         <div class="col-md-6">
                             <label for="role_id" class="form-label fw-semibold">Role <span class="text-danger">*</span></label>
-                            <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror" required>
+                            <select name="role_id" id="role_id" class="form-select @error('role_id') is-invalid @enderror" required @if($isReadOnly) style="pointer-events: none; background-color: #e9ecef;" @endif>
                                 <option value="">Select Role</option>
                                 @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                    <option value="{{ $role->id }}" {{ $selectedRoleId == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                                 @endforeach
                             </select>
                             @error('role_id') <div class="invalid-feedback">{{ $message }}</div> @enderror

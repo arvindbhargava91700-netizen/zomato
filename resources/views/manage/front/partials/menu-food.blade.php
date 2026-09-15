@@ -31,16 +31,7 @@
                         <h6 class="customized">Customized</h6>
                     @endif
                 </div>
-                <div class="rating-section">
-                    <ul class="rating-star">
-                        <li><i class="ri-star-fill star"></i></li>
-                        <li><i class="ri-star-fill star"></i></li>
-                        <li><i class="ri-star-fill star"></i></li>
-                        <li><i class="ri-star-fill star"></i></li>
-                        <li><i class="ri-star-fill star"></i></li>
-                    </ul>
-                    <h6 class="rating-amount">1k+ Ratings</h6>
-                </div>
+
                 <p class="mb-1">{{ $food->short_description ?: $food->description }}</p>
                 @if ($isCustomized)
                     <div class="variant-tags d-flex align-items-center flex-wrap gap-1 mt-1">

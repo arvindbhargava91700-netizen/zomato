@@ -27,7 +27,7 @@
                 <!-- ============================================= -->
                 <!-- Restaurants Management -->
                 <!-- ============================================= -->
-                <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.restaurants.*', 'admin.dining-offers.*', 'admin.restaurant-offers.*', 'admin.restaurant-blogs.*', 'admin.food-categories.*', 'admin.promo-codes.*', 'admin.brands.*', 'admin.nightlife-banners.*') ? 'active' : '' }}">
+                <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.restaurants.*', 'admin.dining-offers.*', 'admin.restaurant-offers.*', 'admin.restaurant-blogs.*', 'admin.food-categories.*', 'admin.promo-codes.*', 'admin.brands.*', 'admin.nightlife-banners.*') ? 'active nxl-trigger' : '' }}">
                     <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon">
                             <i class="feather-shopping-bag"></i>
@@ -117,24 +117,24 @@
                                     <!-- ============================================= -->
                     <!-- User Management (Dedicated Section) -->
                     <!-- ============================================= -->
-                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.users.*', 'admin.delivery-partners.*') ? 'active' : '' }}">
+                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.users.*', 'admin.delivery-partners.*') ? 'active nxl-trigger' : '' }}">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-users"></i></span>
                             <span class="nxl-mtext">User Management</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                         </a>
                         <ul class="nxl-submenu">
-                            <li class="nxl-item">
-                                <a class="nxl-link {{ request()->routeIs('admin.users.*') && request('type') === 'customer' ? 'active' : '' }}" href="{{ route('admin.users.index', ['type' => 'customer']) }}">
+                            <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'customer' ? 'active' : '' }}">
+                                <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'customer']) }}">
                                     <i class="feather-user me-2"></i>Customer List
                                 </a>
                             </li>
-                            <li class="nxl-item">
-                                <a class="nxl-link {{ request()->routeIs('admin.users.*') && request('type') === 'restaurant_owner' ? 'active' : '' }}" href="{{ route('admin.users.index', ['type' => 'restaurant_owner']) }}">
+                            <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'restaurant_owner' ? 'active' : '' }}">
+                                <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'restaurant_owner']) }}">
                                     <i class="feather-shopping-bag me-2"></i>Vendor List
                                 </a>
                             </li>
-                            <li class="nxl-item">
-                                <a class="nxl-link {{ request()->routeIs('admin.delivery-partners.*') ? 'active' : '' }}" href="{{ route('admin.delivery-partners.index') }}">
+                            <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'delivery_partner' ? 'active' : '' }} ">
+                                <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'delivery_partner']) }}">
                                     <i class="feather-truck me-2"></i>Delivery Partner List
                                 </a>
                             </li>
@@ -144,17 +144,17 @@
 
 
 
-                                    <li class="nxl-item nxl-hasmenu">
+                                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.settings.*', 'admin.email-configuration.*', 'admin.sms-configuration.*', 'admin.email-templates.*') ? 'active nxl-trigger' : '' }}">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-award"></i></span>
                             <span class="nxl-mtext">Super Admin</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                         </a>
                         <ul class="nxl-submenu">
 
-                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="{{ route('admin.settings.index') }}"><i class="feather-settings me-2"></i>Company Settings</a></li>
-                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.email-configuration.*') ? 'active' : '' }}" href="{{ route('admin.email-configuration.edit') }}"><i class="feather-mail me-2"></i>Email Configuration</a></li>
-                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.sms-configuration.*') ? 'active' : '' }}" href="{{ route('admin.sms-configuration.edit') }}"><i class="feather-message-square me-2"></i>SMS Configuration</a></li>
-                            <li class="nxl-item"><a class="nxl-link {{ request()->routeIs('admin.email-templates.*') ? 'active' : '' }}" href="{{ route('admin.email-templates.index') }}"><i class="feather-file-text me-2"></i>Email Templates</a></li>
+                            <li class="nxl-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.settings.index') }}"><i class="feather-settings me-2"></i>Company Settings</a></li>
+                            <li class="nxl-item {{ request()->routeIs('admin.email-configuration.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.email-configuration.edit') }}"><i class="feather-mail me-2"></i>Email Configuration</a></li>
+                            <li class="nxl-item {{ request()->routeIs('admin.sms-configuration.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.sms-configuration.edit') }}"><i class="feather-message-square me-2"></i>SMS Configuration</a></li>
+                            <li class="nxl-item {{ request()->routeIs('admin.email-templates.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.email-templates.index') }}"><i class="feather-file-text me-2"></i>Email Templates</a></li>
                         </ul>
                     </li>
 
