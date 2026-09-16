@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Payment Gateways - Super Admin')
+@section('title', getPageTitle('Payment Gateways - Super Admin'))
 
 @section('content')
     <!-- [ page-header ] start -->

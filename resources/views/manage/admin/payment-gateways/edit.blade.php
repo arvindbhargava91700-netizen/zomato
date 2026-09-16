@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Configure ' . $gateway->name . ' - Payment Gateway')
+@section('title', getPageTitle('Configure ' . $gateway->name . ' - Payment Gateway'))
 
 @php
     $gwIcons = [

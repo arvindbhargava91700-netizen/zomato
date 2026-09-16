@@ -50,7 +50,8 @@ class RestaurantController extends Controller
         $approvedCount = Restaurant::where('approval_status', 'approved')->count();
         $rejectedCount = Restaurant::where('approval_status', 'rejected')->count();
 
-        return view('manage.admin.restaurants.index', compact('restaurants', 'pendingCount', 'approvedCount', 'rejectedCount'));
+        $title = getPageTitle('Restaurants');
+        return view('manage.admin.restaurants.index', compact('restaurants', 'pendingCount', 'approvedCount', 'rejectedCount', 'title'));
     }
 
     /**

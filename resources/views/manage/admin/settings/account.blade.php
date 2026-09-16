@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Account Settings - Admin Dashboard')
+@section('title', getPageTitle('Account Settings'))
 
 @section('content')
 <div class="nxl-content">

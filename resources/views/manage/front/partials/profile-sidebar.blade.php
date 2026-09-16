@@ -23,9 +23,17 @@
                 <i class="ri-wallet-3-line"></i>
                 <a href="{{ route('wallet') }}">My Wallet</a>
             </li>
+            <li class="{{ request()->routeIs('my.transactions') ? 'active' : '' }}">
+                <i class="ri-search-line"></i>
+                <a href="{{ route('my.transactions') }}">My Transactions</a>
+            </li>
             <li class="{{ request()->routeIs('my.orders') ? 'active' : '' }}">
                 <i class="ri-shopping-bag-3-line"></i>
                 <a href="{{ route('my.orders') }}">My Order</a>
+            </li>
+            <li class="{{ request()->routeIs('my.feedback') ? 'active' : '' }}">
+                <i class="ri-star-line"></i>
+                <a href="{{ route('my.feedback') }}">My Feedback</a>
             </li>
             <li class="{{ request()->routeIs('saved.address') ? 'active' : '' }}">
                 <i class="ri-map-pin-line"></i>

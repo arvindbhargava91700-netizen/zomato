@@ -69,7 +69,7 @@ class WalletTransactionController extends Controller
         $totalTxnCount = $allTxns->count();
 
         // Paginated list
-        $transactions = $query->latest()->paginate(20)->withQueryString();
+        $transactions = $query->latest()->paginate(10)->withQueryString();
 
         $roles = Role::orderBy('name')->get();
         $setting = CompanySetting::firstSetting();

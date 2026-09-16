@@ -9,6 +9,8 @@
 
 @extends('layouts.admin.main')
 
+@section('title', getPageTitle('Message Details'))
+
 @section('content')
 <div class="nxl-content">
     <!-- Page Header (Compact) -->

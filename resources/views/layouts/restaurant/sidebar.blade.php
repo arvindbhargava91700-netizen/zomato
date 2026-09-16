@@ -35,7 +35,7 @@
                     </a>
                     <ul class="nxl-submenu">
                         <li class="nxl-item {{ request()->routeIs('restaurant.restaurants.index') ? 'active' : '' }}">
-                            <a href="{{ route('restaurant.restaurants.index') }}" class="nxl-link">All Restaurants</a>
+                            <a href="{{ route('restaurant.restaurants.index') }}" class="nxl-link">Restaurants</a>
                         </li>
                         <li class="nxl-item {{ request()->routeIs('restaurant.restaurants.create') ? 'active' : '' }}">
                             <a href="{{ route('restaurant.restaurants.create') }}" class="nxl-link">Add Restaurant</a>

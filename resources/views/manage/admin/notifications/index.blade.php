@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Notifications - Admin Dashboard')
+@section('title', getPageTitle('Notifications'))
 
 @section('content')
 <div class="nxl-content">

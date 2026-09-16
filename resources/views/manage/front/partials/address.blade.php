@@ -14,7 +14,10 @@
                 <i class="{{ $icon }} icon"></i>
                 <h6>{{ $address->label }}</h6>
             </div>
-            <a href="#edit-address-{{ $address->id }}" class="edit-btn" data-bs-toggle="modal">Edit</a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="#edit-address-{{ $address->id }}" class="edit-btn" data-bs-toggle="modal">Edit</a>
+                <a href="#delete-address-{{ $address->id }}" class="text-danger" data-bs-toggle="modal" style="font-size: 1.1rem; line-height: 1;"><i class="ri-delete-bin-line"></i></a>
+            </div>
         </div>
         <div class="address-details">
             <h6>

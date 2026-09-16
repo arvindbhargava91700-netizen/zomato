@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Edit Email Template - Admin Dashboard')
+@section('title', getPageTitle('Edit Email Template'))
 
 @section('content')
 <div class="nxl-content">

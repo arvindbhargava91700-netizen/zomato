@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Dining Offers - Admin Dashboard')
+@section('title', getPageTitle('Dining Offers'))
 
 @push('styles')
 <style>

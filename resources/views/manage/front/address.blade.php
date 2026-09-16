@@ -69,8 +69,11 @@
                                                     <i class="{{ $icon }} icon"></i>
                                                     <h6>{{ $label }}</h6>
                                                 </div>
-                                                <a href="#edit-address-{{ $address->id }}" class="edit-btn"
-                                                    data-bs-toggle="modal">Edit</a>
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <a href="#edit-address-{{ $address->id }}" class="edit-btn"
+                                                        data-bs-toggle="modal">Edit</a>
+                                                    <a href="#delete-address-{{ $address->id }}" class="text-danger" data-bs-toggle="modal" style="font-size: 1.1rem; line-height: 1;"><i class="ri-delete-bin-line"></i></a>
+                                                </div>
                                             </div>
                                             <div class="address-details">
                                                 <h6>
@@ -122,7 +125,12 @@
                                                                     placeholder="Enter your last name">
                                                             </div>
                                                             <div class="col-12">
-                                                                <label class="form-label">Address</label>
+                                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                    <label class="form-label mb-0">Address</label>
+                                                                    <button type="button" class="btn btn-sm text-primary p-0 bg-transparent border-0 d-flex align-items-center gap-1 auto-location-btn">
+                                                                        <i class="ri-map-pin-line"></i> Use my current location
+                                                                    </button>
+                                                                </div>
                                                                 <input type="text" class="form-control" name="address"
                                                                     value="{{ $address->address }}"
                                                                     placeholder="Enter your address" required>
@@ -175,6 +183,7 @@
                                         </div>
                                     </div>
                                     <!-- edit address modal end -->
+                                    @include('manage.front.partials.address-delete-modal')
                                 @empty
                                     <div class="col-12">
                                         <div class="alert alert-info">
@@ -272,7 +281,12 @@
                                     placeholder="Enter your last name">
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Address</label>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label mb-0">Address</label>
+                                    <button type="button" class="btn btn-sm text-primary p-0 bg-transparent border-0 d-flex align-items-center gap-1 auto-location-btn">
+                                        <i class="ri-map-pin-line"></i> Use my current location
+                                    </button>
+                                </div>
                                 <input type="text" class="form-control" name="address" placeholder="Enter your address"
                                     required>
                             </div>
@@ -317,6 +331,58 @@
 
 @push('scripts')
     <script>
+        $(document).on('click', '.auto-location-btn', function() {
+            let $btn = $(this);
+            let originalText = $btn.html();
+            $btn.html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Fetching...');
+            $btn.prop('disabled', true);
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    let lat = position.coords.latitude;
+                    let lng = position.coords.longitude;
+                    
+                    let $form = $btn.closest('form');
+                    $form.find('input[name="latitude"]').val(lat);
+                    $form.find('input[name="longitude"]').val(lng);
+
+                    $.ajax({
+                        url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+                        method: 'GET',
+                        success: function(data) {
+                            if (data && data.address) {
+                                let addr = data.address;
+                                let city = addr.city || addr.town || addr.village || addr.county || '';
+                                let country = addr.country || '';
+                                let zip = addr.postcode || '';
+                                let fullAddress = data.display_name || '';
+                                
+                                $form.find('input[name="address"]').val(fullAddress);
+                                $form.find('input[name="city"]').val(city);
+                                $form.find('input[name="country"]').val(country);
+                                $form.find('input[name="zip"]').val(zip);
+                            }
+                            $btn.html(originalText);
+                            $btn.prop('disabled', false);
+                        },
+                        error: function() {
+                            alert('Could not fetch address details. Please fill manually.');
+                            $btn.html(originalText);
+                            $btn.prop('disabled', false);
+                        }
+                    });
+                }, function(error) {
+                    alert('Location access denied or unavailable.');
+                    $btn.html(originalText);
+                    $btn.prop('disabled', false);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+                $btn.html(originalText);
+                $btn.prop('disabled', false);
+            }
+        });
+
         $(function () {
             var selectedId = localStorage.getItem('checkout_address_id');
 
@@ -348,6 +414,23 @@
                 $btn.find('.btn-spinner').removeClass('d-none');
 
                 window.location.href = '{{ route('payment') }}';
+            });
+            
+            // Add loading state to address modal forms
+            $(document).on('submit', '.address-details-modal form', function() {
+                let $btn = $(this).find('button[type="submit"]');
+                if ($btn.length) {
+                    $btn.prop('disabled', true);
+                    $btn.html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Submitting...');
+                }
+            });
+            // Add loading state to delete address forms
+            $(document).on('submit', '.delete-address-form', function() {
+                let $btn = $(this).find('button[type="submit"]');
+                if ($btn.length) {
+                    $btn.prop('disabled', true);
+                    $btn.html('<span class="spinner-border spinner-border-sm me-1 text-white" role="status" aria-hidden="true"></span> <span class="text-white">Deleting...</span>');
+                }
             });
         });
     </script>

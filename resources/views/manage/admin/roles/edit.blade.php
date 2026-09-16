@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Edit Role - Admin Dashboard')
+@section('title', getPageTitle('Edit Role'))
 
 @push('styles')
 <style>

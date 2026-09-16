@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Roles Management - Admin Dashboard')
+@section('title', getPageTitle('Roles Management'))
 
 @section('content')
 <div class="nxl-content">

@@ -164,7 +164,7 @@
                 @if ($order->status === 'assigned')
 
                     <form method="POST"
-                        action="{{ route('delivery-partner.orders.picked-up', $order->id) }}">
+                        action="{{ route('delivery-partner.orders.picked-up', $order->id) }}" class="action-form" data-action="Collecting...">
                         @csrf
 
                         <button type="submit"
@@ -189,7 +189,7 @@
                 @elseif ($order->status === 'picked_up')
 
                     <form method="POST"
-                        action="{{ route('delivery-partner.orders.out-for-delivery', $order->id) }}">
+                        action="{{ route('delivery-partner.orders.out-for-delivery', $order->id) }}" class="action-form" data-action="Starting...">
                         @csrf
 
                         <button type="submit"
@@ -214,7 +214,7 @@
                 @elseif ($order->status === 'out_for_delivery')
 
                     <form method="POST"
-                        action="{{ route('delivery-partner.orders.delivered', $order->id) }}">
+                        action="{{ route('delivery-partner.orders.delivered', $order->id) }}" class="action-form" data-action="Processing...">
 
                         @csrf
 
@@ -246,7 +246,7 @@
 
                     <form method="POST"
                         action="{{ route('delivery-partner.orders.reject', $order->id) }}"
-                        class="d-inline">
+                        class="d-inline action-form" data-action="Rejecting...">
 
                         @csrf
 
@@ -609,3 +609,18 @@
     <!-- [ Main Content ] end -->
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('.action-form').on('submit', function() {
+            var $btn = $(this).find('button[type="submit"]');
+            var actionText = $(this).data('action') || 'Processing...';
+            if ($btn.length) {
+                $btn.prop('disabled', true);
+                $btn.html('<span class="spinner-border spinner-border-sm me-1 text-white" role="status" aria-hidden="true"></span> ' + actionText);
+            }
+        });
+    });
+</script>
+@endpush

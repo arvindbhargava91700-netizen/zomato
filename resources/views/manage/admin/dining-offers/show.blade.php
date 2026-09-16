@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Review Dining Offer - Admin Dashboard')
+@section('title', getPageTitle('Review Dining Offer'))
 
 @section('content')
     <div class="page-header">

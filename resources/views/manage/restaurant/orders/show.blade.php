@@ -58,30 +58,30 @@
                 @if ($order->isActive())
                     <div class="d-flex flex-wrap gap-2">
                         @if ($order->status === 'pending')
-                            <form method="POST" action="{{ route('restaurant.orders.reject', $order->id) }}">
+                            <form method="POST" action="{{ route('restaurant.orders.reject', $order->id) }}" class="action-form" data-action="Rejecting...">
                                 @csrf
                                 <button type="submit" class="btn btn-danger"
                                     onclick="return confirm('Reject this order?')">Reject</button>
                             </form>
-                            <form method="POST" action="{{ route('restaurant.orders.accept', $order->id) }}">
+                            <form method="POST" action="{{ route('restaurant.orders.accept', $order->id) }}" class="action-form" data-action="Accepting...">
                                 @csrf
                                 <button type="submit" class="btn btn-success">Accept</button>
                             </form>
                         @elseif ($order->status === 'accepted')
-                            <form method="POST" action="{{ route('restaurant.orders.preparing', $order->id) }}">
+                            <form method="POST" action="{{ route('restaurant.orders.preparing', $order->id) }}" class="action-form" data-action="Updating...">
                                 @csrf
                                 <button type="submit" class="btn btn-primary">Start Preparing</button>
                             </form>
                         @elseif ($order->status === 'preparing')
-                            <form method="POST" action="{{ route('restaurant.orders.ready', $order->id) }}">
+                            <form method="POST" action="{{ route('restaurant.orders.ready', $order->id) }}" class="action-form" data-action="Updating...">
                                 @csrf
                                 <button type="submit" class="btn btn-success">Mark Ready</button>
                             </form>
                         @elseif ($order->status === 'ready' && !$order->delivery_partner_id)
-                            <form method="POST" action="{{ route('restaurant.orders.send-request', $order->id) }}">
+                            <form method="POST" action="{{ route('restaurant.orders.send-request', $order->id) }}" class="action-form" data-action="Assigning...">
                                 @csrf
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="feather-send me-1"></i>Send Delivery Request
+                                    <i class="feather-user-check me-1"></i>Auto Assign Partner
                                 </button>
                             </form>
                         @endif
@@ -127,7 +127,7 @@
                                 <div class="fw-bold text-dark">{{ $order->deliveryPartner->name }}</div>
                                 <div class="text-muted fs-13">{{ $order->deliveryPartner->phone ?? '' }}</div>
                             @elseif ($order->status === 'ready')
-                                <form method="POST" action="{{ route('restaurant.orders.assign-partner', $order->id) }}" class="d-flex gap-2">
+                                <form method="POST" action="{{ route('restaurant.orders.assign-partner', $order->id) }}" class="d-flex gap-2 action-form" data-action="Assigning...">
                                     @csrf
                                     <select name="delivery_partner_id" class="form-select form-select-sm" required>
                                         <option value="">Select Delivery Partner</option>
@@ -139,45 +139,80 @@
                                         <i class="feather-user-check me-1"></i>Assign
                                     </button>
                                 </form>
+                            @endif
+                        </div>
+                        
+                        <hr class="my-0">
+
+                        <div class="p-4 pt-3">
+                            <h6 class="card-title mb-3 fw-bold d-flex align-items-center">
+                                <i class="feather-users text-primary me-2"></i>Active Partners (Nearest First)
+                            </h6>
+                            @if($deliveryPartners->count() > 0)
+                                <style>
+                                    .pulse-dot {
+                                        height: 8px; width: 8px; background-color: #10b981; border-radius: 50%; display: inline-block;
+                                        animation: pulse-green 1.5s infinite;
+                                    }
+                                    @keyframes pulse-green {
+                                        0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+                                        70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+                                        100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+                                    }
+                                </style>
+                                <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                                    @foreach ($deliveryPartners as $p)
+                                        <li class="d-flex align-items-center justify-content-between p-3 border rounded bg-white shadow-sm" style="transition: all 0.2s ease; cursor: default;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(0,0,0,0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)';">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-light text-secondary" style="width: 42px; height: 42px;">
+                                                    <i class="feather-user fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="fw-bold text-dark fs-14 d-block mb-1">{{ $p->name }}</span>
+                                                    <span class="fs-12 d-flex align-items-center">
+                                                        @if(isset($p->location_type) && $p->location_type === 'Live GPS')
+                                                            <span class="pulse-dot me-2"></span>
+                                                            <span class="text-success fw-semibold">Live GPS Active</span>
+                                                        @else
+                                                            <i class="feather-map-pin text-muted me-1"></i>
+                                                            <span class="text-muted">{{ $p->location_type ?? 'Unknown' }}</span>
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                @if(isset($p->distance) && $p->distance != 999999)
+                                                    <div class="badge rounded-pill" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; font-size: 12px; padding: 6px 12px; font-weight: 600;">
+                                                        <i class="feather-navigation me-1"></i>{{ number_format($p->distance, 2) }} km
+                                                    </div>
+                                                @else
+                                                    <div class="badge rounded-pill bg-light text-muted border" style="font-size: 12px; padding: 6px 12px;">
+                                                        N/A
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             @else
-                                <span class="text-muted">No partner assigned yet.</span>
+                                <div class="text-muted text-center p-4 border rounded bg-light border-dashed">
+                                    <i class="feather-user-x fs-3 d-block mb-2 text-secondary"></i>
+                                    No delivery partners found.
+                                </div>
                             @endif
                         </div>
                     </div>
                 </div>
-
-                @if ($order->deliveryRequests->isNotEmpty())
-                    <div class="card stretch stretch-full">
-                        <div class="card-header border-bottom py-3">
-                            <h5 class="card-title mb-0 fw-bold"><i class="feather-bell me-2"></i>Delivery Requests</h5>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
-                                @foreach ($order->deliveryRequests as $dr)
-                                    <li class="d-flex align-items-center justify-content-between gap-2">
-                                        <span class="fw-semibold text-dark">{{ $dr->deliveryPartner?->name ?? 'Partner' }}</span>
-                                        @if ($dr->status === 'accepted')
-                                            <span class="badge bg-success">Accepted</span>
-                                        @elseif ($dr->status === 'rejected')
-                                            <span class="badge bg-danger">Rejected</span>
-                                        @elseif ($dr->status === 'expired')
-                                            <span class="badge bg-secondary">Expired</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark">Pending</span>
-                                        @endif
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                @endif
             </div>
 
             <!-- Items & Billing -->
             <div class="col-xl-8">
                 <div class="card stretch stretch-full">
-                    <div class="card-header border-bottom py-3">
+                    <div class="card-header border-bottom py-3 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 fw-bold"><i class="feather-shopping-cart me-2"></i>Order Items</h5>
+                        <button type="button" onclick="window.print()" class="btn btn-sm btn-primary d-print-none shadow-sm">
+                            <i class="feather-printer me-1"></i> Print PDF
+                        </button>
                     </div>
                     <div class="card-body p-0">
                         <table class="table table-hover align-middle mb-0">
@@ -264,3 +299,18 @@
     <!-- [ Main Content ] end -->
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('.action-form').on('submit', function() {
+            var $btn = $(this).find('button[type="submit"]');
+            var actionText = $(this).data('action') || 'Processing...';
+            if ($btn.length) {
+                $btn.prop('disabled', true);
+                $btn.html('<span class="spinner-border spinner-border-sm me-1 text-white" role="status" aria-hidden="true"></span> ' + actionText);
+            }
+        });
+    });
+</script>
+@endpush

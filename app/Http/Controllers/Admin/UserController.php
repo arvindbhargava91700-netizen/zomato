@@ -48,7 +48,9 @@ class UserController extends Controller
 
         $roles = Role::orderBy('name')->get();
 
-        return view('manage.admin.users.index', compact('users', 'roles', 'type', 'typeLabel'));
+        $title = getPageTitle($typeLabel ? $typeLabel . 's' : 'Users');
+
+        return view('manage.admin.users.index', compact('users', 'roles', 'type', 'typeLabel', 'title'));
     }
 
     /**

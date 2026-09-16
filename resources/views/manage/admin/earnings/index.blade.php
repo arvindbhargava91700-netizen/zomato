@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Earnings - Admin Dashboard')
+@section('title', getPageTitle('Earnings'))
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('admin/assets/vendors/css/dataTables.bs5.min.css') }}" />

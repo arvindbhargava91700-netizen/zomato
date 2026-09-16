@@ -146,4 +146,23 @@ class ProfileController extends Controller
 
         return back()->with('success', 'KYC details submitted successfully. Your documents have been sent for review and admin will activate your account after approval.');
     }
+
+    /**
+     * Update the live location (GPS coordinates) of the delivery partner.
+     */
+    public function updateLocation(Request $request)
+    {
+        $request->validate([
+            'live_lat' => ['required', 'numeric', 'between:-90,90'],
+            'live_lng' => ['required', 'numeric', 'between:-180,180'],
+        ]);
+
+        $partner = Auth::user();
+        $partner->update([
+            'live_lat' => $request->live_lat,
+            'live_lng' => $request->live_lng,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Location updated successfully']);
+    }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Wallet Transactions - Admin Dashboard')
+@section('title', getPageTitle('Wallet Transactions'))
 
 @push('styles')
 <style>
@@ -344,11 +344,9 @@
                 </table>
             </div>
         </div>
-        @if($transactions->hasPages())
-            <div class="card-footer bg-white border-top py-3">
-                {{ $transactions->links() }}
-            </div>
-        @endif
+        <div class="card-footer bg-white border-top py-3">
+            {{ $transactions->links() }}
+        </div>
     </div>
 </div>
 <!-- [ Main Content ] end -->

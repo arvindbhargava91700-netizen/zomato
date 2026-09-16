@@ -16,6 +16,7 @@
 @endphp
 
 @extends('layouts.admin.main')
+@section('title', getPageTitle('Ticket Details'))
 <style>
     /* =========================================
    SIMPLE TICKET CARD

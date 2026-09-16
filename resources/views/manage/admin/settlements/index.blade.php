@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'COD Settlements - Admin Dashboard')
+@section('title', getPageTitle('COD Settlements'))
 
 @section('content')
 <div class="nxl-content">

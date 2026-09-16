@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Review Restaurant Blog - ' . $restaurant_blog->title)
+@section('title', $title)
 
 @section('content')
     <!-- [ page-header ] start -->

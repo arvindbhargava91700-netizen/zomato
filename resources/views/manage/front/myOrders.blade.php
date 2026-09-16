@@ -68,6 +68,9 @@
                                                 {{ $currencySymbol }} {{ number_format($order->total, 2) }}
                                             </h6>
                                             <div class="d-flex align-items-center flex-wrap gap-2">
+                                                <button type="button" class="btn theme-outline details-btn" data-bs-toggle="modal" data-bs-target="#billModal{{ $order->id }}">
+                                                    <i class="ri-file-list-3-line me-1"></i>View Bill
+                                                </button>
                                                 <a href="{{ route('orderTracking', ['order' => $order->id]) }}"
                                                     class="btn theme-outline details-btn">Track Order</a>
                                                 @if (in_array($order->status, [
@@ -114,6 +117,51 @@
                                 </li>
                             @endforelse
                         </ul>
+
+                        @foreach($orders as $order)
+                        <div class="modal fade" id="billModal{{ $order->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg rounded-4">
+                                    <div class="modal-header border-bottom-0 pb-0">
+                                        <h1 class="modal-title fs-5 fw-bold"><i class="ri-bill-line me-2 text-primary"></i>Order Bill</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body py-4">
+                                        <div class="bill-details-wrapper p-4 bg-light rounded-4">
+                                            <div class="d-flex justify-content-between mb-3">
+                                                <span class="content-color fw-medium">Items Subtotal</span>
+                                                <span class="dark-text fw-bold">{{ $currencySymbol }}{{ number_format($order->subtotal, 2) }}</span>
+                                            </div>
+                                            @if($order->discount > 0)
+                                            <div class="d-flex justify-content-between mb-3">
+                                                <span class="text-success fw-medium">Restaurant Discount</span>
+                                                <span class="text-success fw-bold">-{{ $currencySymbol }}{{ number_format($order->discount, 2) }}</span>
+                                            </div>
+                                            @endif
+                                            @if($order->promo_discount > 0)
+                                            <div class="d-flex justify-content-between mb-3">
+                                                <span class="text-success fw-medium">Promo ({{ $order->promo_code }})</span>
+                                                <span class="text-success fw-bold">-{{ $currencySymbol }}{{ number_format($order->promo_discount, 2) }}</span>
+                                            </div>
+                                            @endif
+                                            <div class="d-flex justify-content-between mb-3">
+                                                <span class="content-color fw-medium">Delivery Charge</span>
+                                                <span class="dark-text fw-bold">{{ $currencySymbol }}{{ number_format($order->delivery_charge, 2) }}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-4 pb-3 border-bottom" style="border-bottom-style: dashed !important; border-bottom-width: 2px !important;">
+                                                <span class="content-color fw-medium">Taxes & Fees</span>
+                                                <span class="dark-text fw-bold">{{ $currencySymbol }}{{ number_format($order->tax, 2) }}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="dark-text fw-bold fs-5">Grand Total</span>
+                                                <span class="fw-bold fs-4" style="color: var(--theme-color);">{{ $currencySymbol }}{{ number_format($order->total, 2) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
 
                         @if ($orders->hasPages())
                             <div class="d-flex justify-content-center mt-4">

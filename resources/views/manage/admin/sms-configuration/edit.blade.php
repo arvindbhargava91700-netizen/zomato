@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'SMS Configuration - Admin Dashboard')
+@section('title', getPageTitle('SMS Configuration'))
 
 @section('content')
 <div class="nxl-content">

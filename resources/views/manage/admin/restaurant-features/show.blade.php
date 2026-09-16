@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Feature Details: ' . $restaurantFeature->name . ' - Admin Dashboard')
+@section('title', getPageTitle('Feature Details: ' . $restaurantFeature->name . ''))
 
 @section('content')
 <div class="nxl-content">

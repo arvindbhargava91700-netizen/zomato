@@ -9,6 +9,8 @@
 
 @extends('layouts.admin.main')
 
+@section('title', getPageTitle('Contact Messages'))
+
 @section('content')
 <div class="nxl-content">
     <div class="page-header">
@@ -32,73 +34,88 @@
         @endif
 
         <!-- Status Counters -->
-        <div class="row g-2 mb-3">
+        <div class="row g-3 mb-4">
+            <!-- All Messages -->
             <div class="col">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-3">
-                    <div class="card-body py-2 text-center">
-                        <div class="fw-bold fs-5">{{ $counts['all'] }}</div>
-                        <div class="small text-muted">All Messages</div>
+                <div class="card stretch stretch-full border-0 shadow-sm rounded-3 bg-soft-info overflow-hidden h-100">
+                    <div class="card-body p-3 d-flex flex-column justify-content-center align-items-center position-relative">
+                        <i class="feather-mail position-absolute opacity-25" style="font-size: 3rem; right: -10px; bottom: -10px; color: var(--bs-info);"></i>
+                        <h3 class="fw-bolder mb-1 text-info">{{ $counts['all'] }}</h3>
+                        <div class="text-info fw-semibold text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">All Messages</div>
                     </div>
                 </div>
             </div>
+            <!-- Unread -->
             <div class="col">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-3">
-                    <div class="card-body py-2 text-center">
-                        <div class="fw-bold fs-5 text-danger">{{ $counts['unread'] }}</div>
-                        <div class="small text-muted">Unread</div>
+                <div class="card stretch stretch-full border-0 shadow-sm rounded-3 bg-soft-danger overflow-hidden h-100">
+                    <div class="card-body p-3 d-flex flex-column justify-content-center align-items-center position-relative">
+                        <i class="feather-inbox position-absolute opacity-25" style="font-size: 3rem; right: -10px; bottom: -10px; color: var(--bs-danger);"></i>
+                        <h3 class="fw-bolder mb-1 text-danger">{{ $counts['unread'] }}</h3>
+                        <div class="text-danger fw-semibold text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">Unread</div>
                     </div>
                 </div>
             </div>
+            <!-- Read -->
             <div class="col">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-3">
-                    <div class="card-body py-2 text-center">
-                        <div class="fw-bold fs-5 text-primary">{{ $counts['read'] }}</div>
-                        <div class="small text-muted">Read</div>
+                <div class="card stretch stretch-full border-0 shadow-sm rounded-3 bg-soft-primary overflow-hidden h-100">
+                    <div class="card-body p-3 d-flex flex-column justify-content-center align-items-center position-relative">
+                        <i class="feather-eye position-absolute opacity-25" style="font-size: 3rem; right: -10px; bottom: -10px; color: var(--bs-primary);"></i>
+                        <h3 class="fw-bolder mb-1 text-primary">{{ $counts['read'] }}</h3>
+                        <div class="text-primary fw-semibold text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">Read</div>
                     </div>
                 </div>
             </div>
+            <!-- Replied -->
             <div class="col">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-3">
-                    <div class="card-body py-2 text-center">
-                        <div class="fw-bold fs-5 text-success">{{ $counts['replied'] }}</div>
-                        <div class="small text-muted">Replied</div>
+                <div class="card stretch stretch-full border-0 shadow-sm rounded-3 bg-soft-success overflow-hidden h-100">
+                    <div class="card-body p-3 d-flex flex-column justify-content-center align-items-center position-relative">
+                        <i class="feather-check-circle position-absolute opacity-25" style="font-size: 3rem; right: -10px; bottom: -10px; color: var(--bs-success);"></i>
+                        <h3 class="fw-bolder mb-1 text-success">{{ $counts['replied'] }}</h3>
+                        <div class="text-success fw-semibold text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">Replied</div>
                     </div>
                 </div>
             </div>
+            <!-- Closed -->
             <div class="col">
-                <div class="card stretch stretch-full border-0 shadow-sm rounded-3">
-                    <div class="card-body py-2 text-center">
-                        <div class="fw-bold fs-5 text-secondary">{{ $counts['closed'] }}</div>
-                        <div class="small text-muted">Closed</div>
+                <div class="card stretch stretch-full border-0 shadow-sm rounded-3 bg-soft-secondary overflow-hidden h-100">
+                    <div class="card-body p-3 d-flex flex-column justify-content-center align-items-center position-relative">
+                        <i class="feather-archive position-absolute opacity-25" style="font-size: 3rem; right: -10px; bottom: -10px; color: var(--bs-secondary);"></i>
+                        <h3 class="fw-bolder mb-1 text-secondary">{{ $counts['closed'] }}</h3>
+                        <div class="text-secondary fw-semibold text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">Closed</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Filters -->
-        <form method="GET" class="card stretch stretch-full border-0 shadow-sm rounded-3 mb-3">
-            <div class="card-body d-flex flex-wrap gap-2 align-items-end">
-                <div>
-                    <label class="form-label small mb-1">Status</label>
-                    <select name="status" class="form-select form-select-sm">
-                        <option value="">All Statuses</option>
-                        @foreach(['unread', 'read', 'replied', 'closed'] as $s)
-                            <option value="{{ $s }}" {{ request('status') == $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="flex-grow-1">
-                    <label class="form-label small mb-1">Search</label>
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by name, email, phone, subject..." value="{{ request('search') }}">
-                </div>
-                <div>
-                    <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="feather-search me-1"></i> Filter
-                    </button>
-                    <a href="{{ route('admin.contact-messages.index') }}" class="btn btn-sm btn-light border">Reset</a>
-                </div>
+        <div class="card stretch stretch-full mb-3 border-0 shadow-sm rounded-3">
+            <div class="card-body p-3">
+                <form method="GET" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small mb-1 fw-semibold">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">All Statuses</option>
+                            @foreach(['unread', 'read', 'replied', 'closed'] as $s)
+                                <option value="{{ $s }}" {{ request('status') == $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label small mb-1 fw-semibold">Search</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="feather-search text-muted"></i></span>
+                            <input type="text" name="search" class="form-control border-start-0" placeholder="Search by name, email, phone, subject..." value="{{ request('search') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary fw-semibold flex-grow-1">
+                            <i class="feather-search me-1"></i> Filter
+                        </button>
+                        <a href="{{ route('admin.contact-messages.index') }}" class="btn btn-light border text-secondary fw-semibold flex-grow-1">Reset</a>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
 
         <!-- Messages Table -->
         <div class="card stretch stretch-full border-0 shadow-sm rounded-3">

@@ -171,6 +171,90 @@ class Order extends Model
     }
 
     /**
+     * Assign order directly to the nearest available partner.
+     */
+    public function assignToNearestPartner(): ?User
+    {
+        // Only exclude partners who explicitly rejected this order
+        $tried = $this->deliveryRequests()
+            ->where('status', \App\Models\DeliveryRequest::STATUS_REJECTED)
+            ->pluck('delivery_partner_id')->all();
+            
+        if ($this->delivery_partner_id) {
+            $tried[] = $this->delivery_partner_id;
+        }
+        
+        // Also exclude partners who rejected requests for this order
+        $tried = array_unique($tried);
+
+        $busy = self::whereIn('status', [
+            self::STATUS_ASSIGNED,
+            self::STATUS_PICKED_UP,
+            self::STATUS_OUT_FOR_DELIVERY,
+        ])->whereNotNull('delivery_partner_id')->pluck('delivery_partner_id')->all();
+
+        $restaurant = $this->restaurant;
+        $lat = (float) $restaurant?->latitude;
+        $lng = (float) $restaurant?->longitude;
+
+        $partners = User::whereHas('role', function ($q) {
+                $q->where('slug', 'delivery_partner');
+            })
+            ->whereNotIn('id', array_merge($tried, $busy))
+            ->with('addresses')
+            ->get();
+
+        if ($lat && $lng) {
+            $partners = $partners->sortBy(function ($partner) use ($lat, $lng) {
+                $partnerLat = null;
+                $partnerLng = null;
+                
+                // 1. Prefer live GPS coordinates
+                if ($partner->live_lat && $partner->live_lng) {
+                    $partnerLat = (float) $partner->live_lat;
+                    $partnerLng = (float) $partner->live_lng;
+                } else {
+                    // 2. Fall back to saved addresses
+                    foreach ($partner->addresses as $address) {
+                        if ($address->latitude && $address->longitude) {
+                            $partnerLat = (float) $address->latitude;
+                            $partnerLng = (float) $address->longitude;
+                            break;
+                        }
+                    }
+                }
+
+                if ($partnerLat === null || $partnerLng === null) {
+                    return 999999;
+                }
+                
+                $earthRadius = 6371;
+                $latDelta = deg2rad($partnerLat - $lat);
+                $lngDelta = deg2rad($partnerLng - $lng);
+                $a = sin($latDelta / 2) * sin($latDelta / 2) +
+                     cos(deg2rad($lat)) * cos(deg2rad($partnerLat)) *
+                     sin($lngDelta / 2) * sin($lngDelta / 2);
+                return $earthRadius * (2 * atan2(sqrt($a), sqrt(1 - $a)));
+            });
+        }
+
+        $nextPartner = $partners->first();
+
+        if ($nextPartner) {
+            $this->update([
+                'delivery_partner_id' => $nextPartner->id,
+                'status' => self::STATUS_ASSIGNED,
+                'assigned_at' => now(),
+                'picked_up_at' => null,
+            ]);
+            $nextPartner->notify(new \App\Notifications\NewDeliveryAssignedNotification($this));
+            return $nextPartner;
+        }
+
+        return null;
+    }
+
+    /**
      * Expire stale pending requests. Returns ids of orders whose last
      * pending request was just expired (callers can resend to next partner).
      */

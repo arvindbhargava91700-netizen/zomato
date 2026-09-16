@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Admin Profile - Zomato Clone')
+@section('title', getPageTitle('Admin Profile - Zomato Clone'))
 
 @section('content')
 <div class="nxl-content">

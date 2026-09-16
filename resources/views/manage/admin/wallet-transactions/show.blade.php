@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Transaction Voucher #' . $transaction->transaction_number . ' - Admin')
+@section('title', getPageTitle('Transaction Voucher #' . $transaction->transaction_number . ' - Admin'))
 
 @push('styles')
 <style>

@@ -39,7 +39,8 @@ class RestaurantFeatureController extends Controller
 
         $features = $query->orderByRaw('LENGTH(sort_order), sort_order, name')->paginate(10)->withQueryString();
 
-        return view('manage.admin.restaurant-features.index', compact('features'));
+        $title = getPageTitle('Restaurant Features');
+        return view('manage.admin.restaurant-features.index', compact('features', 'title'));
     }
 
     /**
@@ -47,7 +48,8 @@ class RestaurantFeatureController extends Controller
      */
     public function create(): View
     {
-        return view('manage.admin.restaurant-features.create');
+        $title = getPageTitle('Create Restaurant Feature');
+        return view('manage.admin.restaurant-features.create', compact('title'));
     }
 
     /**
@@ -79,7 +81,8 @@ class RestaurantFeatureController extends Controller
      */
     public function edit(RestaurantFeature $restaurantFeature): View
     {
-        return view('manage.admin.restaurant-features.edit', compact('restaurantFeature'));
+        $title = getPageTitle('Edit Restaurant Feature');
+        return view('manage.admin.restaurant-features.edit', compact('restaurantFeature', 'title'));
     }
 
     /**

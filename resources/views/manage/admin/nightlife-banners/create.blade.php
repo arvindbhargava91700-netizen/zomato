@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Add New Nightlife Banner - Admin Dashboard')
+@section('title', getPageTitle('Add New Nightlife Banner'))
 
 @section('content')
 <div class="nxl-content">

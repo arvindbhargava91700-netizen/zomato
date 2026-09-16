@@ -27,7 +27,12 @@
                                 value="{{ old('last_name', $address->last_name) }}" placeholder="Enter your last name">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Address</label>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0">Address</label>
+                                <button type="button" class="btn btn-sm text-primary p-0 bg-transparent border-0 d-flex align-items-center gap-1 auto-location-btn">
+                                    <i class="ri-map-pin-line"></i> Use my current location
+                                </button>
+                            </div>
                             <input type="text" class="form-control" name="address"
                                 value="{{ old('address', $address->address) }}" placeholder="Enter your address">
                         </div>
@@ -68,11 +73,7 @@
                     <button type="submit" class="btn theme-btn mt-0">SUBMIT</button>
                 </div>
             </form>
-            <form method="POST" action="{{ route('address.destroy', $address->id) }}" class="text-center pb-3">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn theme-outline mt-0">Delete Address</button>
-            </form>
+
         </div>
     </div>
 </div>

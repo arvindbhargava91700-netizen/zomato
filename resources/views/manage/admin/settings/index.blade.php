@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'General Settings - Admin Dashboard')
+@section('title', getPageTitle('General Settings'))
 
 @section('content')
 <div class="nxl-content">
@@ -8,7 +8,7 @@
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
-                <h5 class="m-b-10">Company / General Settings</h5>
+                <h5 class="m-b-10">Commission / General Settings</h5>
             </div>
             <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
@@ -29,119 +29,6 @@
 
         <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
-
-            <div class="card stretch stretch-full border-0 shadow-sm rounded-3 mb-4">
-                <div class="card-header border-bottom py-3">
-                    <h5 class="card-title mb-0 fw-bold">Company Information</h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="company_name" class="form-label fw-semibold">Company Name</label>
-                            <input type="text" name="company_name" id="company_name" class="form-control @error('company_name') is-invalid @enderror" value="{{ old('company_name', $setting->company_name) }}" placeholder="e.g. Food Management Inc.">
-                            @error('company_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label for="website" class="form-label fw-semibold">Website</label>
-                            <input type="text" name="website" id="website" class="form-control @error('website') is-invalid @enderror" value="{{ old('website', $setting->website) }}" placeholder="e.g. https://www.yourwebsite.com">
-                            @error('website') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label for="logo_lg" class="form-label fw-semibold">Logo (Large) <small class="text-muted">(Max 2MB)</small></label>
-                            <input type="file" name="logo_lg" id="logo_lg" class="form-control @error('logo_lg') is-invalid @enderror" accept="image/*">
-                            @if($setting->logo_lg)
-                                <img src="{{ asset($setting->logo_lg) }}" alt="Logo Large" class="mt-2 rounded border" style="max-height: 55px;">
-                            @endif
-                            @error('logo_lg') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label for="logo_sm" class="form-label fw-semibold">Logo (Small) <small class="text-muted">(Max 2MB)</small></label>
-                            <input type="file" name="logo_sm" id="logo_sm" class="form-control @error('logo_sm') is-invalid @enderror" accept="image/*">
-                            @if($setting->logo_sm)
-                                <img src="{{ asset($setting->logo_sm) }}" alt="Logo Small" class="mt-2 rounded border" style="max-height: 40px;">
-                            @endif
-                            @error('logo_sm') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label for="favicon" class="form-label fw-semibold">Favicon <small class="text-muted">(Max 1MB)</small></label>
-                            <input type="file" name="favicon" id="favicon" class="form-control @error('favicon') is-invalid @enderror" accept="image/*">
-                            @if($setting->favicon)
-                                <img src="{{ asset($setting->favicon) }}" alt="Favicon" class="mt-2 rounded border" style="max-height: 40px;">
-                            @endif
-                            @error('favicon') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card stretch stretch-full border-0 shadow-sm rounded-3 mb-4">
-                <div class="card-header border-bottom py-3">
-                    <h5 class="card-title mb-0 fw-bold">Contact Information</h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="email" class="form-label fw-semibold">Email</label>
-                            <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $setting->email) }}" placeholder="e.g. info@example.com">
-                            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label for="phone" class="form-label fw-semibold">Phone</label>
-                            <input type="text" name="phone" id="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $setting->phone) }}" placeholder="e.g. +91 9876543210">
-                            @error('phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-12">
-                            <label for="address" class="form-label fw-semibold">Address</label>
-                            <input type="text" name="address" id="address" class="form-control @error('address') is-invalid @enderror" value="{{ old('address', $setting->address) }}" placeholder="e.g. 123, Main Street, City, State, PIN">
-                            @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
-                </div>
-            <div class="card stretch stretch-full border-0 shadow-sm rounded-3 mb-4">
-                <div class="card-header border-bottom py-3">
-                    <h5 class="card-title mb-0 fw-bold">Social Media Links</h5>
-                </div>
-                <div class="card-body p-4">
-                    <p class="text-muted fs-13 mb-3">Add your official brand social media URLs. These will appear in the website footer and email templates.</p>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="facebook_url" class="form-label fw-semibold">
-                                <i class="feather-facebook text-primary me-1"></i> Facebook Page URL
-                            </label>
-                            <input type="url" name="facebook_url" id="facebook_url" class="form-control @error('facebook_url') is-invalid @enderror" value="{{ old('facebook_url', $setting->facebook_url) }}" placeholder="https://facebook.com/yourbrand">
-                            @error('facebook_url') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label for="twitter_url" class="form-label fw-semibold">
-                                <i class="feather-twitter text-info me-1"></i> Twitter / X URL
-                            </label>
-                            <input type="url" name="twitter_url" id="twitter_url" class="form-control @error('twitter_url') is-invalid @enderror" value="{{ old('twitter_url', $setting->twitter_url) }}" placeholder="https://twitter.com/yourbrand">
-                            @error('twitter_url') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label for="instagram_url" class="form-label fw-semibold">
-                                <i class="feather-instagram text-danger me-1"></i> Instagram URL
-                            </label>
-                            <input type="url" name="instagram_url" id="instagram_url" class="form-control @error('instagram_url') is-invalid @enderror" value="{{ old('instagram_url', $setting->instagram_url) }}" placeholder="https://instagram.com/yourbrand">
-                            @error('instagram_url') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label for="linkedin_url" class="form-label fw-semibold">
-                                <i class="feather-linkedin text-primary me-1"></i> LinkedIn URL
-                            </label>
-                            <input type="url" name="linkedin_url" id="linkedin_url" class="form-control @error('linkedin_url') is-invalid @enderror" value="{{ old('linkedin_url', $setting->linkedin_url) }}" placeholder="https://linkedin.com/company/yourbrand">
-                            @error('linkedin_url') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label for="youtube_url" class="form-label fw-semibold">
-                                <i class="feather-youtube text-danger me-1"></i> YouTube URL
-                            </label>
-                            <input type="url" name="youtube_url" id="youtube_url" class="form-control @error('youtube_url') is-invalid @enderror" value="{{ old('youtube_url', $setting->youtube_url) }}" placeholder="https://youtube.com/@yourbrand">
-                            @error('youtube_url') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="card stretch stretch-full border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-header border-bottom py-3">
@@ -183,28 +70,6 @@
                 </div>
             </div>
 
-            <div class="card stretch stretch-full border-0 shadow-sm rounded-3 mb-4">
-                <div class="card-header border-bottom py-3">
-                    <h5 class="card-title mb-0 fw-bold">Payment Details</h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="payment_qr" class="form-label fw-semibold">Payment QR Code Image <small class="text-muted">(Max 2MB)</small></label>
-                            <input type="file" name="payment_qr" id="payment_qr" class="form-control @error('payment_qr') is-invalid @enderror" accept="image/*">
-                            @if($setting->payment_qr)
-                                <img src="{{ asset($setting->payment_qr) }}" alt="Payment QR" class="mt-2 rounded border" style="max-height: 90px;">
-                            @endif
-                            @error('payment_qr') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label for="payment_details" class="form-label fw-semibold">Payment Details</label>
-                            <textarea name="payment_details" id="payment_details" rows="4" class="form-control @error('payment_details') is-invalid @enderror" placeholder="e.g. Bank: XYZ Bank, A/C No: 1234567890, IFSC: XYZB0000000, UPI: pay@bank...">{{ old('payment_details', $setting->payment_details) }}</textarea>
-                            @error('payment_details') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="card stretch stretch-full border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-header border-bottom py-3">

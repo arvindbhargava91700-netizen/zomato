@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Brands Management - Admin Dashboard')
+@section('title', $title)
 
 @section('content')
 <div class="nxl-content">

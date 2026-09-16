@@ -77,6 +77,8 @@ Route::post('/promo/validate', [frontController::class, 'validatePromo'])->name(
 Route::get('/orderTracking', [frontController::class, 'orderTracking'])->name('orderTracking')->middleware('auth');
 Route::post('/orders/{order}/cancel', [frontController::class, 'cancelOrder'])->name('orders.cancel')->middleware('auth');
 Route::post('/review', [frontController::class, 'storeReview'])->name('review.store')->middleware('auth');
+Route::put('/review/{review}', [frontController::class, 'updateReview'])->name('review.update')->middleware('auth');
+Route::delete('/review/{review}', [frontController::class, 'destroyReview'])->name('review.destroy')->middleware('auth');
 
 
 Route::get('/profile', [frontController::class, 'profile'])->name('profile')->middleware('auth');
@@ -84,6 +86,8 @@ Route::get('/wallet', [frontController::class, 'wallet'])->name('wallet')->middl
 Route::post('/wallet/topup', [frontController::class, 'walletTopup'])->name('wallet.topup')->middleware('auth');
 Route::post('/wallet/topup/success', [frontController::class, 'walletTopupSuccess'])->name('wallet.topup.success')->middleware('auth');
 Route::get('/my-orders', [frontController::class, 'myOrders'])->name('my.orders')->middleware('auth');
+Route::get('/my-transactions', [frontController::class, 'myTransactions'])->name('my.transactions')->middleware('auth');
+Route::get('/my-feedback', [frontController::class, 'myFeedback'])->name('my.feedback')->middleware('auth');
 Route::get('/saved-address', [frontController::class, 'savedAddress'])->name('saved.address')->middleware('auth');
 Route::post('/saved-address', [frontController::class, 'addressStore'])->name('address.store')->middleware('auth');
 Route::put('/saved-address/{id}', [frontController::class, 'addressUpdate'])->name('address.update')->middleware('auth');
@@ -280,6 +284,7 @@ Route::middleware('role:delivery_partner')->prefix('delivery-partner')->name('de
     Route::get('/profile-detail', [App\Http\Controllers\DeliveryPartner\ProfileController::class, 'profileDetail'])->name('profile-detail');
     Route::get('/kyc', [App\Http\Controllers\DeliveryPartner\ProfileController::class, 'kyc'])->name('kyc');
     Route::post('/profile', [App\Http\Controllers\DeliveryPartner\ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/update-location', [App\Http\Controllers\DeliveryPartner\ProfileController::class, 'updateLocation'])->name('profile.update-location');
     Route::post('/profile/password', [App\Http\Controllers\DeliveryPartner\ProfileController::class, 'changePassword'])->name('password.update');
     Route::get('/account-settings', [App\Http\Controllers\DeliveryPartner\SettingController::class, 'accountSettings'])->name('account.settings');
     Route::post('/account-settings', [App\Http\Controllers\DeliveryPartner\SettingController::class, 'accountSettingsUpdate'])->name('account.settings.update');

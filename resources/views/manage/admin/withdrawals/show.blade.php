@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Withdrawal Request #' . $withdrawal->withdrawal_number . ' - Admin')
+@section('title', getPageTitle('Withdrawal Request #' . $withdrawal->withdrawal_number . ' - Admin'))
 
 @push('styles')
 <style>

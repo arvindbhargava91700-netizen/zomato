@@ -74,6 +74,9 @@ class RoleController extends Controller
             });
         }
 
+        $query->whereNotIn('slug',['restaurant_owner','customer','delivery_partner','super_admin']);
+
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }

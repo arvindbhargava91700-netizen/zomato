@@ -18,6 +18,14 @@ class Admin extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'image',
+        'bank_name',
+        'account_number',
+        'ifsc_code',
+        'branch_name',
+        'account_type',
+        'upi_id',
+        'qr_code_image',
         'email',
         'mobile',
         'password',

@@ -120,6 +120,10 @@
                                 <i class="feather-user"></i>
                                 <span>Profile Details</span>
                             </a>
+                            <a href="{{ route('admin.account-setting.index') }}" class="dropdown-item">
+                                <i class="feather-credit-card"></i>
+                                <span>Account Setting</span>
+                            </a>
                             <a href="{{ route('admin.profile') }}" class="dropdown-item">
                                 <i class="feather-lock"></i>
                                 <span>Change Password</span>

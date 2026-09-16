@@ -25,6 +25,33 @@
                 </li>
 
                 <!-- ============================================= -->
+                <!-- User Management (Dedicated Section) -->
+                <!-- ============================================= -->
+                <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.users.*') ? 'active nxl-trigger' : '' }}">
+                    <a href="javascript:void(0);" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-users"></i></span>
+                        <span class="nxl-mtext">User Management</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                    </a>
+                    <ul class="nxl-submenu">
+                        <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'customer' ? 'active' : '' }}">
+                            <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'customer']) }}">
+                                <i class="feather-user me-2"></i>Customer List
+                            </a>
+                        </li>
+                        <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'restaurant_owner' ? 'active' : '' }}">
+                            <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'restaurant_owner']) }}">
+                                <i class="feather-shopping-bag me-2"></i>Vendor List
+                            </a>
+                        </li>
+                        <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'delivery_partner' ? 'active' : '' }} ">
+                            <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'delivery_partner']) }}">
+                                <i class="feather-truck me-2"></i>Delivery Partner List
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- ============================================= -->
                 <!-- Restaurants Management -->
                 <!-- ============================================= -->
                 <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.restaurants.*', 'admin.dining-offers.*', 'admin.restaurant-offers.*', 'admin.restaurant-blogs.*', 'admin.food-categories.*', 'admin.promo-codes.*', 'admin.brands.*', 'admin.nightlife-banners.*') ? 'active nxl-trigger' : '' }}">
@@ -114,28 +141,40 @@
 
 
 
-                                    <!-- ============================================= -->
-                    <!-- User Management (Dedicated Section) -->
+                   
+
                     <!-- ============================================= -->
-                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.users.*', 'admin.delivery-partners.*') ? 'active nxl-trigger' : '' }}">
+                    <!-- Delivery Partner Management -->
+                    <!-- ============================================= -->
+                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.delivery-partners.*') ? 'active nxl-trigger' : '' }}">
                         <a href="javascript:void(0);" class="nxl-link">
-                            <span class="nxl-micon"><i class="feather-users"></i></span>
-                            <span class="nxl-mtext">User Management</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                            <span class="nxl-micon">
+                                <i class="feather-truck"></i>
+                            </span>
+                            <span class="nxl-mtext">Delivery Management</span>
+                            <span class="nxl-arrow">
+                                <i class="feather-chevron-right"></i>
+                            </span>
                         </a>
                         <ul class="nxl-submenu">
-                            <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'customer' ? 'active' : '' }}">
-                                <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'customer']) }}">
-                                    <i class="feather-user me-2"></i>Customer List
+                            <li class="nxl-item {{ request()->routeIs('admin.delivery-partners.index') && (request('kyc_status') === 'all' || !request('kyc_status')) ? 'active' : '' }}">
+                                <a href="{{ route('admin.delivery-partners.index', ['kyc_status' => 'all']) }}" class="nxl-link">
+                                    <i class="feather-users me-2"></i> All Partners
                                 </a>
                             </li>
-                            <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'restaurant_owner' ? 'active' : '' }}">
-                                <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'restaurant_owner']) }}">
-                                    <i class="feather-shopping-bag me-2"></i>Vendor List
+                            <li class="nxl-item {{ request('kyc_status') === 'pending' ? 'active' : '' }}">
+                                <a href="{{ route('admin.delivery-partners.index', ['kyc_status' => 'pending']) }}" class="nxl-link">
+                                    <i class="feather-clock me-2"></i> Pending KYC
                                 </a>
                             </li>
-                            <li class="nxl-item {{ request()->routeIs('admin.users.*') && request('type') === 'delivery_partner' ? 'active' : '' }} ">
-                                <a class="nxl-link" href="{{ route('admin.users.index', ['type' => 'delivery_partner']) }}">
-                                    <i class="feather-truck me-2"></i>Delivery Partner List
+                            <li class="nxl-item {{ request('kyc_status') === 'approved' ? 'active' : '' }}">
+                                <a href="{{ route('admin.delivery-partners.index', ['kyc_status' => 'approved']) }}" class="nxl-link">
+                                    <i class="feather-check-circle me-2"></i> Approved
+                                </a>
+                            </li>
+                            <li class="nxl-item {{ request('kyc_status') === 'rejected' ? 'active' : '' }}">
+                                <a href="{{ route('admin.delivery-partners.index', ['kyc_status' => 'rejected']) }}" class="nxl-link">
+                                    <i class="feather-x-circle me-2"></i> Rejected
                                 </a>
                             </li>
                         </ul>
@@ -144,6 +183,17 @@
 
 
 
+                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.cms.*') ? 'active nxl-trigger' : '' }}">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-layout"></i></span>
+                            <span class="nxl-mtext">CMS Management</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item {{ request()->routeIs('admin.cms.company') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.cms.company') }}"><i class="feather-home me-2"></i>Company Setting</a></li>
+                            <li class="nxl-item {{ request()->routeIs('admin.cms.social') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.cms.social') }}"><i class="feather-share-2 me-2"></i>Social Media Setting</a></li>
+                        </ul>
+                    </li>
+
                                     <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.settings.*', 'admin.email-configuration.*', 'admin.sms-configuration.*', 'admin.email-templates.*') ? 'active nxl-trigger' : '' }}">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-award"></i></span>
@@ -151,7 +201,8 @@
                         </a>
                         <ul class="nxl-submenu">
 
-                            <li class="nxl-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.settings.index') }}"><i class="feather-settings me-2"></i>Company Settings</a></li>
+                            <li class="nxl-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.settings.index') }}"><i class="feather-settings me-2"></i>Commission Settings</a></li>
+                           
                             <li class="nxl-item {{ request()->routeIs('admin.email-configuration.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.email-configuration.edit') }}"><i class="feather-mail me-2"></i>Email Configuration</a></li>
                             <li class="nxl-item {{ request()->routeIs('admin.sms-configuration.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.sms-configuration.edit') }}"><i class="feather-message-square me-2"></i>SMS Configuration</a></li>
                             <li class="nxl-item {{ request()->routeIs('admin.email-templates.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.email-templates.index') }}"><i class="feather-file-text me-2"></i>Email Templates</a></li>
@@ -223,42 +274,6 @@
                     </li>
 
 
-                    <!-- ============================================= -->
-                    <!-- Delivery Partner Management -->
-                    <!-- ============================================= -->
-                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.delivery-partners.*') ? 'active' : '' }}">
-                        <a href="javascript:void(0);" class="nxl-link">
-                            <span class="nxl-micon">
-                                <i class="feather-truck"></i>
-                            </span>
-                            <span class="nxl-mtext">Delivery Partners</span>
-                            <span class="nxl-arrow">
-                                <i class="feather-chevron-right"></i>
-                            </span>
-                        </a>
-                        <ul class="nxl-submenu">
-                            <li class="nxl-item {{ request()->routeIs('admin.delivery-partners.index') && !request('kyc_status') ? 'active' : '' }}">
-                                <a href="{{ route('admin.delivery-partners.index') }}" class="nxl-link">
-                                    <i class="feather-users me-2"></i> All Partners
-                                </a>
-                            </li>
-                            <li class="nxl-item {{ request('kyc_status') === 'pending' ? 'active' : '' }}">
-                                <a href="{{ route('admin.delivery-partners.index', ['kyc_status' => 'pending']) }}" class="nxl-link">
-                                    <i class="feather-clock me-2"></i> Pending KYC
-                                </a>
-                            </li>
-                            <li class="nxl-item {{ request('kyc_status') === 'approved' ? 'active' : '' }}">
-                                <a href="{{ route('admin.delivery-partners.index', ['kyc_status' => 'approved']) }}" class="nxl-link">
-                                    <i class="feather-check-circle me-2"></i> Approved
-                                </a>
-                            </li>
-                            <li class="nxl-item {{ request('kyc_status') === 'rejected' ? 'active' : '' }}">
-                                <a href="{{ route('admin.delivery-partners.index', ['kyc_status' => 'rejected']) }}" class="nxl-link">
-                                    <i class="feather-x-circle me-2"></i> Rejected
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
 
                     <!-- ============================================= -->
                     <!-- Payment Transactions -->
@@ -381,6 +396,11 @@
                             <a href="{{ route('admin.profile') }}" class="dropdown-item">
                                 <i class="feather-settings"></i>
                                 <span>Change Password</span>
+                            </a>
+
+                            <a href="{{ route('admin.account-setting.index') }}" class="dropdown-item">
+                                <i class="feather-credit-card"></i>
+                                <span>Account Setting</span>
                             </a>
                             <div class="dropdown-divider"></div>
                             <form action="" method="POST" id="logoutFormSidebar">

@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Settlement #' . $settlement->id . ' - Admin Dashboard')
+@section('title', getPageTitle('Settlement #' . $settlement->id . ''))
 
 @section('styles')
 <style>

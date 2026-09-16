@@ -49,6 +49,8 @@ class User extends Authenticatable
         'kyc_remark',
         'kyc_reviewed_at',
         'status',
+        'live_lat',
+        'live_lng',
     ];
 
     protected $hidden = [

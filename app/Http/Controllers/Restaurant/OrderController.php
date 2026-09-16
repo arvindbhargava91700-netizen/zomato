@@ -66,6 +66,46 @@ class OrderController extends Controller
         $order->load(['user', 'address', 'items', 'deliveryPartner', 'review', 'deliveryRequests.deliveryPartner']);
 
         $deliveryPartners = $this->availablePartners();
+        
+        $lat = (float) $order->restaurant->latitude;
+        $lng = (float) $order->restaurant->longitude;
+
+        if ($lat && $lng) {
+            $deliveryPartners = $deliveryPartners->map(function ($partner) use ($lat, $lng) {
+                $partnerLat = null;
+                $partnerLng = null;
+                
+                if ($partner->live_lat && $partner->live_lng) {
+                    $partnerLat = (float) $partner->live_lat;
+                    $partnerLng = (float) $partner->live_lng;
+                    $partner->location_type = 'Live GPS';
+                } else {
+                    foreach ($partner->addresses as $address) {
+                        if ($address->latitude && $address->longitude) {
+                            $partnerLat = (float) $address->latitude;
+                            $partnerLng = (float) $address->longitude;
+                            $partner->location_type = 'Saved Address';
+                            break;
+                        }
+                    }
+                }
+
+                if ($partnerLat !== null && $partnerLng !== null) {
+                    $earthRadius = 6371;
+                    $latDelta = deg2rad($partnerLat - $lat);
+                    $lngDelta = deg2rad($partnerLng - $lng);
+                    $a = sin($latDelta / 2) * sin($latDelta / 2) +
+                         cos(deg2rad($lat)) * cos(deg2rad($partnerLat)) *
+                         sin($lngDelta / 2) * sin($lngDelta / 2);
+                    $partner->distance = $earthRadius * (2 * atan2(sqrt($a), sqrt(1 - $a)));
+                } else {
+                    $partner->distance = 999999;
+                    $partner->location_type = 'Unknown';
+                }
+                
+                return $partner;
+            })->sortBy('distance')->values();
+        }
 
         return view('manage.restaurant.orders.show', compact('order', 'deliveryPartners'));
     }
@@ -97,6 +137,8 @@ class OrderController extends Controller
             'assigned_at' => now(),
         ]);
 
+        $partner->notify(new \App\Notifications\NewDeliveryAssignedNotification($order));
+
         // Cancel any other pending requests for this order
         $order->deliveryRequests()
             ->where('status', \App\Models\DeliveryRequest::STATUS_PENDING)
@@ -116,12 +158,10 @@ class OrderController extends Controller
             return back()->with('error', 'This order is not ready for a delivery request.');
         }
 
-        Order::expireStaleRequests();
+        $nextPartner = $order->assignToNearestPartner();
 
-        $sent = $order->sendDeliveryRequests();
-
-        if ($sent > 0) {
-            return back()->with('success', "Delivery request sent to {$sent} available partner(s).");
+        if ($nextPartner) {
+            return back()->with('success', "Order has been automatically assigned to the nearest partner ({$nextPartner->name}).");
         }
 
         return back()->with('error', 'No available delivery partners right now. Try again later.');
@@ -134,7 +174,7 @@ class OrderController extends Controller
     {
         return User::whereHas('role', function ($q) {
             $q->where('slug', 'delivery_partner');
-        })->orderBy('name')->get();
+        })->with('addresses')->orderBy('name')->get();
     }
 
     /**
@@ -219,10 +259,10 @@ class OrderController extends Controller
             'ready_at' => now(),
         ]);
 
-        $sent = $order->sendDeliveryRequests();
+        $nextPartner = $order->assignToNearestPartner();
 
         $message = "Order #{$order->id} is ready.";
-        $message .= $sent > 0 ? " Delivery request sent to {$sent} partner(s)." : ' No available delivery partners right now.';
+        $message .= $nextPartner ? " Automatically assigned to {$nextPartner->name}." : ' No available delivery partners right now.';
 
         return back()->with('success', $message);
     }

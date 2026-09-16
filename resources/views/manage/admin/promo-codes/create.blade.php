@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Create Campaign - Admin Dashboard')
+@section('title', getPageTitle('Create Campaign'))
 
 @section('content')
 <div class="nxl-content">

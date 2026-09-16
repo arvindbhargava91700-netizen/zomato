@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Admin Logs - Admin Dashboard')
+@section('title', getPageTitle('Admin Logs'))
 
 @push('styles')
 <style>

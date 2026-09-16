@@ -56,7 +56,8 @@ class RestaurantBlogController extends Controller
     public function show(RestaurantBlog $restaurant_blog): View
     {
         $restaurant_blog->load(['restaurant', 'author', 'approver', 'category', 'cuisine']);
-        return view('manage.admin.restaurant-blogs.show', compact('restaurant_blog'));
+        $title = getPageTitle('Review Blog - ' . $restaurant_blog->title);
+        return view('manage.admin.restaurant-blogs.show', compact('restaurant_blog', 'title'));
     }
 
     /**

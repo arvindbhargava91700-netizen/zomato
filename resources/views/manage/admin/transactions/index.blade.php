@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Payment Transactions - Admin Dashboard')
+@section('title', getPageTitle('Payment Transactions'))
 
 @section('content')
 <div class="nxl-content">

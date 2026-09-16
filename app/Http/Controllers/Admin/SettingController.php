@@ -77,6 +77,66 @@ class SettingController extends Controller
         return back()->with('success', 'General settings updated successfully.');
     }
 
+    public function cmsCompany(): View
+    {
+        $setting = CompanySetting::firstSetting();
+        return view('manage.admin.cms.company', compact('setting'));
+    }
+
+    public function cmsCompanyUpdate(Request $request): RedirectResponse
+    {
+        $setting = CompanySetting::firstSetting();
+
+        $data = $request->validate([
+            'company_name' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'website' => ['nullable', 'string', 'max:255'],
+            'logo_lg' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'logo_sm' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'favicon' => ['nullable', 'image', 'mimes:jpeg,png,jpg,ico,webp', 'max:1024'],
+        ]);
+
+        foreach (['logo_lg', 'logo_sm', 'favicon'] as $field) {
+            if ($request->hasFile($field)) {
+                if ($setting->{$field} && File::exists(public_path($setting->{$field}))) {
+                    File::delete(public_path($setting->{$field}));
+                }
+                $fileName = time().'_'.$field.'_'.Str::random(5).'.'.$request->file($field)->extension();
+                $request->file($field)->move(public_path('uploads/settings'), $fileName);
+                $data[$field] = 'uploads/settings/'.$fileName;
+            }
+        }
+
+        $setting->update($data);
+
+        return back()->with('success', 'Company settings updated successfully.');
+    }
+
+    public function cmsSocial(): View
+    {
+        $setting = CompanySetting::firstSetting();
+        return view('manage.admin.cms.social', compact('setting'));
+    }
+
+    public function cmsSocialUpdate(Request $request): RedirectResponse
+    {
+        $setting = CompanySetting::firstSetting();
+
+        $data = $request->validate([
+            'facebook_url' => ['nullable', 'string', 'max:255'],
+            'twitter_url' => ['nullable', 'string', 'max:255'],
+            'linkedin_url' => ['nullable', 'string', 'max:255'],
+            'instagram_url' => ['nullable', 'string', 'max:255'],
+            'youtube_url' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $setting->update($data);
+
+        return back()->with('success', 'Social Media settings updated successfully.');
+    }
+
     /**
      * Show the account settings form.
      */

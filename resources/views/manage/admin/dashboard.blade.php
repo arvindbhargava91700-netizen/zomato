@@ -1,6 +1,8 @@
 @extends('layouts.admin.main')
+@section('title')
+{{ $title }}
 
-@section('title', 'Admin Dashboard - Property Management Software')
+@endsection
 
 @section('content')
 <div class="nxl-content">

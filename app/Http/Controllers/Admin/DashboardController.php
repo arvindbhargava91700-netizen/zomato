@@ -17,6 +17,7 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
+        $title = getPageTitle("Dashboard");
         $orders = Order::query();
 
         $stats = [
@@ -38,6 +39,6 @@ class DashboardController extends Controller
             'total_foods' => Food::count(),
         ];
 
-        return view('manage.admin.dashboard', compact('stats'));
+        return view('manage.admin.dashboard', compact('stats', 'title'));
     }
 }

@@ -48,6 +48,16 @@ class frontController extends Controller
         return view('manage.front.profile');
     }
 
+    public function myFeedback()
+    {
+        $reviews = \App\Models\Review::with(['restaurant', 'deliveryPartner', 'order'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(10);
+
+        return view('manage.front.my-feedback', compact('reviews'));
+    }
+
     public function profileUpdateName(Request $request)
     {
         $request->validate([
@@ -1114,14 +1124,26 @@ class frontController extends Controller
         return redirect()->route('contact')->with('success', $successMessage);
     }
     
-       public function myOrders()
+    public function myOrders()
     {
-        $orders = Order::with(['restaurant', 'items'])
-            ->where('user_id', auth()->id())
+        $orders = Order::with('restaurant')->where('user_id', auth()->user()->id)->latest()->paginate(10);
+        $taxPercentage = Setting::where('key', 'tax_percentage')->value('value') ?? 0;
+        $currencySymbol = Setting::where('key', 'currency_symbol')->value('value') ?? '$';
+        $taxGst = Setting::where('key', 'tax_gst')->value('value') ?? null;
+        
+        return view('manage.front.myOrders', compact('orders', 'taxPercentage', 'currencySymbol', 'taxGst'));
+    }
+
+    public function myTransactions()
+    {
+        $transactions = \App\Models\Transaction::with(['order', 'restaurant'])
+            ->where('customer_id', auth()->user()->id)
             ->latest()
             ->paginate(10);
 
-        return view('manage.front.myOrders', compact('orders'));
+        $currencySymbol = \App\Models\Setting::where('key', 'currency_symbol')->value('value') ?? '$';
+
+        return view('manage.front.my-transactions', compact('transactions', 'currencySymbol'));
     }
 
     /**
@@ -1257,6 +1279,40 @@ class frontController extends Controller
         ]);
 
         return back()->with('success', 'Thank you! Your review has been submitted.');
+    }
+
+    public function updateReview(Request $request, \App\Models\Review $review)
+    {
+        if ($review->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $data = $request->validate([
+            'restaurant_rating' => 'nullable|integer|between:1,5',
+            'food_rating' => 'nullable|integer|between:1,5',
+            'delivery_rating' => 'nullable|integer|between:1,5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+
+        $review->update([
+            'restaurant_rating' => $data['restaurant_rating'] ?? null,
+            'food_rating' => $data['food_rating'] ?? null,
+            'delivery_rating' => $data['delivery_rating'] ?? null,
+            'comment' => $data['comment'] ?? null,
+        ]);
+
+        return back()->with('success', 'Your feedback has been updated successfully.');
+    }
+
+    public function destroyReview(\App\Models\Review $review)
+    {
+        if ($review->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $review->delete();
+
+        return back()->with('success', 'Your feedback has been deleted successfully.');
     }
     public function savedAddress()
     {
@@ -1637,6 +1693,8 @@ class frontController extends Controller
             );
 
             $radius = (float) $firstRestaurant->delivery_radius;
+
+           // dd($radius, $distance);
             if ($radius > 0 && $distance > $radius) {
                 return response()->json([
                     'success' => false,
@@ -1744,6 +1802,12 @@ class frontController extends Controller
             $orderRefId = $request->input('razorpay_order_id');
             $signature = $request->input('razorpay_signature');
             $this->distributeOrderIncome($order, $data['payment_method'], $paymentId, $orderRefId, $signature);
+        }
+
+        // Notify restaurant owner
+        $restaurant = \App\Models\Restaurant::find($firstRestaurantId);
+        if ($restaurant && $restaurant->user) {
+            $restaurant->user->notify(new \App\Notifications\NewOrderNotification($order));
         }
 
         return response()->json([

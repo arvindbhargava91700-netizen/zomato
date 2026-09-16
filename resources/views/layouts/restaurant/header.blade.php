@@ -71,7 +71,7 @@
                             @forelse($recentNotifications as $recentNotification)
                                 @php $recentData = $recentNotification->data; @endphp
                                 <div class="notifications-item">
-                                    <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 me-3" style="width: 36px; height: 36px; {{ $recentNotification->read_at === null ? 'background: rgba(13,110,253,0.12); color:#0d6efd;' : 'background: rgba(100,116,139,0.12); color:#64748b;' }}">
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 me-3" style="width: 36px; height: 36px; {{ $recentNotification->read_at === null ? 'background: rgba(203,32,45,0.12); color:#cb202d;' : 'background: rgba(100,116,139,0.12); color:#64748b;' }}">
                                         <i class="{{ $recentData['icon'] ?? 'feather-bell' }}" style="font-size:15px;"></i>
                                     </div>
                                     <div class="notifications-desc">

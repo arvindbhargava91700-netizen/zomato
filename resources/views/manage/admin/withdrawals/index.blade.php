@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Withdrawal Requests - Admin Dashboard')
+@section('title', getPageTitle('Withdrawal Requests'))
 
 @push('styles')
 <style>

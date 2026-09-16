@@ -47,11 +47,11 @@
                         $icon = $data['icon'] ?? 'feather-bell';
                     @endphp
                     <a href="{{ route('restaurant.notifications.show', $notification->id) }}"
-                        class="d-flex align-items-start gap-3 px-4 py-3 text-decoration-none border-bottom {{ $unread ? 'bg-soft-primary' : '' }}"
+                        class="d-flex align-items-start gap-3 px-4 py-3 text-decoration-none border-bottom {{ $unread ? 'bg-soft-danger' : '' }}"
                         style="transition: background 0.15s ease;">
                         <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 mt-1"
-                            style="width: 40px; height: 40px; background: {{ $unread ? 'rgba(13,110,253,0.12)' : 'rgba(100,116,139,0.12)' }};">
-                            <i class="{{ $icon }} {{ $unread ? 'text-primary' : 'text-secondary' }}"></i>
+                            style="width: 40px; height: 40px; background: {{ $unread ? 'rgba(203,32,45,0.12)' : 'rgba(100,116,139,0.12)' }};">
+                            <i class="{{ $icon }} {{ $unread ? 'text-danger' : 'text-secondary' }}"></i>
                         </div>
                         <div class="flex-grow-1">
                             <div class="fw-semibold text-dark mb-1">{{ $data['title'] ?? 'Notification' }}</div>
@@ -59,7 +59,7 @@
                             <div class="fs-12 text-muted">
                                 {{ $notification->created_at->diffForHumans() }}
                                 @if($unread)
-                                    <span class="badge bg-primary ms-2">New</span>
+                                    <span class="badge bg-danger ms-2">New</span>
                                 @endif
                             </div>
                         </div>

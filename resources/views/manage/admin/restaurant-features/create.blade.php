@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Add New Restaurant Feature - Admin Dashboard')
+@section('title', $title)
 
 @section('content')
 <div class="nxl-content">

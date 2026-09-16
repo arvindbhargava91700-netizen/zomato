@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Edit Food Item - Admin Dashboard')
+@section('title', getPageTitle('Edit Food Item'))
 
 @section('content')
 <div class="nxl-content">

@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Sub Admins Management - Admin Dashboard')
+@section('title', getPageTitle('Sub Admins Management'))
 
 @push('styles')
 <style>

@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Restaurant Blogs Management - Super Admin')
+@section('title', getPageTitle('Restaurant Blogs Management - Super Admin'))
 
 @section('content')
     <!-- [ page-header ] start -->

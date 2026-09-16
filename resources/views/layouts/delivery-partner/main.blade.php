@@ -91,6 +91,39 @@
 
     @vite(['resources/js/echo.js'])
 
+    <!-- Live Location Tracker -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (navigator.geolocation) {
+                // Fetch and send location every 30 seconds (30000 ms)
+                setInterval(() => {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            
+                            fetch("{{ route('delivery-partner.profile.update-location') }}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify({
+                                    live_lat: lat,
+                                    live_lng: lng
+                                })
+                            }).catch(err => console.error("Error updating location:", err));
+                        },
+                        (error) => {
+                            console.warn("Location access denied or unavailable.");
+                        },
+                        { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+                    );
+                }, 30000);
+            }
+        });
+    </script>
+
     @stack('scripts')
 </body>
 </html>

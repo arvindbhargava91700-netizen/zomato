@@ -32,6 +32,32 @@
                     @endif
                 </div>
 
+                @php
+                    // Fetch real ratings from reviews by joining through orders and order items
+                    $reviews = \App\Models\Review::whereHas('order.items', function($q) use ($food) {
+                        $q->where('food_id', $food->id);
+                    })->whereNotNull('food_rating');
+                    
+                    $dynamicVotes = $reviews->count();
+                    $dynamicRating = $dynamicVotes > 0 ? number_format($reviews->avg('food_rating'), 1) : 0;
+                    
+                    if ($dynamicRating >= 4.0) {
+                        $starColor = '#24963f'; // Green
+                    } elseif ($dynamicRating >= 3.0) {
+                        $starColor = '#f4a266'; // Orange
+                    } else {
+                        $starColor = '#e65100'; // Dark Orange/Red
+                    }
+                @endphp
+                @if($dynamicVotes > 0)
+                <div class="d-flex align-items-center gap-2 mt-1 mb-2">
+                    <div class="star-badge" style="background-color: {{ $starColor }}; color: white; padding: 2px 5px; border-radius: 4px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                        <i class="ri-star-fill"></i> {{ $dynamicRating }}
+                    </div>
+                    <span class="text-muted small fw-medium">{{ $dynamicVotes }} votes</span>
+                </div>
+                @endif
+
                 <p class="mb-1">{{ $food->short_description ?: $food->description }}</p>
                 @if ($isCustomized)
                     <div class="variant-tags d-flex align-items-center flex-wrap gap-1 mt-1">

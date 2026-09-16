@@ -1,6 +1,6 @@
 @extends('layouts.admin.main')
 
-@section('title', 'Delivery Partner Management - Admin Dashboard')
+@section('title', getPageTitle('Delivery Partner Management'))
 
 @php
     $kycBadge = function ($status) {

@@ -41,7 +41,9 @@ class BrandController extends Controller
 
         $brands = $query->latest()->paginate(10)->withQueryString();
 
-        return view('manage.admin.brands.index', compact('brands'));
+        $title = getPageTitle('Brands');
+
+        return view('manage.admin.brands.index', compact('brands', 'title'));
     }
 
     /**
@@ -49,7 +51,8 @@ class BrandController extends Controller
      */
     public function create(): View
     {
-        return view('manage.admin.brands.create');
+        $title = getPageTitle('Create Brand');
+        return view('manage.admin.brands.create', compact('title'));
     }
 
     /**
@@ -89,7 +92,8 @@ class BrandController extends Controller
      */
     public function edit(Brand $brand): View
     {
-        return view('manage.admin.brands.edit', compact('brand'));
+        $title = getPageTitle('Edit Brand');
+        return view('manage.admin.brands.edit', compact('brand', 'title'));
     }
 
     /**

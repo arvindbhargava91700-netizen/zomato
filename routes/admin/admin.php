@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\NightlifeBannerController;
 use App\Http\Controllers\Admin\PaymentGatewayController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\AdminBankController;
 
 use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\RestaurantBlogController;
@@ -184,6 +185,14 @@ Route::middleware('admin')->group(function () {
     Route::get('earnings/commission', [EarningsController::class, 'commission'])->name('earnings.commission');
     Route::get('earnings/tax', [EarningsController::class, 'tax'])->name('earnings.tax');
     Route::get('earnings/platform', [EarningsController::class, 'platform'])->name('earnings.platform');
+
+    // CMS Management Routes
+    Route::get('account-setting', [AdminBankController::class, 'index'])->name('account-setting.index');
+    Route::post('account-setting', [AdminBankController::class, 'update'])->name('account-setting.update');
+    Route::get('cms/company', [SettingController::class, 'cmsCompany'])->name('cms.company');
+    Route::post('cms/company', [SettingController::class, 'cmsCompanyUpdate'])->name('cms.company.update');
+    Route::get('cms/social', [SettingController::class, 'cmsSocial'])->name('cms.social');
+    Route::post('cms/social', [SettingController::class, 'cmsSocialUpdate'])->name('cms.social.update');
 
     // General Settings Routes
     Route::get('settings', [SettingController::class, 'edit'])->name('settings.index');

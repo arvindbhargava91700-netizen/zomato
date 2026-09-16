@@ -36,6 +36,11 @@ class OrderController extends Controller
      */
     public function deliveries(): View
     {
+        $partners = \App\Models\User::whereHas('role', function ($q) {
+            $q->where('slug', 'delivery_partner');
+        })->get();
+      //  dd($partners->toArray());
+
         $orders = Order::with(['restaurant', 'user', 'items', 'latestCodSettlement'])
             ->where('delivery_partner_id', auth()->id())
             ->latest()
@@ -116,14 +121,17 @@ class OrderController extends Controller
         // Try the next available partner if the order is still waiting
         $order = $request->order;
         if ($order->status === Order::STATUS_READY && $order->delivery_partner_id === null) {
-            $sent = $order->sendDeliveryRequests();
-            if ($sent === 0) {
-                Order::expireStaleRequests();
-                $order->sendDeliveryRequests();
+            $nextPartner = $order->assignToNearestPartner();
+            if ($nextPartner) {
+                $msg = "Request rejected. The order has been automatically assigned to the nearest partner ({$nextPartner->name}).";
+            } else {
+                $msg = 'Request rejected. No other partners available right now.';
             }
+        } else {
+            $msg = 'Request rejected.';
         }
 
-        return back()->with('success', 'Request rejected. Another partner will be notified.');
+        return back()->with('success', $msg);
     }
 
     /**
@@ -218,23 +226,24 @@ class OrderController extends Controller
             ]);
         }
 
-        // Unassign and return the order to "ready" for another partner
-        $order->update([
-            'delivery_partner_id' => null,
-            'status' => Order::STATUS_READY,
-            'assigned_at' => null,
-            'picked_up_at' => null,
-        ]);
+        // Try the next nearest partner directly
+        $nextPartner = $order->assignToNearestPartner();
 
-        // Try the next available partner
-        $sent = $order->sendDeliveryRequests();
-        if ($sent === 0) {
-            Order::expireStaleRequests();
-            $order->sendDeliveryRequests();
+        if ($nextPartner) {
+            $msg = "Delivery #{$order->id} rejected. It has been automatically assigned to the nearest partner ({$nextPartner->name}).";
+        } else {
+            // Unassign and return the order to "ready" since no one else is available
+            $order->update([
+                'delivery_partner_id' => null,
+                'status' => Order::STATUS_READY,
+                'assigned_at' => null,
+                'picked_up_at' => null,
+            ]);
+            $msg = "Delivery #{$order->id} rejected. No other partners available right now.";
         }
 
         return redirect()->route('delivery-partner.orders.deliveries')
-            ->with('success', "Delivery #{$order->id} rejected. Another partner will be notified.");
+            ->with('success', $msg);
     }
 
     /**
