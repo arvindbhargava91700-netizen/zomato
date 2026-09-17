@@ -194,7 +194,7 @@
                         </ul>
                     </li>
 
-                                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.settings.*', 'admin.email-configuration.*', 'admin.sms-configuration.*', 'admin.email-templates.*') ? 'active nxl-trigger' : '' }}">
+                                    <li class="nxl-item nxl-hasmenu {{ request()->routeIs('admin.settings.*', 'admin.invoices.*', 'admin.ip-settings.*', 'admin.email-configuration.*', 'admin.sms-configuration.*', 'admin.email-templates.*') ? 'active nxl-trigger' : '' }}">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-award"></i></span>
                             <span class="nxl-mtext">Super Admin</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
@@ -202,7 +202,8 @@
                         <ul class="nxl-submenu">
 
                             <li class="nxl-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.settings.index') }}"><i class="feather-settings me-2"></i>Commission Settings</a></li>
-                           
+                            <li class="nxl-item {{ request()->routeIs('admin.invoices.settings') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.invoices.settings') }}"><i class="feather-file-text me-2"></i>Invoice Settings</a></li>
+                            <li class="nxl-item {{ request()->routeIs('admin.ip-settings.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.ip-settings.index') }}"><i class="feather-shield me-2"></i>IP Settings</a></li>
                             <li class="nxl-item {{ request()->routeIs('admin.email-configuration.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.email-configuration.edit') }}"><i class="feather-mail me-2"></i>Email Configuration</a></li>
                             <li class="nxl-item {{ request()->routeIs('admin.sms-configuration.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.sms-configuration.edit') }}"><i class="feather-message-square me-2"></i>SMS Configuration</a></li>
                             <li class="nxl-item {{ request()->routeIs('admin.email-templates.*') ? 'active' : '' }}"><a class="nxl-link" href="{{ route('admin.email-templates.index') }}"><i class="feather-file-text me-2"></i>Email Templates</a></li>

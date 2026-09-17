@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\AdminBankController;
 
 use App\Http\Controllers\Admin\RestaurantController;
 use App\Http\Controllers\Admin\RestaurantBlogController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\RestaurantFeatureController;
 use App\Http\Controllers\Admin\RestaurantOfferController;
 use App\Http\Controllers\Admin\RoleController;
@@ -219,5 +220,13 @@ Route::resource('email-templates', EmailTemplateController::class);
     Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
     Route::get('account-settings', [SettingController::class, 'accountSettings'])->name('account.settings');
     Route::post('account-settings', [SettingController::class, 'accountSettingsUpdate'])->name('account.settings.update');
-});
 
+    // Invoice Template Preview Route
+    Route::get('invoices/settings', [InvoiceController::class, 'settings'])->name('invoices.settings');
+    Route::post('invoices/settings', [InvoiceController::class, 'updateSettings'])->name('invoices.settings.update');
+    Route::get('invoices/preview', [InvoiceController::class, 'preview'])->name('invoices.preview');
+
+    // IP Settings Routes
+    Route::get('ip-settings', [\App\Http\Controllers\Admin\IpSettingController::class, 'index'])->name('ip-settings.index');
+    Route::post('ip-settings/{id}/toggle-block', [\App\Http\Controllers\Admin\IpSettingController::class, 'toggleBlock'])->name('ip-settings.toggle-block');
+});

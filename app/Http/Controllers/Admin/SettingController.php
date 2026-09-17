@@ -47,6 +47,7 @@ class SettingController extends Controller
             'tax_gst' => ['nullable', 'string', 'max:255'],
             'invoice_prefix' => ['nullable', 'string', 'max:20'],
             'receipt_prefix' => ['nullable', 'string', 'max:20'],
+            'invoice_terms' => ['nullable', 'string'],
             'payment_details' => ['nullable', 'string'],
             'delivery_partner_share' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'delivery_partner_cod_limit' => ['nullable', 'numeric', 'min:0'],

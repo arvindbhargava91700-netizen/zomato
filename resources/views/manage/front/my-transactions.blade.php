@@ -35,7 +35,8 @@
                                         <th>Details</th>
                                         <th>Method</th>
                                         <th>Amount</th>
-                                        <th class="text-end pe-3">Status</th>
+                                        <th class="text-end">Status</th>
+                                        <th class="text-center pe-3">Receipt</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -59,7 +60,7 @@
                                         <td>
                                             <div class="fw-bold" style="color: var(--theme-color);">{{ $currencySymbol }}{{ number_format($txn->total_amount, 2) }}</div>
                                         </td>
-                                        <td class="text-end pe-3">
+                                        <td class="text-end">
                                             @php
                                                 $badgeClass = 'bg-secondary';
                                                 if ($txn->status === 'success' || $txn->status === 'paid') {
@@ -72,10 +73,19 @@
                                             @endphp
                                             <span class="badge {{ $badgeClass }} text-uppercase">{{ $txn->status ?: 'UNKNOWN' }}</span>
                                         </td>
+                                        <td class="text-center pe-3">
+                                            @if($txn->status === 'success' || $txn->status === 'paid')
+                                                <button onclick="downloadReceipt(this, '{{ route('my.transactions.receipt', $txn->id) }}')" class="btn btn-sm btn-outline-danger shadow-sm receipt-btn" title="Download PDF Receipt">
+                                                    <i class="ri-file-pdf-2-line btn-icon"></i> <span class="btn-text">Download</span>
+                                                </button>
+                                            @else
+                                                <span class="text-muted small">N/A</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-5">
+                                        <td colspan="6" class="text-center py-5">
                                             <div class="text-muted">
                                                 <i class="ri-exchange-dollar-line" style="font-size: 40px; display: block; margin-bottom: 10px; color: #dee2e6;"></i>
                                                 <h6 class="fw-normal text-secondary">You haven't made any transactions yet.</h6>
@@ -96,3 +106,43 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+<script>
+    function downloadReceipt(btn, url) {
+        // Find icon and text elements
+        const icon = btn.querySelector('.btn-icon');
+        const text = btn.querySelector('.btn-text');
+        
+        // Save original icon class
+        const originalIconClass = icon.className;
+        
+        // Change to spinner and update text
+        icon.className = 'spinner-border spinner-border-sm me-1';
+        text.innerText = 'Downloading...';
+        btn.classList.add('disabled');
+        btn.style.pointerEvents = 'none';
+        
+        // Trigger download via hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = url;
+        document.body.appendChild(iframe);
+        
+        // Reset button state after a few seconds (assumes PDF generates within this time)
+        setTimeout(() => {
+            icon.className = originalIconClass;
+            text.innerText = 'Download';
+            btn.classList.remove('disabled');
+            btn.style.pointerEvents = 'auto';
+            
+            // Clean up iframe
+            setTimeout(() => {
+                if (document.body.contains(iframe)) {
+                    document.body.removeChild(iframe);
+                }
+            }, 10000); // Give it extra time before removing
+        }, 3000);
+    }
+</script>
+@endpush

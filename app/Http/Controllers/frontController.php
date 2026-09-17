@@ -1146,6 +1146,21 @@ class frontController extends Controller
         return view('manage.front.my-transactions', compact('transactions', 'currencySymbol'));
     }
 
+    public function downloadReceipt($transactionId)
+    {
+        $transaction = \App\Models\Transaction::with(['order.items.food', 'restaurant'])
+            ->where('customer_id', auth()->user()->id)
+            ->findOrFail($transactionId);
+
+        $currencySymbol = \App\Models\Setting::where('key', 'currency_symbol')->value('value') ?? '$';
+        $companySetting = \App\Models\CompanySetting::first();
+
+        // Use the dompdf wrapper directly from the container to avoid Facade caching issues
+        $pdf = app('dompdf.wrapper')->loadView('manage.front.receipt-pdf', compact('transaction', 'currencySymbol', 'companySetting'));
+        
+        return $pdf->download('Receipt-' . $transaction->transaction_number . '.pdf');
+    }
+
     /**
      * Cancel a customer order. Cancellation is only allowed while the order
      * is still pending (before the restaurant accepts and food prep starts).

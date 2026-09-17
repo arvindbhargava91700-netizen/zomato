@@ -61,53 +61,55 @@ Route::post('/blog/comments/{comment}/react', [App\Http\Controllers\BlogCommentC
 
 Route::get('/faq-list', [frontController::class, 'faqList'])->name('faq.list');
 Route::get('/testomonial-list', [frontController::class, 'testomonialList'])->name('testomonial.list');
-Route::get('/wish-list', [frontController::class, 'wishList'])->name('wish.list')->middleware('auth');
-Route::delete('/wish-list/{id}', [frontController::class, 'wishlistDestroy'])->name('wishlist.remove')->middleware('auth');
-Route::post('/wishlist/toggle', [frontController::class, 'wishlistStore'])->name('wishlist.store')->middleware('auth');
 Route::get('/contact', [frontController::class, 'contact'])->name('contact');
 Route::post('/contact', [frontController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/checkout', [frontController::class, 'checkout'])->name('checkout');
-Route::get('/address', [frontController::class, 'address'])->name('address')->middleware('auth');
-Route::get('/address-api/{id}', [frontController::class, 'addressApi'])->middleware('auth');
-Route::get('/restaurant-api/{id}', [frontController::class, 'restaurantApi'])->middleware('auth');
-Route::get('/payment', [frontController::class, 'payment'])->name('payment')->middleware('auth');
-Route::get('/confirmOrder', [frontController::class, 'confirmOrder'])->name('confirmOrder')->middleware('auth');
-Route::post('/place-order', [frontController::class, 'placeOrder'])->name('place.order')->middleware('auth');
-Route::post('/promo/validate', [frontController::class, 'validatePromo'])->name('promo.validate')->middleware('auth');
-Route::get('/orderTracking', [frontController::class, 'orderTracking'])->name('orderTracking')->middleware('auth');
-Route::post('/orders/{order}/cancel', [frontController::class, 'cancelOrder'])->name('orders.cancel')->middleware('auth');
-Route::post('/review', [frontController::class, 'storeReview'])->name('review.store')->middleware('auth');
-Route::put('/review/{review}', [frontController::class, 'updateReview'])->name('review.update')->middleware('auth');
-Route::delete('/review/{review}', [frontController::class, 'destroyReview'])->name('review.destroy')->middleware('auth');
 
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/wish-list', [frontController::class, 'wishList'])->name('wish.list');
+    Route::delete('/wish-list/{id}', [frontController::class, 'wishlistDestroy'])->name('wishlist.remove');
+    Route::post('/wishlist/toggle', [frontController::class, 'wishlistStore'])->name('wishlist.store');
+    
+    Route::get('/address', [frontController::class, 'address'])->name('address');
+    Route::get('/address-api/{id}', [frontController::class, 'addressApi']);
+    Route::get('/restaurant-api/{id}', [frontController::class, 'restaurantApi']);
+    Route::get('/payment', [frontController::class, 'payment'])->name('payment');
+    Route::get('/confirmOrder', [frontController::class, 'confirmOrder'])->name('confirmOrder');
+    Route::post('/place-order', [frontController::class, 'placeOrder'])->name('place.order');
+    Route::post('/promo/validate', [frontController::class, 'validatePromo'])->name('promo.validate');
+    Route::get('/orderTracking', [frontController::class, 'orderTracking'])->name('orderTracking');
+    Route::post('/orders/{order}/cancel', [frontController::class, 'cancelOrder'])->name('orders.cancel');
+    Route::post('/review', [frontController::class, 'storeReview'])->name('review.store');
+    Route::put('/review/{review}', [frontController::class, 'updateReview'])->name('review.update');
+    Route::delete('/review/{review}', [frontController::class, 'destroyReview'])->name('review.destroy');
 
-Route::get('/profile', [frontController::class, 'profile'])->name('profile')->middleware('auth');
-Route::get('/wallet', [frontController::class, 'wallet'])->name('wallet')->middleware('auth');
-Route::post('/wallet/topup', [frontController::class, 'walletTopup'])->name('wallet.topup')->middleware('auth');
-Route::post('/wallet/topup/success', [frontController::class, 'walletTopupSuccess'])->name('wallet.topup.success')->middleware('auth');
-Route::get('/my-orders', [frontController::class, 'myOrders'])->name('my.orders')->middleware('auth');
-Route::get('/my-transactions', [frontController::class, 'myTransactions'])->name('my.transactions')->middleware('auth');
-Route::get('/my-feedback', [frontController::class, 'myFeedback'])->name('my.feedback')->middleware('auth');
-Route::get('/saved-address', [frontController::class, 'savedAddress'])->name('saved.address')->middleware('auth');
-Route::post('/saved-address', [frontController::class, 'addressStore'])->name('address.store')->middleware('auth');
-Route::put('/saved-address/{id}', [frontController::class, 'addressUpdate'])->name('address.update')->middleware('auth');
-Route::delete('/saved-address/{id}', [frontController::class, 'addressDestroy'])->name('address.destroy')->middleware('auth');
-Route::get('/saved-card', [frontController::class, 'savedCard'])->name('saved.card')->middleware('auth');
-Route::post('/saved-card', [frontController::class, 'cardStore'])->name('card.store')->middleware('auth');
-Route::put('/saved-card/{id}', [frontController::class, 'cardUpdate'])->name('card.update')->middleware('auth');
-Route::delete('/saved-card/{id}', [frontController::class, 'cardDestroy'])->name('card.destroy')->middleware('auth');
-Route::get('/setting', [frontController::class, 'setting'])->name('setting')->middleware('auth');
+    Route::get('/profile', [frontController::class, 'profile'])->name('profile');
+    Route::get('/wallet', [frontController::class, 'wallet'])->name('wallet');
+    Route::post('/wallet/topup', [frontController::class, 'walletTopup'])->name('wallet.topup');
+    Route::post('/wallet/topup/success', [frontController::class, 'walletTopupSuccess'])->name('wallet.topup.success');
+    Route::get('/my-orders', [frontController::class, 'myOrders'])->name('my.orders');
+    Route::get('/my-transactions', [frontController::class, 'myTransactions'])->name('my.transactions');
+    Route::get('/my-transactions/{transaction}/receipt', [frontController::class, 'downloadReceipt'])->name('my.transactions.receipt');
+    Route::get('/my-feedback', [frontController::class, 'myFeedback'])->name('my.feedback');
+    Route::get('/saved-address', [frontController::class, 'savedAddress'])->name('saved.address');
+    Route::post('/saved-address', [frontController::class, 'addressStore'])->name('address.store');
+    Route::put('/saved-address/{id}', [frontController::class, 'addressUpdate'])->name('address.update');
+    Route::delete('/saved-address/{id}', [frontController::class, 'addressDestroy'])->name('address.destroy');
+    Route::get('/saved-card', [frontController::class, 'savedCard'])->name('saved.card');
+    Route::post('/saved-card', [frontController::class, 'cardStore'])->name('card.store');
+    Route::put('/saved-card/{id}', [frontController::class, 'cardUpdate'])->name('card.update');
+    Route::delete('/saved-card/{id}', [frontController::class, 'cardDestroy'])->name('card.destroy');
+    Route::get('/setting', [frontController::class, 'setting'])->name('setting');
 
-Route::post('/profile/update-name', [frontController::class, 'profileUpdateName'])->name('profile.update-name')->middleware('auth');
-Route::post('/profile/update-email', [frontController::class, 'profileUpdateEmail'])->name('profile.update-email')->middleware('auth');
-Route::post('/profile/update-phone', [frontController::class, 'profileUpdatePhone'])->name('profile.update-phone')->middleware('auth');
-Route::post('/profile/update-password', [frontController::class, 'profileUpdatePassword'])->name('profile.update-password')->middleware('auth');
-Route::post('/profile/update-image', [frontController::class, 'profileUpdateImage'])->name('profile.update-image')->middleware('auth');
-Route::post('/profile/delete-account', [frontController::class, 'deleteAccount'])->name('profile.delete-account')->middleware('auth');
-Route::post('/profile/notification-update', [frontController::class, 'notificationUpdate'])->name('profile.notification-update')->middleware('auth');
+    Route::post('/profile/update-name', [frontController::class, 'profileUpdateName'])->name('profile.update-name');
+    Route::post('/profile/update-email', [frontController::class, 'profileUpdateEmail'])->name('profile.update-email');
+    Route::post('/profile/update-phone', [frontController::class, 'profileUpdatePhone'])->name('profile.update-phone');
+    Route::post('/profile/update-password', [frontController::class, 'profileUpdatePassword'])->name('profile.update-password');
+    Route::post('/profile/update-image', [frontController::class, 'profileUpdateImage'])->name('profile.update-image');
+    Route::post('/profile/delete-account', [frontController::class, 'deleteAccount'])->name('profile.delete-account');
+    Route::post('/profile/notification-update', [frontController::class, 'notificationUpdate'])->name('profile.notification-update');
 
-// Support Tickets (Customer)
-Route::middleware('auth')->group(function () {
+    // Support Tickets (Customer)
     Route::get('tickets', [TicketController::class, 'index'])->name('tickets-index');
     Route::get('tickets-create', [TicketController::class, 'create'])->name('tickets-create');
     Route::post('tickets', [TicketController::class, 'store'])->name('tickets-store');
@@ -116,8 +118,8 @@ Route::middleware('auth')->group(function () {
     Route::post('tickets/{ticket}/close', [TicketController::class, 'close'])->name('tickets-close');
     Route::post('tickets/{ticket}/reopen', [TicketController::class, 'reopen'])->name('tickets-reopen');
     Route::post('tickets/{ticket}/rate', [TicketController::class, 'rate'])->name('tickets-rate');
+    Route::get('help', [TicketController::class, 'help'])->name('help');
 });
-Route::get('help', [TicketController::class, 'help'])->name('help')->middleware('auth');
 
 // Restaurant Owner Auth (guest)
 Route::get('/restaurant/login', [App\Http\Controllers\Restaurant\Auth\LoginController::class, 'showLoginForm'])->name('restaurant.login');

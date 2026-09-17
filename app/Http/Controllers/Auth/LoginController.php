@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
+use App\Models\BlockedIp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,10 +29,50 @@ public function login(Request $request): RedirectResponse
         'password' => 'required',
     ]);
 
+    $ipAddress = $request->ip();
+    $blockedIp = BlockedIp::firstOrCreate(['ip_address' => $ipAddress]);
+
+    if ($blockedIp->is_blocked) {
+        if ($blockedIp->blocked_at && $blockedIp->blocked_at->copy()->addHours(24)->isPast()) {
+            $blockedIp->update([
+                'is_blocked' => false,
+                'failed_attempts' => 0,
+                'blocked_at' => null,
+            ]);
+        } else {
+            return back()->withErrors([
+                'email' => 'Too many failed login attempts. Please try again after 24 hours.',
+            ]);
+        }
+    }
+
     if (!Auth::attempt($credentials)) {
+        $blockedIp->increment('failed_attempts');
+        
+        $blockedIp->update([
+            'details' => [
+                'last_email' => $request->email,
+                'user_agent' => $request->userAgent()
+            ]
+        ]);
+        
+        if ($blockedIp->failed_attempts >= 5) {
+            $blockedIp->update([
+                'is_blocked' => true,
+                'blocked_at' => now(),
+            ]);
+            return back()->withErrors([
+                'email' => 'Too many failed login attempts. Please try again after 24 hours.',
+            ]);
+        }
+
         return back()->withErrors([
             'email' => 'Invalid email or password.',
         ]);
+    }
+
+    if ($blockedIp->failed_attempts > 0) {
+        $blockedIp->update(['failed_attempts' => 0]);
     }
 
     $request->session()->regenerate();
