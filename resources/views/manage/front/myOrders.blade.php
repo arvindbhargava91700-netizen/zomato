@@ -71,6 +71,9 @@
                                                 <button type="button" class="btn theme-outline details-btn" data-bs-toggle="modal" data-bs-target="#billModal{{ $order->id }}">
                                                     <i class="ri-file-list-3-line me-1"></i>View Bill
                                                 </button>
+                                                <button type="button" class="btn theme-outline details-btn download-invoice-btn" data-url="{{ route('my.orders.invoice', $order->id) }}">
+                                                    <i class="ri-download-2-line me-1"></i>Download Invoice
+                                                </button>
                                                 <a href="{{ route('orderTracking', ['order' => $order->id]) }}"
                                                     class="btn theme-outline details-btn">Track Order</a>
                                                 @if (in_array($order->status, [
@@ -263,6 +266,29 @@
                         showMessage(msg, true);
                     }
                 });
+            });
+
+            $('.download-invoice-btn').on('click', function () {
+                var $btn = $(this);
+                var originalHtml = $btn.html();
+                var url = $btn.data('url');
+                
+                $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Downloading...');
+                
+                var iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = url;
+                document.body.appendChild(iframe);
+                
+                // Revert button state after 3 seconds assuming download prompt has started
+                setTimeout(function () {
+                    $btn.prop('disabled', false).html(originalHtml);
+                    setTimeout(function() {
+                        if (document.body.contains(iframe)) {
+                            document.body.removeChild(iframe);
+                        }
+                    }, 5000);
+                }, 3000);
             });
         });
     </script>

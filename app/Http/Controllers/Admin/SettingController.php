@@ -90,6 +90,8 @@ class SettingController extends Controller
 
         $data = $request->validate([
             'company_name' => ['nullable', 'string', 'max:255'],
+            'gst_number' => ['nullable', 'string', 'max:255'],
+            'about_company' => ['nullable', 'string'],
             'email' => ['nullable', 'string', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
             'address' => ['nullable', 'string', 'max:255'],

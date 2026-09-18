@@ -23,6 +23,8 @@ class CompanySetting extends Model
      */
     protected $fillable = [
         'company_name',
+        'gst_number',
+        'about_company',
         'logo_lg',
         'logo_sm',
         'favicon',

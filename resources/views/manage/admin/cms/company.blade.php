@@ -28,7 +28,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.cms.company.update') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.cms.company.update') }}" method="POST" enctype="multipart/form-data" id="companyForm">
             @csrf
 
             <div class="card stretch stretch-full border-0 shadow-sm rounded-3 mb-4">
@@ -37,15 +37,25 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="company_name" class="form-label fw-semibold">Company Name</label>
                             <input type="text" name="company_name" id="company_name" class="form-control @error('company_name') is-invalid @enderror" value="{{ old('company_name', $setting->company_name) }}" placeholder="e.g. Food Management Inc.">
                             @error('company_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label for="gst_number" class="form-label fw-semibold">GST Number</label>
+                            <input type="text" name="gst_number" id="gst_number" class="form-control @error('gst_number') is-invalid @enderror" value="{{ old('gst_number', $setting->gst_number) }}" placeholder="e.g. 22AAAAA0000A1Z5">
+                            @error('gst_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4">
                             <label for="website" class="form-label fw-semibold">Website</label>
                             <input type="text" name="website" id="website" class="form-control @error('website') is-invalid @enderror" value="{{ old('website', $setting->website) }}" placeholder="e.g. https://www.yourwebsite.com">
                             @error('website') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-12">
+                            <label for="about_company" class="form-label fw-semibold">About Company</label>
+                            <textarea name="about_company" id="about_company" rows="3" class="form-control @error('about_company') is-invalid @enderror" placeholder="Write a short description about the company...">{{ old('about_company', $setting->about_company) }}</textarea>
+                            @error('about_company') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
                             <label for="logo_lg" class="form-label fw-semibold">Logo (Large) <small class="text-muted">(Max 2MB)</small></label>
@@ -101,11 +111,29 @@
             </div>
 
             <div class="text-end mb-5">
-                <button type="submit" class="btn btn-primary">
-                    <i class="feather-save me-2"></i> Save Changes
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="feather-save me-2" id="submitIcon"></i>
+                    <span class="spinner-border spinner-border-sm me-2 d-none" id="submitSpinner" role="status" aria-hidden="true"></span>
+                    <span id="submitText">Save Changes</span>
                 </button>
             </div>
         </form>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('companyForm').addEventListener('submit', function() {
+        var btn = document.getElementById('submitBtn');
+        var icon = document.getElementById('submitIcon');
+        var spinner = document.getElementById('submitSpinner');
+        var text = document.getElementById('submitText');
+        
+        btn.disabled = true;
+        if(icon) icon.classList.add('d-none');
+        if(spinner) spinner.classList.remove('d-none');
+        if(text) text.innerText = 'Saving...';
+    });
+</script>
+@endpush

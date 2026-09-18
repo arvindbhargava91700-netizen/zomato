@@ -119,6 +119,9 @@
             @if($companySetting && $companySetting->company_address)
                 <p>{{ $companySetting->company_address }}</p>
             @endif
+            @if($companySetting && $companySetting->gst_number)
+                <p>GSTIN: {{ $companySetting->gst_number }}</p>
+            @endif
         </div>
 
         <!-- Info Blocks -->

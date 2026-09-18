@@ -58,6 +58,12 @@
                                 @error('invoice_prefix') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
+                            <div class="mb-4">
+                                <label for="gst_number" class="form-label fw-semibold">Company GST Number</label>
+                                <input type="text" name="gst_number" id="gst_number" class="form-control @error('gst_number') is-invalid @enderror" value="{{ old('gst_number', $setting->gst_number) }}" placeholder="e.g. 22AAAAA0000A1Z5">
+                                @error('gst_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+
                             <hr class="my-4">
                             <h6 class="fw-bold mb-3 border-bottom pb-2">Signatory Details</h6>
 

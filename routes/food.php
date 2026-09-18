@@ -88,6 +88,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::post('/wallet/topup', [frontController::class, 'walletTopup'])->name('wallet.topup');
     Route::post('/wallet/topup/success', [frontController::class, 'walletTopupSuccess'])->name('wallet.topup.success');
     Route::get('/my-orders', [frontController::class, 'myOrders'])->name('my.orders');
+    Route::get('/my-orders/{order}/invoice', [frontController::class, 'downloadOrderInvoice'])->name('my.orders.invoice');
     Route::get('/my-transactions', [frontController::class, 'myTransactions'])->name('my.transactions');
     Route::get('/my-transactions/{transaction}/receipt', [frontController::class, 'downloadReceipt'])->name('my.transactions.receipt');
     Route::get('/my-feedback', [frontController::class, 'myFeedback'])->name('my.feedback');

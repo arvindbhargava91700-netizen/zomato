@@ -23,6 +23,7 @@ class InvoiceController extends Controller
 
         $data = $request->validate([
             'logo_lg' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'gst_number' => ['nullable', 'string', 'max:255'],
             'invoice_prefix' => ['nullable', 'string', 'max:20'],
             'signature' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'signatory_designation' => ['nullable', 'string', 'max:255'],

@@ -1134,6 +1134,47 @@ class frontController extends Controller
         return view('manage.front.myOrders', compact('orders', 'taxPercentage', 'currencySymbol', 'taxGst'));
     }
 
+    public function downloadOrderInvoice($orderId)
+    {
+        $order = \App\Models\Order::with(['items.food', 'user', 'address', 'restaurant'])->findOrFail($orderId);
+        
+        // Ensure user is downloading their own order
+        if ($order->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $setting = \App\Models\CompanySetting::firstSetting();
+        
+        // Map order data to the expected $invoice structure
+        $invoice = [
+            'invoice_number' => ($setting->invoice_prefix ?? 'INV-') . str_pad($order->id, 5, '0', STR_PAD_LEFT),
+            'date' => $order->created_at->format($setting->date_format ?? 'd/m/Y'),
+            'due_date' => $order->created_at->format($setting->date_format ?? 'd/m/Y'),
+            'customer_name' => $order->user->name,
+            'customer_email' => $order->user->email,
+            'customer_phone' => $order->user->phone ?? 'N/A',
+            'customer_address' => $order->address ? "{$order->address->house_no}, {$order->address->street}, {$order->address->city}" : 'N/A',
+            'items' => [],
+            'subtotal' => $order->subtotal,
+            'tax_percentage' => \App\Models\Setting::where('key', 'tax_percentage')->value('value') ?? 0,
+            'tax_amount' => $order->tax,
+            'discount' => $order->discount + $order->promo_discount,
+            'delivery_fee' => $order->delivery_charge,
+            'total' => $order->total,
+        ];
+
+        foreach ($order->items as $item) {
+            $invoice['items'][] = [
+                'name' => $item->food ? $item->food->name : 'Food Item',
+                'quantity' => $item->qty,
+                'price' => $item->price,
+            ];
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('manage.admin.invoices.template', compact('setting', 'invoice'));
+        return $pdf->download('invoice-' . $invoice['invoice_number'] . '.pdf');
+    }
+
     public function myTransactions()
     {
         $transactions = \App\Models\Transaction::with(['order', 'restaurant'])

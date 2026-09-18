@@ -139,6 +139,9 @@
                             {!! nl2br(e($setting->address ?? 'Company Address')) !!}<br>
                             {{ $setting->email ?? 'contact@example.com' }}<br>
                             {{ $setting->phone ?? '123456789' }}
+                            @if(!empty($setting->gst_number))
+                                <br>GSTIN: {{ $setting->gst_number }}
+                            @endif
                         </td>
                     </tr>
                 </table>
